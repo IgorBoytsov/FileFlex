@@ -17,15 +17,15 @@ using System.Windows.Shapes;
 namespace FileFlex.Views.Pages
 {
     /// <summary>
-    /// Логика взаимодействия для GifPage.xaml
+    /// Логика взаимодействия для CreateGIFPage.xaml
     /// </summary>
-    public partial class GifPage : Page
+    public partial class CreateGIFPage : Page
     {
-        public GifPage()
+        public CreateGIFPage()
         {
             InitializeComponent();
 
-            DataContext = new GifPageViewModel();
+            DataContext = new CreateGifPageViewModel();
         }
     }
 }

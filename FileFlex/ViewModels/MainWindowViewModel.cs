@@ -17,7 +17,7 @@ namespace FileFlex.ViewModels
 {
     internal class MainWindowViewModel : BaseViewModel
     {
-        #region Properties and fields
+        #region Свойства
 
         private readonly INavigationService _navigationServices;
 
@@ -29,7 +29,7 @@ namespace FileFlex.ViewModels
             get => _currentPage;
             set
             {
-                _currentPage = value;
+                _currentPage = value;                
                 OnPropertyChanged();
             }
         }
@@ -41,10 +41,8 @@ namespace FileFlex.ViewModels
             _navigationServices = navigationServices ?? throw new ArgumentNullException(nameof(navigationServices));
         }
 
-        #region Command
-
-       
-
+        #region Команды
+    
         private RelayCommand _navigateToImageConvertPageCommand;
         public RelayCommand NavigateToImageConvertPageCommand
         {
@@ -58,31 +56,31 @@ namespace FileFlex.ViewModels
         }
 
 
-        private RelayCommand _navigateToGifPageCommand;
+        private RelayCommand _navigateToCreateGifPageCommand;
 
-        public RelayCommand NavigateToGifPageCommand
+        public RelayCommand NavigateToCreateGifPageCommand
         {
             get
             {
-                return _navigateToGifPageCommand ?? (_navigateToGifPageCommand = new RelayCommand(obj =>
+                return _navigateToCreateGifPageCommand ?? (_navigateToCreateGifPageCommand = new RelayCommand(obj =>
                 {
-                    NavigatToGifPage();
+                    NavigatToCreateGifPage();
                 }));
             }
         }
 
         #endregion
 
-        #region MethodForCommand
+        #region Методы
 
         private void NavigatToImageConvertPage()
         {
             _navigationServices.NavigateTo("ImageConvertPage", null);
         }
 
-        private void NavigatToGifPage()
+        private void NavigatToCreateGifPage()
         {
-            _navigationServices.NavigateTo("GifPage", null);
+            _navigationServices.NavigateTo("CreateGIFPage", null);
         }
 
         #endregion

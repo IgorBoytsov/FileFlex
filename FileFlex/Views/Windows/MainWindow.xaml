@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:fa="http://schemas.fontawesome.com/icons/"
         mc:Ignorable="d"
-        Title="MainWindow" Height="730" Width="1300" MinHeight="365" MinWidth="650" WindowStartupLocation="CenterScreen">
+        Background="#FF282C34"
+        Title="MainWindow" Height="800" Width="1400" MinHeight="365" MinWidth="650" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -13,7 +14,7 @@
         </Grid.RowDefinitions>
 
         <TabControl Grid.Column="0" Style="{StaticResource TabControlMainStyle}">
-            <TabItem Header="Конвертер" FontSize="15">
+            <TabItem Header="Конвертеры" FontSize="15">
                 <Grid>
 
                     <Grid.ColumnDefinitions>
@@ -33,7 +34,7 @@
                             Command="{Binding NavigateToImageConvertPageCommand}"
                             Template="{StaticResource MenuButtonTemplate}"
                             ToolTip="Конвертер изображений">
-                        <fa:ImageAwesome Icon="Regular_FileImage" Foreground="Black" Height="40"/>
+                        <fa:ImageAwesome Icon="Regular_FileImage" Foreground="White" Height="40"/>
                     </Button>
 
                     <Label Content="Документов" Grid.Row="0" Grid.Column="1" Style="{StaticResource TabItemLabelStyle}"/>
@@ -42,7 +43,7 @@
                             Command="{Binding NavigateToGifPageCommand}"
                             Template="{StaticResource MenuButtonTemplate}"
                             ToolTip="Конвертер документов" >
-                        <fa:ImageAwesome Icon="Regular_FileWord" Foreground="Black" Height="40"/>
+                        <fa:ImageAwesome Icon="Regular_FileWord" Foreground="White" Height="40"/>
                     </Button>
 
                     <Label Content="Видео" Grid.Row="0" Grid.Column="2" Style="{StaticResource TabItemLabelStyle}"/>
@@ -51,59 +52,93 @@
                             Command="{Binding NavigateToImageConvertPageCommand}"
                             Template="{StaticResource MenuButtonTemplate}"
                             ToolTip="Конвертер видео">
-                        <fa:ImageAwesome Icon="Regular_FileVideo" Foreground="Black" Height="40"/>
+                        <fa:ImageAwesome Icon="Regular_FileVideo" Foreground="White" Height="40"/>
                     </Button>
 
                     <Label Content="Аудио" Grid.Row="0" Grid.Column="3" Style="{StaticResource TabItemLabelStyle}"/>
                     <Button Grid.Column="3" Grid.Row="1" 
                             Command="{Binding NavigateToGifPageCommand}"
                             Template="{StaticResource MenuButtonTemplate}">
-                        <fa:ImageAwesome Icon="Regular_FileAudio" Height="40"/>
+                        <fa:ImageAwesome Icon="Regular_FileAudio" Height="40" Foreground="White"/>
                     </Button>
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Создание GIF">
+            <TabItem Header="PDF">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
+                    <Label Content="Создание" Grid.Row="0" Grid.Column="0" Style="{StaticResource TabItemLabelStyle}"/>
+                    <Button Grid.Column="0" Grid.Row="1" 
+                            HorizontalAlignment="Center"
+                            Command="{Binding NavigateToImageConvertPageCommand}"
+                            Template="{StaticResource MenuButtonTemplate}"
+                            ToolTip="Конвертер изображений">
+                        <fa:ImageAwesome Icon="Regular_File" Foreground="Black" Height="40"/>
+                    </Button>
+                </Grid>
+                
+            </TabItem>
+
+            <TabItem Header="GIF">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Label Content="Создание" Grid.Row="0" Grid.Column="0" Style="{StaticResource TabItemLabelStyle}"/>
+                    <Button Grid.Column="0" Grid.Row="1" 
+                            HorizontalAlignment="Center"
+                            Command="{Binding NavigateToCreateGifPageCommand}"
+                            Template="{StaticResource MenuButtonTemplate}"
+                            ToolTip="Конвертер изображений">
+                        <fa:ImageAwesome Icon="Regular_FilePdf" Foreground="Black" Height="40"/>
+                    </Button>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Сжатие файлов">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Label Content="Изображений" Grid.Row="0" Grid.Column="0" Style="{StaticResource TabItemLabelStyle}"/>
+                    <Button Grid.Column="0" Grid.Row="1" 
+                            HorizontalAlignment="Center"
+                            Command="{Binding NavigateToImageConvertPageCommand}"
+                            Template="{StaticResource MenuButtonTemplate}"
+                            ToolTip="Конвертер изображений">
+                        <fa:ImageAwesome Icon="Regular_FileImage" Foreground="Black" Height="40"/>
+                    </Button>
+                </Grid>
             </TabItem>
         </TabControl>
-        
+
         <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" Grid.Row="1"/>
-        
+
     </Grid>
-
 </Window>
-
-
-
-
-<!--<Grid.ColumnDefinitions>
-    <ColumnDefinition Width="*"/>
-    <ColumnDefinition Width="2"/>
-    <ColumnDefinition Width="5*"/>
-</Grid.ColumnDefinitions>
-    
-     <DockPanel>
-     <ComboBox ItemsSource="{Binding ConvertImageFormatList}"/>
- </DockPanel>
-<Button Command="{Binding NavigateToImageConvertPageCommand}" Content="На страницу с картинками" Width="250"/>
-<Button Command="{Binding NavigateToGifPageCommand}" Content="На страницу с ГИФ" Width="250"/>
-    
-<Button 
-    Grid.Column="0" 
-    Background="Black" 
-    Content="Кнопка #1" 
-    Foreground="White"/>
-
-<GridSplitter 
-    Grid.Column="1" 
-    ShowsPreview="False" 
-    Width="2" 
-    Background="Red"
-    HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
-
-<Button 
-    Grid.Column="2" 
-    Background="DarkBlue" 
-    Content="Кнопка #2" 
-    Foreground="White"/>-->

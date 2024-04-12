@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FileFlex.ViewModels
 {
-    internal class GifPageViewModel : BaseViewModel
+    internal class CreateGifPageViewModel : BaseViewModel
     {
     }
 }

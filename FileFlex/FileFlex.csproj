@@ -12,4 +12,10 @@
     <PackageReference Include="FontAwesome5" Version="2.1.11" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TempFile\TempImages\" />
+    <Folder Include="TempFile\TempDocuments\" />
+    <Folder Include="TempFile\TempGifs\" />
+  </ItemGroup>
+
 </Project>

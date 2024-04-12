@@ -21,8 +21,8 @@ namespace FileFlex.ViewModels.Services
         {
             switch (pageName)
             {
-                case "GifPage":
-                    _frame.Navigate(new GifPage());
+                case "CreateGIFPage":
+                    _frame.Navigate(new CreateGIFPage());
                     break;
 
                 case "ImageConvertPage":

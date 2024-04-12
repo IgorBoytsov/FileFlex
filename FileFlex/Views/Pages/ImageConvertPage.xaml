@@ -4,15 +4,17 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local1="clr-namespace:FileFlex.ViewModels"
+      xmlns:fa="http://schemas.fontawesome.com/icons/"
       mc:Ignorable="d" 
       d:DesignHeight="730" d:DesignWidth="1300"
+      FontFamily="Bahnschrift SemiBold SemiCondensed"
+      FontSize="15"
       Title="ImageConvertPage">
 
-    <!--d:DesignHeight="450" d:DesignWidth="800"-->
-    <Grid Background="White">
+    <Grid Background="#FF282C34">
         <Grid.RowDefinitions>
             <RowDefinition Height="1"/>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="50"/>
             <RowDefinition Height="150"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="1"/>
@@ -33,16 +35,28 @@
               Grid.Column="3"
               Grid.RowSpan="5"  
               HorizontalAlignment="Center"
-              Width="3"
+              Width="4"
+              Cursor="SizeWE"
               ShowsPreview="False"/>
+        <!--#endregion-->
+
+        <!--#region Элементы управление-->
+
+        <WrapPanel Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Button Content="Конвертировать" Template="{StaticResource ControlButton}" Margin="0,0,10,0"/>
+            <Button Content="Конверт. и сохр." Template="{StaticResource ControlButton}" Margin="0,0,10,0"/>
+            <Button Content="Сохранить" Template="{StaticResource ControlButton}" Margin="0,0,10,0"/>
+            <Button Content="Сбросить" Template="{StaticResource ControlButton}" Margin="0,0,10,0"/>
+        </WrapPanel>
+
         <!--#endregion-->
 
         <!--#region Область добавления файлов-->
         <DockPanel Grid.Row="1" Grid.RowSpan="2" Grid.Column="1">
-            <Border BorderBrush="Blue" BorderThickness="4" CornerRadius="30" DockPanel.Dock="Bottom">
+            <Border BorderBrush="Blue" Background="White" BorderThickness="4" CornerRadius="30" DockPanel.Dock="Bottom">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                     <Label Content="Перетащите файл" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="15"/>
-                    <Button Content="Выбрать файл" HorizontalAlignment="Center" />
+                    <Button Content="Выбрать файл" Command="{Binding SelectFileCommand}" HorizontalAlignment="Center" />
                 </StackPanel>
             </Border>
         </DockPanel>
@@ -50,67 +64,147 @@
 
         <!--#region Область с списком настроек-->
         <ScrollViewer Grid.Row="3" Grid.Column="1">
-            <StackPanel>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-                <Button Height="100" Content="RGHRHRTHTHT"/>
-            </StackPanel>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.ColumnSpan="2" Grid.Row="0" Background="#595958" >
+                    <DockPanel>
+                        <fa:ImageAwesome Icon="Solid_Wrench" Width="25"/>
+                        <Label Content="Настройки формата" Style="{StaticResource SettingLabelStyle}"/>
+                    </DockPanel>
+                </Border>
+
+                <DockPanel Grid.Column="0" Grid.Row="1" >
+                    <Label Content="Целевой формат" Style="{StaticResource SettingLabelStyle}"/>
+                    <fa:ImageAwesome Icon="Solid_QuestionCircle" Foreground="LightBlue" Height="15" Width="15"  HorizontalAlignment="Left">
+                        <fa:ImageAwesome.ToolTip>
+                            <TextBlock TextWrapping="WrapWithOverflow" Background="White" FontSize="20" Text="{Binding ToolTipTargetFormatLabelText}" />
+                        </fa:ImageAwesome.ToolTip>
+                    </fa:ImageAwesome>
+                </DockPanel>
+
+                <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding ConvertFormat}" Width="100" Height="25"/>
+
+
+                <Border Grid.ColumnSpan="2" Grid.Row="2" Background="#595958">
+                    <DockPanel>
+                        <fa:ImageAwesome Icon="Solid_Wrench" Width="25"/>
+                        <Label Content="Настройки качества" Style="{StaticResource SettingLabelStyle}"/>
+                    </DockPanel>
+                </Border>
+
+                <Slider Grid.ColumnSpan="2" Grid.Row="4" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,10,0" />
+
+                <DockPanel Grid.Column="0" Grid.Row="3">
+                    <Label Content="Качество" Style="{StaticResource SettingLabelStyle}"/>
+                    <fa:ImageAwesome Icon="Solid_QuestionCircle" Foreground="LightBlue" Height="15" Width="15"  HorizontalAlignment="Left">
+                        <fa:ImageAwesome.ToolTip>
+                            <TextBlock TextWrapping="WrapWithOverflow" Height="100" Width="500" Background="White" FontSize="20" Text="{Binding ToolTipQualityLabelText}" />
+                        </fa:ImageAwesome.ToolTip>
+                    </fa:ImageAwesome>
+                </DockPanel>
+
+                <Label Grid.Column="0" Grid.Row="5" Content="Значение в % :" Style="{StaticResource SettingLabelStyle}"/>
+                <TextBox Grid.Column="1" Grid.Row="5" Text="100" Template="{StaticResource SettingTextBoxTemplate}" Style="{StaticResource SettingTextBoxStyle}"/>
+
+                <Border  Grid.ColumnSpan="2" Grid.Row="7" Background="#595958" >
+                    <DockPanel>
+                        <fa:FontAwesome Icon="Solid_CropAlt" Height="15" Width="15"/>
+                        <Label Content="Изменить размер" Style="{StaticResource SettingLabelStyle}"/>
+                        <fa:ImageAwesome Icon="Solid_QuestionCircle" Foreground="LightBlue" Height="15" Width="15"  HorizontalAlignment="Left">
+                            <fa:ImageAwesome.ToolTip>
+                                <TextBlock TextWrapping="WrapWithOverflow" Height="100" Width="500" Background="White" FontSize="20" Text="{Binding ToolTipResizeLabelText}" />
+                            </fa:ImageAwesome.ToolTip>
+                        </fa:ImageAwesome>
+                    </DockPanel>
+                </Border>
+
+                <Label Grid.Column="0" Grid.Row="9" Content="Ширина" HorizontalAlignment="Center" Style="{StaticResource SettingLabelStyle}"/>
+                <TextBox Grid.Column="1" Grid.Row="9" Template="{StaticResource SettingTextBoxTemplate}" Style="{StaticResource SettingTextBoxStyle}"/>
+
+                <Label Grid.Column="0" Grid.Row="11" Content="Высота" HorizontalAlignment="Center" Style="{StaticResource SettingLabelStyle}"/>
+                <TextBox Grid.Column="1" Grid.Row="11" Template="{StaticResource SettingTextBoxTemplate}" Style="{StaticResource SettingTextBoxStyle}"/>
+
+                <Border Grid.ColumnSpan="2" Grid.Row="13" Background="#595958">
+                    <DockPanel>
+                        <fa:ImageAwesome Icon="Solid_Palette" Height="15" Width="15"/>
+                        <Label  Content="Цветовой фильтр" Style="{StaticResource SettingLabelStyle}"/>
+                        <fa:ImageAwesome Icon="Solid_QuestionCircle" Foreground="LightBlue" Height="15" Width="15"  HorizontalAlignment="Left">
+                            <fa:ImageAwesome.ToolTip>
+                                <TextBlock TextWrapping="WrapWithOverflow" Background="White" FontSize="20" Text="{Binding ToolTipCallorFilterLabelText}" />
+                            </fa:ImageAwesome.ToolTip>
+                        </fa:ImageAwesome>
+                    </DockPanel>
+                </Border>
+
+                <ComboBox Grid.ColumnSpan="2" Grid.Row="14" ItemsSource="{Binding ColorFilter}" VerticalAlignment="Center" Width="200" Height="20" Margin="0,5,0,5"/>
+
+                <Border Grid.ColumnSpan="2" Grid.Row="15" Background="#595958">
+                    <DockPanel>
+                        <fa:ImageAwesome Icon="Solid_Hammer" Height="15" Width="15"/>
+                        <Label  Content="Дополнительные настройки" Style="{StaticResource SettingLabelStyle}"/>
+                        <fa:ImageAwesome Icon="Solid_QuestionCircle" Foreground="LightBlue" Height="15" Width="15"  HorizontalAlignment="Left">
+                            <fa:ImageAwesome.ToolTip>
+                                <TextBlock TextWrapping="WrapWithOverflow" Background="White" FontSize="20" Text="{Binding ToolTipAdditionalSettingsLabelText}" />
+                            </fa:ImageAwesome.ToolTip>
+                        </fa:ImageAwesome>
+                    </DockPanel>
+                </Border>
+
+                <StackPanel Grid.Column="0" Grid.Row="16" >
+                    <CheckBox Content="Повысить резкость" Style="{StaticResource SettingCheckBoxStyle}"/>
+                    <CheckBox Content="Сглаживание" Style="{StaticResource SettingCheckBoxStyle}"/>
+                    <CheckBox Content="Сглаживание контраста" Style="{StaticResource SettingCheckBoxStyle}"/>
+                    <CheckBox Content="Добавить файлы в архив" Style="{StaticResource SettingCheckBoxStyle}"/>
+                </StackPanel>
+
+            </Grid>
         </ScrollViewer>
         <!--#endregion-->
 
         <!--#region Отображение информации о файле-->
-        <ScrollViewer Grid.Column="2" Grid.Row="2" Grid.RowSpan="3">
-            <Grid Background="White">
+        <ScrollViewer Grid.Column="2" Grid.Row="2" Grid.RowSpan="3" >
+            <Grid Background="#FF282C34">
+
+                <!--Background="#FF282C34"-->
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <GroupBox MaxHeight="500" Header="Изображение"  BorderBrush="Black" Foreground="Black" BorderThickness="2" FontSize="30" Margin="10" FontFamily="Bahnschrift SemiBold SemiCondensed" >
-                        <Image Source="C:\Users\light\Downloads\Igor184_2 (1).png" HorizontalAlignment="Center" Margin="15" />
-                    </GroupBox>
-                </StackPanel>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <GroupBox MaxHeight="700" Header="Исходное изображение" Grid.Row="0" Grid.Column="0" BorderBrush="Black" Foreground="White" BorderThickness="2" FontSize="20" Margin="10" FontFamily="Bahnschrift SemiBold SemiCondensed" >
+                    <Image Source="C:\Users\light\OneDrive\Изображения\Снимки экрана\Снимок экрана 2024-04-01 170733.png" HorizontalAlignment="Center" Margin="15" />
+                </GroupBox>
 
                 <StackPanel Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top">
-                    <GroupBox MaxHeight="500" Header="Информация"  BorderBrush="Black" Foreground="Black" BorderThickness="2" FontSize="30" Margin="10" FontFamily="Bahnschrift SemiBold SemiCondensed">
+                    <GroupBox MaxHeight="500" Header="Информация"  BorderBrush="Black" Foreground="White" BorderThickness="2" FontSize="30" Margin="10" FontFamily="Bahnschrift SemiBold SemiCondensed">
                         <Grid>
 
                             <Grid.RowDefinitions>
@@ -119,23 +213,59 @@
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            
+
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Label Content="Имя файла" Grid.Row="0" Grid.Column="0" Margin="10"/>
-                            <TextBox Text="image1" Grid.Row="0" Grid.Column="1" Margin="10"/>
+                            <Label Content="Имя файла" Grid.Row="0" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
+                            <TextBox Text="image1" Grid.Row="0" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
 
-                            <Label Content="Тип файла" Grid.Row="1" Grid.Column="0" Margin="10"/>
-                            <TextBox Text=".png" Grid.Row="1" Grid.Column="1" Margin="10"/>
+                            <Label Content="Тип файла" Grid.Row="1" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
+                            <TextBox Text=".png" Grid.Row="1" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
 
-                            <Label Content="Размер файла" Grid.Row="2" Grid.Column="0" Margin="10"/>
-                            <TextBox Text="456кб" Grid.Row="2" Grid.Column="1" Margin="10"/>
+                            <Label Content="Размер файла" Grid.Row="2" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
+                            <TextBox Text="456кб" Grid.Row="2" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
 
-                            <Label Content="Разрешение файл" Grid.Row="3" Grid.Column="0" Margin="10"/>
-                            <TextBox Text="2560 x 1440" Grid.Row="3" Grid.Column="1" Margin="10"/>
+                            <Label Content="Разрешение файл" Grid.Row="3" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
+                            <TextBox Text="2560 x 1440" Grid.Row="3" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
+
+                        </Grid>
+                    </GroupBox>
+                </StackPanel>
+
+                <GroupBox MaxHeight="700" Header="Выходное изображение" Grid.Row="0" Grid.Column="1" BorderBrush="Black" Foreground="White" BorderThickness="2" FontSize="20" Margin="10" FontFamily="Bahnschrift SemiBold SemiCondensed" >
+                    <Image Source="C:\Users\light\OneDrive\Изображения\Снимки экрана\Снимок экрана 2024-04-01 170733.png" HorizontalAlignment="Center" Margin="15" />
+                </GroupBox>
+
+                <StackPanel Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top">
+                    <GroupBox MaxHeight="500" Header="Информация"  BorderBrush="Black" Foreground="White" BorderThickness="2" FontSize="30" Margin="10" FontFamily="Bahnschrift SemiBold SemiCondensed">
+                        <Grid>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Content="Имя файла" Grid.Row="0" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
+                            <TextBox Text="image1" Grid.Row="0" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
+
+                            <Label Content="Тип файла" Grid.Row="1" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
+                            <TextBox Text=".png" Grid.Row="1" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
+
+                            <Label Content="Размер файла" Grid.Row="2" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
+                            <TextBox Text="456кб" Grid.Row="2" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
+
+                            <Label Content="Разрешение файл" Grid.Row="3" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
+                            <TextBox Text="2560 x 1440" Grid.Row="3" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
 
                         </Grid>
                     </GroupBox>
@@ -146,69 +276,22 @@
         <!--#region -->
 
         <!--#region Список файлов/Управление списком файлов-->
-        <ComboBox Grid.Row="1" Grid.Column="4"/>
+        <StackPanel Grid.Row="1" Grid.Column="4" Orientation="Horizontal">
+            <ComboBox ItemsSource="{Binding SortingSelection}" Width="150" Height="25"/>
+            <Button Content="Удалить все файлы" Template="{StaticResource ControlButton}" Margin="10,0,0,0"/>
+        </StackPanel>
 
-        <ListView Grid.Row="2" Grid.RowSpan="2" Grid.Column="4">
-            <ListViewItem Content="Файл 1"/>
-            <ListViewItem Content="Файл 21"/>
-            <ListViewItem Content="Файл 14"/>
-            <ListViewItem Content="Файл 1"/>
-            <ListViewItem Content="Файл 21"/>
-            <ListViewItem Content="Файл 14"/>
-            <ListViewItem Content="Файл 1"/>
-            <ListViewItem Content="Файл 21"/>
-            <ListViewItem Content="Файл 14"/>
-            <ListViewItem Content="Файл 1"/>
-            <ListViewItem Content="Файл 21"/>
-            <ListViewItem Content="Файл 14"/>
-            <ListViewItem Content="Файл 1"/>
-            <ListViewItem Content="Файл 21"/>
-            <ListViewItem Content="Файл 14"/>
-            <ListViewItem Content="Файл 1"/>
-            <ListViewItem Content="Файл 21"/>
-            <ListViewItem Content="Файл 14"/>
-            <ListViewItem Content="Файл 1"/>
-            <ListViewItem Content="Файл 21"/>
-            <ListViewItem Content="Файл 14"/>
-            <ListViewItem Content="Файл 1"/>
-            <ListViewItem Content="Файл 21"/>
-            <ListViewItem Content="Файл 14"/>
-            <ListViewItem Content="Файл 1"/>
-            <ListViewItem Content="Файл 21"/>
-            <ListViewItem Content="Файл 14"/>
-            <ListViewItem Content="Файл 1"/>
-            <ListViewItem Content="Файл 21"/>
-            <ListViewItem Content="Файл 14"/>
-            <ListViewItem Content="Файл 1"/>
-            <ListViewItem Content="Файл 21"/>
-            <ListViewItem Content="Файл 14"/>
-            <ListViewItem Content="Файл 1"/>
-            <ListViewItem Content="Файл 21"/>
-            <ListViewItem Content="Файл 14"/>
-            <ListViewItem Content="Файл 1"/>
-            <ListViewItem Content="Файл 21"/>
-            <ListViewItem Content="Файл 14"/>
-            <ListViewItem Content="Файл 1"/>
-            <ListViewItem Content="Файл 21"/>
-            <ListViewItem Content="Файл 14"/>
-            <ListViewItem Content="Файл 1"/>
-            <ListViewItem Content="Файл 21"/>
-            <ListViewItem Content="Файл 14"/>
-            <ListViewItem Content="Файл 1"/>
-            <ListViewItem Content="Файл 21"/>
-            <ListViewItem Content="Файл 14"/>
-            <ListViewItem Content="Файл 1"/>
-            <ListViewItem Content="Файл 21"/>
-            <ListViewItem Content="Файл 14"/>
-            <ListViewItem Content="Файл 1"/>
-            <ListViewItem Content="Файл 21"/>
-            <ListViewItem Content="Файл 14"/>
+
+        <ListView ItemsSource="{Binding ListFiles}" Style="{StaticResource UploadFileListViewStyle}" Grid.Row="2" Grid.RowSpan="2" Grid.Column="4">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Имя" Width="auto" DisplayMemberBinding="{Binding FileName}"/>
+                    <GridViewColumn Header="Размер" Width="auto" DisplayMemberBinding="{Binding FileSize}"/>
+                </GridView>
+            </ListView.View>
+
         </ListView>
         <!--#endregion-->
-
-
-
-
     </Grid>
 
 </Page>
