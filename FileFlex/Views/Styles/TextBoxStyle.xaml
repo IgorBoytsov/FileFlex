@@ -3,7 +3,7 @@
 
     <Style x:Key="SettingTextBoxStyle" TargetType="TextBox">
         <Setter Property="Height" Value="30"/>
-        <Setter Property="Width" Value="100"/>
+        <Setter Property="Width" Value="auto"/>
         <Setter Property="FontSize" Value="25"/>
         <Setter Property="Foreground" Value="#F0F1F3"/>
         <Setter Property="CaretBrush" Value="White"/>

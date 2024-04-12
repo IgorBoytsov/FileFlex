@@ -23,5 +23,7 @@ namespace FileFlex.Model
         public string FileTimeOfChange{ get; set; }
 
         public string FileOwner { get; set; }
+
+        public int NumberFiles { get;set; }
     }
 }

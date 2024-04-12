@@ -142,10 +142,10 @@
                 </Border>
 
                 <Label Grid.Column="0" Grid.Row="9" Content="Ширина" HorizontalAlignment="Center" Style="{StaticResource SettingLabelStyle}"/>
-                <TextBox Grid.Column="1" Grid.Row="9" Template="{StaticResource SettingTextBoxTemplate}" Style="{StaticResource SettingTextBoxStyle}"/>
+                <TextBox Grid.Column="1" Grid.Row="9" Width="100" Template="{StaticResource SettingTextBoxTemplate}" Style="{StaticResource SettingTextBoxStyle}"/>
 
                 <Label Grid.Column="0" Grid.Row="11" Content="Высота" HorizontalAlignment="Center" Style="{StaticResource SettingLabelStyle}"/>
-                <TextBox Grid.Column="1" Grid.Row="11" Template="{StaticResource SettingTextBoxTemplate}" Style="{StaticResource SettingTextBoxStyle}"/>
+                <TextBox Grid.Column="1" Grid.Row="11" Width="100" Template="{StaticResource SettingTextBoxTemplate}" Style="{StaticResource SettingTextBoxStyle}"/>
 
                 <Border Grid.ColumnSpan="2" Grid.Row="13" Background="#595958">
                     <DockPanel>
@@ -200,7 +200,7 @@
                 </Grid.ColumnDefinitions>
 
                 <GroupBox MaxHeight="700" Header="Исходное изображение" Grid.Row="0" Grid.Column="0" BorderBrush="Black" Foreground="White" BorderThickness="2" FontSize="20" Margin="10" FontFamily="Bahnschrift SemiBold SemiCondensed" >
-                    <Image Source="C:\Users\light\OneDrive\Изображения\Снимки экрана\Снимок экрана 2024-04-01 170733.png" HorizontalAlignment="Center" Margin="15" />
+                    <Image Source="{Binding ImageSource}" HorizontalAlignment="Center" Margin="15" />
                 </GroupBox>
 
                 <StackPanel Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top">
@@ -220,16 +220,16 @@
                             </Grid.ColumnDefinitions>
 
                             <Label Content="Имя файла" Grid.Row="0" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
-                            <TextBox Text="image1" Grid.Row="0" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
+                            <TextBox Text="{Binding FileNameSelected}" Grid.Row="0" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
 
                             <Label Content="Тип файла" Grid.Row="1" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
-                            <TextBox Text=".png" Grid.Row="1" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
+                            <TextBox Text="{Binding FileTypeSelected}" Grid.Row="1" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
 
                             <Label Content="Размер файла" Grid.Row="2" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
-                            <TextBox Text="456кб" Grid.Row="2" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
+                            <TextBox Text="{Binding FileSizeSelected}" Grid.Row="2" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
 
                             <Label Content="Разрешение файл" Grid.Row="3" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
-                            <TextBox Text="2560 x 1440" Grid.Row="3" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
+                            <TextBox Text="{Binding FileResolutionSelected}" Grid.Row="3" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
 
                         </Grid>
                     </GroupBox>
@@ -278,15 +278,14 @@
         <!--#region Список файлов/Управление списком файлов-->
         <StackPanel Grid.Row="1" Grid.Column="4" Orientation="Horizontal">
             <ComboBox ItemsSource="{Binding SortingSelection}" Width="150" Height="25"/>
-            <Button Content="Удалить все файлы" Template="{StaticResource ControlButton}" Margin="10,0,0,0"/>
+            <Button Content="Удалить все файлы" Command="{Binding DeliteFileCommand}" Template="{StaticResource ControlButton}" Margin="10,0,0,0"/>
         </StackPanel>
 
-
-        <ListView ItemsSource="{Binding ListFiles}" Style="{StaticResource UploadFileListViewStyle}" Grid.Row="2" Grid.RowSpan="2" Grid.Column="4">
+        <ListView ItemsSource="{Binding ListFiles}" SelectedItem="{Binding SelectedFileInformation}" Grid.Row="2" Grid.RowSpan="2" Grid.Column="4">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Имя" Width="auto" DisplayMemberBinding="{Binding FileName}"/>
-                    <GridViewColumn Header="Размер" Width="auto" DisplayMemberBinding="{Binding FileSize}"/>
+                    <GridViewColumn Header="Размер" Width="100"  DisplayMemberBinding="{Binding FileSize}"/>
                 </GridView>
             </ListView.View>
 
