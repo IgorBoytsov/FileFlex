@@ -43,10 +43,10 @@
         <!--#region Элементы управление-->
 
         <WrapPanel Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Button Content="Конвертировать" Template="{StaticResource ControlButton}" Margin="0,0,10,0"/>
+            <Button Content="Предпросмотр" Command="{Binding PreviewRenderImageCommand}" Template="{StaticResource ControlButton}" Margin="0,0,10,0"/>
             <Button Content="Конверт. и сохр." Template="{StaticResource ControlButton}" Margin="0,0,10,0"/>
-            <Button Content="Сохранить" Template="{StaticResource ControlButton}" Margin="0,0,10,0"/>
-            <Button Content="Сбросить" Template="{StaticResource ControlButton}" Margin="0,0,10,0"/>
+            <Button Content="Сохранить" Command="{Binding SaveCurrentFileCommand}" Template="{StaticResource ControlButton}" Margin="0,0,10,0"/>
+            <Button Content="Сбросить" Command="{Binding ClearOutputImageCommand}" Template="{StaticResource ControlButton}" Margin="0,0,10,0"/>
         </WrapPanel>
 
         <!--#endregion-->
@@ -56,7 +56,7 @@
             <Border BorderBrush="Blue" Background="White" BorderThickness="4" CornerRadius="30" DockPanel.Dock="Bottom">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                     <Label Content="Перетащите файл" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="15"/>
-                    <Button Content="Выбрать файл" Command="{Binding SelectFileCommand}" HorizontalAlignment="Center" />
+                    <Button Content="Выбрать файл" Command="{Binding SelectFileCommand}" Template="{StaticResource ControlButton}" HorizontalAlignment="Center" />
                 </StackPanel>
             </Border>
         </DockPanel>
@@ -105,8 +105,7 @@
                     </fa:ImageAwesome>
                 </DockPanel>
 
-                <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding ConvertFormat}" Width="100" Height="25"/>
-
+                <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding ConvertFormat}" SelectedItem="{Binding SelectedFormat}" Width="110" Height="25"/>
 
                 <Border Grid.ColumnSpan="2" Grid.Row="2" Background="#595958">
                     <DockPanel>
@@ -116,7 +115,7 @@
                 </Border>
 
                 <Slider Grid.ColumnSpan="2" Grid.Row="4" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,10,0" />
-
+ 
                 <DockPanel Grid.Column="0" Grid.Row="3">
                     <Label Content="Качество" Style="{StaticResource SettingLabelStyle}"/>
                     <fa:ImageAwesome Icon="Solid_QuestionCircle" Foreground="LightBlue" Height="15" Width="15"  HorizontalAlignment="Left">
@@ -159,12 +158,12 @@
                     </DockPanel>
                 </Border>
 
-                <ComboBox Grid.ColumnSpan="2" Grid.Row="14" ItemsSource="{Binding ColorFilter}" VerticalAlignment="Center" Width="200" Height="20" Margin="0,5,0,5"/>
+                <ComboBox Style="{StaticResource DarkComboBoxColorStyle}" Grid.ColumnSpan="2" Grid.Row="14" ItemsSource="{Binding ColorFilter}" SelectedItem="{Binding SelectedColorFilter}" VerticalAlignment="Center" Width="200" Height="20" Margin="0,5,0,5"/>
 
                 <Border Grid.ColumnSpan="2" Grid.Row="15" Background="#595958">
                     <DockPanel>
                         <fa:ImageAwesome Icon="Solid_Hammer" Height="15" Width="15"/>
-                        <Label  Content="Дополнительные настройки" Style="{StaticResource SettingLabelStyle}"/>
+                        <Label Content="Дополнительные настройки" Style="{StaticResource SettingLabelStyle}"/>
                         <fa:ImageAwesome Icon="Solid_QuestionCircle" Foreground="LightBlue" Height="15" Width="15"  HorizontalAlignment="Left">
                             <fa:ImageAwesome.ToolTip>
                                 <TextBlock TextWrapping="WrapWithOverflow" Background="White" FontSize="20" Text="{Binding ToolTipAdditionalSettingsLabelText}" />
@@ -174,9 +173,6 @@
                 </Border>
 
                 <StackPanel Grid.Column="0" Grid.Row="16" >
-                    <CheckBox Content="Повысить резкость" Style="{StaticResource SettingCheckBoxStyle}"/>
-                    <CheckBox Content="Сглаживание" Style="{StaticResource SettingCheckBoxStyle}"/>
-                    <CheckBox Content="Сглаживание контраста" Style="{StaticResource SettingCheckBoxStyle}"/>
                     <CheckBox Content="Добавить файлы в архив" Style="{StaticResource SettingCheckBoxStyle}"/>
                 </StackPanel>
 
@@ -188,7 +184,6 @@
         <ScrollViewer Grid.Column="2" Grid.Row="2" Grid.RowSpan="3" >
             <Grid Background="#FF282C34">
 
-                <!--Background="#FF282C34"-->
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
@@ -220,23 +215,23 @@
                             </Grid.ColumnDefinitions>
 
                             <Label Content="Имя файла" Grid.Row="0" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
-                            <TextBox Text="{Binding FileNameSelected}" Grid.Row="0" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
+                            <TextBox Text="{Binding ImageSource}" Grid.Row="0" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
 
                             <Label Content="Тип файла" Grid.Row="1" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
-                            <TextBox Text="{Binding FileTypeSelected}" Grid.Row="1" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
+                            <TextBox Text="{Binding InputFileTypeSelected}" Grid.Row="1" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
 
                             <Label Content="Размер файла" Grid.Row="2" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
-                            <TextBox Text="{Binding FileSizeSelected}" Grid.Row="2" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
+                            <TextBox Text="{Binding InputFileSizeSelected}" Grid.Row="2" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
 
                             <Label Content="Разрешение файл" Grid.Row="3" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
-                            <TextBox Text="{Binding FileResolutionSelected}" Grid.Row="3" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
+                            <TextBox Text="{Binding InputFileResolutionSelected}" Grid.Row="3" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
 
                         </Grid>
                     </GroupBox>
                 </StackPanel>
 
                 <GroupBox MaxHeight="700" Header="Выходное изображение" Grid.Row="0" Grid.Column="1" BorderBrush="Black" Foreground="White" BorderThickness="2" FontSize="20" Margin="10" FontFamily="Bahnschrift SemiBold SemiCondensed" >
-                    <Image Source="C:\Users\light\OneDrive\Изображения\Снимки экрана\Снимок экрана 2024-04-01 170733.png" HorizontalAlignment="Center" Margin="15" />
+                    <Image Source="{Binding OutputImageSource}" HorizontalAlignment="Center" Margin="15" />
                 </GroupBox>
 
                 <StackPanel Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top">
@@ -256,16 +251,16 @@
                             </Grid.ColumnDefinitions>
 
                             <Label Content="Имя файла" Grid.Row="0" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
-                            <TextBox Text="image1" Grid.Row="0" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
+                            <TextBox Text="{Binding OutputFileNameSelected}" Grid.Row="0" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
 
                             <Label Content="Тип файла" Grid.Row="1" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
-                            <TextBox Text=".png" Grid.Row="1" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
+                            <TextBox Text="{Binding OutputFileTypeSelected}" Grid.Row="1" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
 
                             <Label Content="Размер файла" Grid.Row="2" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
-                            <TextBox Text="456кб" Grid.Row="2" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
+                            <TextBox Text="{Binding OutputFileSizeSelected}" Grid.Row="2" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
 
                             <Label Content="Разрешение файл" Grid.Row="3" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
-                            <TextBox Text="2560 x 1440" Grid.Row="3" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
+                            <TextBox Text="{Binding OutputFileResolutionSelected}" Grid.Row="3" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
 
                         </Grid>
                     </GroupBox>
@@ -277,19 +272,27 @@
 
         <!--#region Список файлов/Управление списком файлов-->
         <StackPanel Grid.Row="1" Grid.Column="4" Orientation="Horizontal">
-            <ComboBox ItemsSource="{Binding SortingSelection}" Width="150" Height="25"/>
-            <Button Content="Удалить все файлы" Command="{Binding DeliteFileCommand}" Template="{StaticResource ControlButton}" Margin="10,0,0,0"/>
+            <ComboBox ItemsSource="{Binding SortingSelection}" SelectedItem="{Binding SelectedFileFilter}" Width="150" Height="25"/>
+            <Button Content="Удалить все файлы" Command="{Binding DeleteFileCommand}" Template="{StaticResource ControlButton}" Margin="10,0,0,0"/>
         </StackPanel>
 
-        <ListView ItemsSource="{Binding ListFiles}" SelectedItem="{Binding SelectedFileInformation}" Grid.Row="2" Grid.RowSpan="2" Grid.Column="4">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Имя" Width="auto" DisplayMemberBinding="{Binding FileName}"/>
-                    <GridViewColumn Header="Размер" Width="100"  DisplayMemberBinding="{Binding FileSize}"/>
-                </GridView>
-            </ListView.View>
+        <Grid Grid.Row="2" Grid.RowSpan="3" Grid.Column="4" Margin="0,0,5,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        </ListView>
+            <ListView ItemsSource="{Binding ListFiles}" SelectedItem="{Binding SelectedFileInformation}" Grid.RowSpan="2" Margin="0,0,10,0">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Имя" Width="180" DisplayMemberBinding="{Binding FileName}"/>
+                        <GridViewColumn Header="Размер" Width="100"  DisplayMemberBinding="{Binding FileSize}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+        
+
         <!--#endregion-->
     </Grid>
 

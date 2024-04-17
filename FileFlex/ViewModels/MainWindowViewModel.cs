@@ -69,6 +69,18 @@ namespace FileFlex.ViewModels
             }
         }
 
+        private RelayCommand _navigateToCreatePDFPageCommand;
+
+        public RelayCommand NavigateToCreatePDFPageCommand
+        {
+            get
+            {
+                return _navigateToCreatePDFPageCommand ?? (_navigateToCreatePDFPageCommand = new RelayCommand(obj =>
+                {
+                    NavigatToCreatePDFPage();
+                }));
+            }
+        }
         #endregion
 
         #region Методы
@@ -81,6 +93,11 @@ namespace FileFlex.ViewModels
         private void NavigatToCreateGifPage()
         {
             _navigationServices.NavigateTo("CreateGIFPage", null);
+        }
+
+        private void NavigatToCreatePDFPage()
+        {
+            _navigationServices.NavigateTo("CreatePDFPage", null);
         }
 
         #endregion

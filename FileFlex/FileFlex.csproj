@@ -9,14 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FontAwesome5" Version="2.1.11" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.4" />
+    <Content Include="Views\Res\free-icon-file-and-folder-9041098.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="TempFile\TempImages\" />
-    <Folder Include="TempFile\TempDocuments\" />
-    <Folder Include="TempFile\TempGifs\" />
+    <PackageReference Include="FontAwesome5" Version="2.1.11" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.4" />
   </ItemGroup>
 
 </Project>

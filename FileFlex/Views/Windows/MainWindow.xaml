@@ -6,7 +6,7 @@
         xmlns:fa="http://schemas.fontawesome.com/icons/"
         mc:Ignorable="d"
         Background="#FF282C34"
-        Title="MainWindow" Height="800" Width="1400" MinHeight="365" MinWidth="650" WindowStartupLocation="CenterScreen">
+        Title="FIleFlex" Height="800" Width="1400" MinHeight="365" MinWidth="650" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -80,7 +80,7 @@
                     <Label Content="Создание" Grid.Row="0" Grid.Column="0" Style="{StaticResource TabItemLabelStyle}"/>
                     <Button Grid.Column="0" Grid.Row="1" 
                             HorizontalAlignment="Center"
-                            Command="{Binding NavigateToImageConvertPageCommand}"
+                            Command="{Binding NavigateToCreatePDFPageCommand}"
                             Template="{StaticResource MenuButtonTemplate}"
                             ToolTip="Конвертер изображений">
                         <fa:ImageAwesome Icon="Regular_File" Foreground="Black" Height="40"/>
