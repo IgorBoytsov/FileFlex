@@ -32,8 +32,8 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    
-    
+
+
     <ControlTemplate TargetType="Button" x:Key="ControlButton">
         <Border x:Name="buttonBorder"
                 Width="140"
@@ -56,7 +56,7 @@
             <Trigger Property="IsPressed" Value="true">
                 <Setter TargetName="buttonBorder" Property="BorderBrush" Value="#FF9FB0C0"/>
             </Trigger>
-            
+
         </ControlTemplate.Triggers>
     </ControlTemplate>
 </ResourceDictionary>

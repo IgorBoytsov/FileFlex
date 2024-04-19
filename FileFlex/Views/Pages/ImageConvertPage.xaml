@@ -71,7 +71,7 @@
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="30"/>
-                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="35"/>
                     <RowDefinition Height="10"/>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="10"/>
@@ -105,7 +105,7 @@
                     </fa:ImageAwesome>
                 </DockPanel>
 
-                <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding ConvertFormat}" SelectedItem="{Binding SelectedFormat}" Width="110" Height="25"/>
+                <ComboBox  Grid.Column="1" Grid.Row="1" ItemsSource="{Binding ConvertFormat}" SelectedItem="{Binding SelectedFormat}" Width="110" Height="25"/>
 
                 <Border Grid.ColumnSpan="2" Grid.Row="2" Background="#595958">
                     <DockPanel>
@@ -114,8 +114,8 @@
                     </DockPanel>
                 </Border>
 
-                <Slider Grid.ColumnSpan="2" Grid.Row="4" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,10,0" />
- 
+                <Slider Grid.ColumnSpan="2" Grid.Row="4" Value="{Binding SliderValue}" Maximum="100" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,10,0" />
+
                 <DockPanel Grid.Column="0" Grid.Row="3">
                     <Label Content="Качество" Style="{StaticResource SettingLabelStyle}"/>
                     <fa:ImageAwesome Icon="Solid_QuestionCircle" Foreground="LightBlue" Height="15" Width="15"  HorizontalAlignment="Left">
@@ -126,7 +126,7 @@
                 </DockPanel>
 
                 <Label Grid.Column="0" Grid.Row="5" Content="Значение в % :" Style="{StaticResource SettingLabelStyle}"/>
-                <TextBox Grid.Column="1" Grid.Row="5" Text="100" Template="{StaticResource SettingTextBoxTemplate}" Style="{StaticResource SettingTextBoxStyle}"/>
+                <TextBox Grid.Column="1" Grid.Row="5" Width="100" MaxLength="100" Text="{Binding SliderValue, UpdateSourceTrigger=PropertyChanged}" Template="{StaticResource SettingTextBoxTemplate}" Style="{StaticResource SettingTextBoxStyle}"/>
 
                 <Border  Grid.ColumnSpan="2" Grid.Row="7" Background="#595958" >
                     <DockPanel>
@@ -141,10 +141,10 @@
                 </Border>
 
                 <Label Grid.Column="0" Grid.Row="9" Content="Ширина" HorizontalAlignment="Center" Style="{StaticResource SettingLabelStyle}"/>
-                <TextBox Grid.Column="1" Grid.Row="9" Width="100" Template="{StaticResource SettingTextBoxTemplate}" Style="{StaticResource SettingTextBoxStyle}"/>
+                <TextBox Grid.Column="1" Grid.Row="9" Width="100" Text="{Binding WidthImageValue}" Template="{StaticResource SettingTextBoxTemplate}" Style="{StaticResource SettingTextBoxStyle}"/>
 
                 <Label Grid.Column="0" Grid.Row="11" Content="Высота" HorizontalAlignment="Center" Style="{StaticResource SettingLabelStyle}"/>
-                <TextBox Grid.Column="1" Grid.Row="11" Width="100" Template="{StaticResource SettingTextBoxTemplate}" Style="{StaticResource SettingTextBoxStyle}"/>
+                <TextBox Grid.Column="1" Grid.Row="11" Width="100" Text="{Binding HeightImageValue}" Template="{StaticResource SettingTextBoxTemplate}" Style="{StaticResource SettingTextBoxStyle}"/>
 
                 <Border Grid.ColumnSpan="2" Grid.Row="13" Background="#595958">
                     <DockPanel>
@@ -232,39 +232,7 @@
 
                 <GroupBox MaxHeight="700" Header="Выходное изображение" Grid.Row="0" Grid.Column="1" BorderBrush="Black" Foreground="White" BorderThickness="2" FontSize="20" Margin="10" FontFamily="Bahnschrift SemiBold SemiCondensed" >
                     <Image Source="{Binding OutputImageSource}" HorizontalAlignment="Center" Margin="15" />
-                </GroupBox>
-
-                <StackPanel Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top">
-                    <GroupBox MaxHeight="500" Header="Информация"  BorderBrush="Black" Foreground="White" BorderThickness="2" FontSize="30" Margin="10" FontFamily="Bahnschrift SemiBold SemiCondensed">
-                        <Grid>
-
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Label Content="Имя файла" Grid.Row="0" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
-                            <TextBox Text="{Binding OutputFileNameSelected}" Grid.Row="0" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
-
-                            <Label Content="Тип файла" Grid.Row="1" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
-                            <TextBox Text="{Binding OutputFileTypeSelected}" Grid.Row="1" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
-
-                            <Label Content="Размер файла" Grid.Row="2" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
-                            <TextBox Text="{Binding OutputFileSizeSelected}" Grid.Row="2" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
-
-                            <Label Content="Разрешение файл" Grid.Row="3" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
-                            <TextBox Text="{Binding OutputFileResolutionSelected}" Grid.Row="3" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
-
-                        </Grid>
-                    </GroupBox>
-                </StackPanel>
+                </GroupBox>               
             </Grid>
         </ScrollViewer>
 
@@ -291,9 +259,8 @@
                 </ListView.View>
             </ListView>
         </Grid>
-        
 
         <!--#endregion-->
-    </Grid>
 
+    </Grid>
 </Page>

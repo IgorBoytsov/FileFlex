@@ -7,6 +7,10 @@ using System.Drawing;
 using System.Windows;
 using FileFlex.Utils;
 using System.Windows.Media.Imaging;
+using System.Net.NetworkInformation;
+using FileFlex.ViewModels.Services.ErrorWindowService;
+using FileFlex.ViewModels.Services.MessageWindowService;
+using System.Text.RegularExpressions;
 
 namespace FileFlex.ViewModels
 {
@@ -15,22 +19,51 @@ namespace FileFlex.ViewModels
         public ImageConvertPageViewModel()
         {
             SetInfoInputlImage();
-            SelectedFormat = ConvertFormat.First();
-            SelectedColorFilter = ColorFilter.First();
-            SelectedFileFilter = SortingSelection.First();
+            DefoultComboBoxValue();
+
+            SliderValue = 100;
         }
 
-        #region Свойства с текстом для всплывающих подсказок
+        #region Cвойства значений для выходного изображение
 
-        public string ToolTipQualityLabelText { get; set; } = "Выберите подходящее качество изображения. Чем выше качество, тем больше весит файл. И наоборот, чем ниже качество, тем меньше размер файла.";
+        private int _sliderValue;
+        public int SliderValue
+        {
+            get => _sliderValue;
+            set
+            {
+                if (value > 100)
+                {
+                    MessageBox.Show("Максимальное значение 100");
+                    SliderValue = 0;
+                }
+                else _sliderValue = value;
 
-        public string ToolTipTargetFormatLabelText { get; set; } = "Формат, в который будет конвертировано изображение";
+                OnPropertyChanged();
+            }
+        }
 
-        public string ToolTipResizeLabelText { get; set; } = "Изменение размера изображение. Считается в пикселях";
+        private int _widthImageValue;
+        public int WidthImageValue
+        {
+            get => _widthImageValue;
+            set
+            {
+                _widthImageValue = value;
+                OnPropertyChanged();
+            }
+        }
 
-        public string ToolTipCallorFilterLabelText { get; set; } = "Применить цветной фильтр к изображению";
-
-        public string ToolTipAdditionalSettingsLabelText { get; set; } = "Разнообразные доп. настройки";
+        private int _heightImageValue;
+        public int HeightImageValue
+        {
+            get => _heightImageValue;
+            set
+            {
+                _heightImageValue = value;
+                OnPropertyChanged();
+            }
+        }
 
         #endregion
 
@@ -90,6 +123,7 @@ namespace FileFlex.ViewModels
                 _selectedFileInformation = value;
                 OnPropertyChanged();
                 SetInfoInputlImage();
+                DefoultTextBoxResulutionTextBoxValue();
             }
         }
 
@@ -228,20 +262,7 @@ namespace FileFlex.ViewModels
             {
                 return _previewRenderImageCommand ??= new RelayCommand(async obj =>
                 {
-                    if (SelectedFileInformation == null)
-                    {
-                        MessageBox.Show("Выберите изображение");
-                    }
-                    else
-                    {
-                        Bitmap bitmap = new Bitmap(SelectedFileInformation.FileUri);
-
-                        BitmapImage renderImage = new BitmapImage();
-
-                        bitmap = await ImageProcessing.RemoveHalfPixelsAsync(bitmap);
-                        SaveRender = bitmap;
-                        OutputImageSource = renderImage = await ImageProcessing.RenderImageAsync(bitmap);
-                    }                                           
+                    await PreviewRenderImageAsync();
                 });
             }
         }
@@ -253,32 +274,7 @@ namespace FileFlex.ViewModels
             {
                 return _saveCurrentFileCommand ??= new RelayCommand(obj =>
                 {
-                    if (SelectedFileInformation == null)
-                    {
-                        MessageBox.Show("Вы не загрузили, либо не выбрали изображение");
-                    }
-                    else if (OutputImageSource == null)
-                    {
-                        MessageBox.Show("Нет измененного изображение");
-                    }
-                    else if (SelectedFormat == null || SelectedFormat == "Не выбран")
-                    {
-                        MessageBox.Show("Не выбран формат файла");
-                    }
-                    else
-                    {
-                        switch (SelectedFormat)
-                        {
-                            case "PNG":
-                                string SaveUrlPng = @$"D:\Тест сохранение файлов\{Path.GetFileNameWithoutExtension(SelectedFileInformation.FileName)}.png";
-                                ImageProcessing.SaveFileToPng(SaveRender, SaveUrlPng);
-                                break;
-                            case "JPG":
-                                string SaveUrlJpeg = @$"D:\Тест сохранение файлов\{Path.GetFileNameWithoutExtension(SelectedFileInformation.FileName)}.jpeg";
-                                ImageProcessing.SaveFileToPng(SaveRender, SaveUrlJpeg);
-                                break;
-                        }
-                    }
+                    SaveCurrentFile();
                 });
             }
         }
@@ -306,44 +302,30 @@ namespace FileFlex.ViewModels
                         FileSize = (fileInfo.Length / 1024).ToString("N2") + " Кб",
                         FileCreatedTieme = fileInfo.CreationTime.ToString(),
                         FileTimeOfChange = fileInfo.LastWriteTime.ToString(),
-                        FileResolution = await GetImageResolutionAsync(item),
+                        FileResolution = await ImageProcessing.GetImageResolutionAsync(item),
                     });
                 }
             }
         }
 
-        private Task<string> GetImageResolutionAsync(string url)
+        private async Task PreviewRenderImageAsync()
         {
-            return Task.Run(() =>
+            if (SelectedFileInformation == null)
             {
-                try
-                {
-                    using (var image = Image.FromFile(url))
-                    {
-                        string width = image.Width.ToString();
-                        string height = image.Height.ToString();
-
-                        return width + " x " + height;
-                    }
-                }
-                catch (Exception)
-                {
-                    return string.Empty;
-                }
-            });        
-        }
-
-        private void DeleteFiles()
-        {
-            if (ListFiles.Count == 0)
+                MessageBox.Show("Выберите изображение");
+            }
+            else
             {
-                MessageBox.Show("Файлов и так нету, удалять нечего");
+                Bitmap bitmap = new Bitmap(SelectedFileInformation.FileUri);
+
+                //bitmap = await ImageProcessing.RemoveHalfPixelsAsync(bitmap);
+                bitmap = await ImageProcessing.ResizeImage(bitmap, WidthImageValue,HeightImageValue);
+                WidthImageValue = bitmap.Width;
+                HeightImageValue = bitmap.Height;
+
+                SaveRender = bitmap;
+                OutputImageSource = await ImageProcessing.ConvertBitmapToBitmapImageAsync(bitmap);
             }
-            else if (MessageBox.Show("Вы уверены что хотите все удалить?", "Предупреждение :", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
-            {  
-                ListFiles.Clear();
-            }
-            else return; 
         }
 
         private void SetInfoInputlImage()
@@ -364,6 +346,63 @@ namespace FileFlex.ViewModels
                 InputFileSizeSelected = _selectedFileInformation.FileSize;
                 InputFileResolutionSelected = _selectedFileInformation.FileResolution;
             }
+        }
+
+        private void DeleteFiles()
+        {
+            if (ListFiles.Count == 0)
+            {
+                MessageBox.Show("Файлов и так нету, удалять нечего");
+            }
+            else if (MessageBox.Show("Вы уверены что хотите все удалить?", "Предупреждение :", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+            {  
+                ListFiles.Clear();
+            }
+            else return; 
+        }
+
+        private void SaveCurrentFile()
+        {
+            if (SelectedFileInformation == null)
+            {
+                MessageBox.Show("Вы не загрузили, либо не выбрали изображение");
+            }
+            else if (OutputImageSource == null)
+            {
+                MessageBox.Show("Нет измененного изображение");
+            }
+            else if (SelectedFormat == "Не выбран")
+            {
+                MessageBox.Show("Не выбран формат файла");
+            }
+            else
+            {
+                switch (SelectedFormat)
+                {
+                    case "PNG":
+                        string SaveUrlPng = @$"D:\Тест сохранение файлов\{Path.GetFileNameWithoutExtension(SelectedFileInformation.FileName)}.png";
+                        ImageProcessing.SaveFileToPng(SaveRender, SaveUrlPng);
+                        break;
+                    case "JPG":
+                        string SaveUrlJpeg = @$"D:\Тест сохранение файлов\{Path.GetFileNameWithoutExtension(SelectedFileInformation.FileName)}.jpeg";
+                        ImageProcessing.SaveFileToPng(SaveRender, SaveUrlJpeg);
+                        break;
+                }
+            }
+        }
+
+        private void DefoultComboBoxValue()
+        {
+            SelectedFormat = ConvertFormat.First();
+            SelectedColorFilter = ColorFilter.First();
+            SelectedFileFilter = SortingSelection.First();
+        }
+
+        private void DefoultTextBoxResulutionTextBoxValue()
+        {
+            var res = ImageProcessing.GetImageWidthAndHeight(SelectedFileInformation.FileUri);
+            WidthImageValue = res.width;
+            HeightImageValue = res.height;
         }
 
         #endregion

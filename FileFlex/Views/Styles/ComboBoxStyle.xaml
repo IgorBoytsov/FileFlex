@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2">
 
     <!-- Стиль для ComboBox с измененными цветами -->
     <Style x:Key="DarkComboBoxColorStyle" TargetType="ComboBox">
@@ -9,7 +10,7 @@
         <Setter Property="Foreground" Value="Black"/>
 
     </Style>
-
+    
     <!-- Стиль для ComboBox --><!--
     <Style x:Key="DarkComboBoxStyle" TargetType="ComboBox">
         <Setter Property="Background" Value="#2C2C2C"/>
