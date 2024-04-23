@@ -1,17 +1,5 @@
-﻿using FileFlex.Model;
-using FileFlex.ViewModels.Commands;
+﻿using FileFlex.ViewModels.Commands;
 using FileFlex.ViewModels.Services;
-using FileFlex.Views.Pages;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 
 namespace FileFlex.ViewModels
 {
@@ -81,6 +69,20 @@ namespace FileFlex.ViewModels
                 }));
             }
         }
+
+        private RelayCommand _navigateToDocumentConverterPageCommand;
+
+        public RelayCommand NavigateToDocumentConverterPageCommand
+        {
+            get
+            {
+                return _navigateToDocumentConverterPageCommand ?? (_navigateToDocumentConverterPageCommand = new RelayCommand(obj =>
+                {
+                    NavigateToDocumentConverterPage();
+                }));
+            }
+        }
+
         #endregion
 
         #region Методы
@@ -88,6 +90,11 @@ namespace FileFlex.ViewModels
         private void NavigatToImageConvertPage()
         {
             _navigationServices.NavigateTo("ImageConvertPage", null);
+        }
+
+        private void NavigateToDocumentConverterPage()
+        {
+            _navigationServices.NavigateTo("DocumentConverterPage", null);
         }
 
         private void NavigatToCreateGifPage()

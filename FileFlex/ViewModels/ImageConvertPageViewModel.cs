@@ -1,16 +1,12 @@
-﻿using FileFlex.Model;
-using FileFlex.ViewModels.Commands;
-using Microsoft.Win32;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Drawing;
-using System.Windows;
-using FileFlex.Utils;
-using System.Windows.Media.Imaging;
-using System.Net.NetworkInformation;
-using FileFlex.ViewModels.Services.ErrorWindowService;
-using FileFlex.ViewModels.Services.MessageWindowService;
-using System.Text.RegularExpressions;
+﻿    using FileFlex.Model;
+    using FileFlex.Utils;
+    using FileFlex.ViewModels.Commands;
+    using Microsoft.Win32;
+    using System.Collections.ObjectModel;
+    using System.Drawing;
+    using System.IO;
+    using System.Windows;
+    using System.Windows.Media.Imaging;
 
 namespace FileFlex.ViewModels
 {
@@ -18,11 +14,25 @@ namespace FileFlex.ViewModels
     {
         public ImageConvertPageViewModel()
         {
-            SetInfoInputlImage();
-            DefoultComboBoxValue();
+            SetInfoInputImage();
+            DefaultComboBoxValue();
 
             SliderValue = 100;
         }
+
+        #region Всплывающие подсказки
+
+        public string ToolTipQualityLabelText { get; set; } = "Выберите подходящее качество изображения. Чем выше качество, тем больше весит файл. И наоборот, чем ниже качество, тем меньше размер файла.";
+
+        public string ToolTipTargetFormatLabelText { get; set; } = "Формат, в который будет конвертировано изображение";
+
+        public string ToolTipResizeLabelText { get; set; } = "Изменение размера изображение. Считается в пикселях";
+
+        public string ToolTipColorFilterLabelText { get; set; } = "Применить цветной фильтр к изображению";
+
+        public string ToolTipAdditionalSettingsLabelText { get; set; } = "Разнообразные доп. настройки";
+
+        #endregion
 
         #region Cвойства значений для выходного изображение
 
@@ -71,7 +81,7 @@ namespace FileFlex.ViewModels
 
         public List<string> ConvertFormat { get; set; } = ["Не выбран", "PNG", "JPG"];
 
-        public List<string> ColorFilter { get; set; } = ["Без фильтра", "Цветное", "Гридиент серого", "Монохромное", "Инвертировать цвета", "Ретро", "Сепия",];
+        public List<string> ColorFilter { get; set; } = ["Без фильтра", "Цветное", "Градиент серого", "Монохромное", "Инвертировать цвета", "Ретро", "Сепия",];
 
         public ObservableCollection<string> SortingSelection { get; set; } = ["Все файлы", "Выбрать все PNG", "Выбрать все JPG",];
 
@@ -122,8 +132,8 @@ namespace FileFlex.ViewModels
             {
                 _selectedFileInformation = value;
                 OnPropertyChanged();
-                SetInfoInputlImage();
-                DefoultTextBoxResulutionTextBoxValue();
+                SetInfoInputImage();
+                DefaultTextBoxResolutionTextBoxValue();
             }
         }
 
@@ -208,12 +218,35 @@ namespace FileFlex.ViewModels
             }
         }
 
+        private string _inputTimeOfChangeSelected;
+        public string InputTimeOfChange
+        {
+            get => _inputTimeOfChangeSelected;
+            set
+            {
+                _inputTimeOfChangeSelected = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _inputFileCreatedTimeSelected;
+        public string InputFileCreatedTime
+        {
+            get => _inputFileCreatedTimeSelected;
+            set
+            {
+                _inputFileCreatedTimeSelected = value;
+                OnPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region Переменные
 
         OpenFileDialog openFileDialog = new();
         SaveFileDialog saveFileDialog = new();
+
 
         #endregion
  
@@ -262,7 +295,7 @@ namespace FileFlex.ViewModels
             {
                 return _previewRenderImageCommand ??= new RelayCommand(async obj =>
                 {
-                    await PreviewRenderImageAsync();
+                    await PreviewRenderImageAsync(SelectedFileInformation.FileUri);
                 });
             }
         }
@@ -274,9 +307,22 @@ namespace FileFlex.ViewModels
             {
                 return _saveCurrentFileCommand ??= new RelayCommand(obj =>
                 {
-                    SaveCurrentFile();
+                    SaveCurrentImage();
                 });
             }
+        }
+
+        private RelayCommand _convertAndSaveImage;
+        public RelayCommand ConvertAndSaveAllImageCommand
+        {
+            get
+            {
+                return _convertAndSaveImage ??= new RelayCommand(async obj =>
+                {
+                    await ConvertAndSaveAllImage();
+                });
+            }
+
         }
 
         #endregion
@@ -300,26 +346,26 @@ namespace FileFlex.ViewModels
                         FileName = fileInfo.Name,
                         FileType = fileInfo.Extension,
                         FileSize = (fileInfo.Length / 1024).ToString("N2") + " Кб",
-                        FileCreatedTieme = fileInfo.CreationTime.ToString(),
-                        FileTimeOfChange = fileInfo.LastWriteTime.ToString(),
+                        FileCreatedTieme = fileInfo.CreationTime.ToString("f"),
+                        FileTimeOfChange = fileInfo.LastWriteTime.ToString("f"),
                         FileResolution = await ImageProcessing.GetImageResolutionAsync(item),
                     });
                 }
             }
         }
 
-        private async Task PreviewRenderImageAsync()
+        private async Task PreviewRenderImageAsync(string path)
         {
-            if (SelectedFileInformation == null)
+            if (path == null)
             {
                 MessageBox.Show("Выберите изображение");
             }
             else
             {
-                Bitmap bitmap = new Bitmap(SelectedFileInformation.FileUri);
+                Bitmap bitmap = new Bitmap(path);
 
                 //bitmap = await ImageProcessing.RemoveHalfPixelsAsync(bitmap);
-                bitmap = await ImageProcessing.ResizeImage(bitmap, WidthImageValue,HeightImageValue);
+                bitmap = await ImageProcessing.ResizeImageAsync(bitmap, WidthImageValue,HeightImageValue);
                 WidthImageValue = bitmap.Width;
                 HeightImageValue = bitmap.Height;
 
@@ -328,7 +374,7 @@ namespace FileFlex.ViewModels
             }
         }
 
-        private void SetInfoInputlImage()
+        private void SetInfoInputImage()
         {
             if (_selectedFileInformation == null)
             {
@@ -337,6 +383,8 @@ namespace FileFlex.ViewModels
                 InputFileTypeSelected = "Нету данных";
                 InputFileSizeSelected = "Нету данных";
                 InputFileResolutionSelected = "Нету данных";
+                InputFileCreatedTime = "Нету данных";
+                InputTimeOfChange = "Нету данных";
             }
             else
             {
@@ -345,6 +393,9 @@ namespace FileFlex.ViewModels
                 InputFileTypeSelected = _selectedFileInformation.FileType;
                 InputFileSizeSelected = _selectedFileInformation.FileSize;
                 InputFileResolutionSelected = _selectedFileInformation.FileResolution;
+                InputFileCreatedTime = _selectedFileInformation.FileCreatedTieme;
+                InputTimeOfChange = _selectedFileInformation.FileCreatedTieme;
+
             }
         }
 
@@ -361,7 +412,7 @@ namespace FileFlex.ViewModels
             else return; 
         }
 
-        private void SaveCurrentFile()
+        private void SaveCurrentImage()
         {
             if (SelectedFileInformation == null)
             {
@@ -391,18 +442,59 @@ namespace FileFlex.ViewModels
             }
         }
 
-        private void DefoultComboBoxValue()
+        private async Task ConvertAndSaveAllImage()
+        {
+            if (SelectedFormat != "Не выбран")
+            {
+                foreach (var item in ListFiles)
+                {
+                    var result = ImageProcessing.GetImageWidthAndHeight(item.FileUri);
+                    WidthImageValue = result.width;
+                    HeightImageValue = result.height;
+
+                    await PreviewRenderImageAsync(item.FileUri);
+
+                    switch (SelectedFormat)
+                    {
+                        case "PNG":
+                            string SaveUrlPng = @$"D:\Тест сохранение файлов\{Path.GetFileNameWithoutExtension(item.FileName)}.png";
+                            ImageProcessing.SaveFileToPng(SaveRender, SaveUrlPng);
+                            break;
+                        case "JPG":
+                            string SaveUrlJpeg = @$"D:\Тест сохранение файлов\{Path.GetFileNameWithoutExtension(item.FileName)}.jpeg";
+                            ImageProcessing.SaveFileToPng(SaveRender, SaveUrlJpeg);
+                            break;
+                    }
+
+                    OutputImageSource = null;
+                }
+            }
+            else MessageBox.Show("Не выбран формат файла");
+            
+            
+        }
+
+        private void DefaultComboBoxValue()
         {
             SelectedFormat = ConvertFormat.First();
             SelectedColorFilter = ColorFilter.First();
             SelectedFileFilter = SortingSelection.First();
         }
 
-        private void DefoultTextBoxResulutionTextBoxValue()
+        private void DefaultTextBoxResolutionTextBoxValue()
         {
-            var res = ImageProcessing.GetImageWidthAndHeight(SelectedFileInformation.FileUri);
-            WidthImageValue = res.width;
-            HeightImageValue = res.height;
+            if (SelectedFileInformation != null)
+            {
+                var res = ImageProcessing.GetImageWidthAndHeight(SelectedFileInformation.FileUri);
+                WidthImageValue = res.width;
+                HeightImageValue = res.height;
+            }
+            else
+            {
+                WidthImageValue = 0;
+                HeightImageValue = 0;
+            }
+            
         }
 
         #endregion

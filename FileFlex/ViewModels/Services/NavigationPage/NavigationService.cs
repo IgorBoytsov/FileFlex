@@ -30,7 +30,10 @@ namespace FileFlex.ViewModels.Services
                     break;
                 case "CreatePDFPage":
                     _frame.Navigate(new CreatePDFPage());
-                    break; 
+                    break;
+                case "DocumentConverterPage":
+                    _frame.Navigate(new DocumentConverterPage());
+                    break;
                 default:
                     throw new ArgumentException($"Страница '{pageName}' не найдена.");
             }

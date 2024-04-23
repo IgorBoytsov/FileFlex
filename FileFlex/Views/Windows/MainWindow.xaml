@@ -40,7 +40,7 @@
                     <Label Content="Документов" Grid.Row="0" Grid.Column="1" Style="{StaticResource TabItemLabelStyle}"/>
                     <Button Grid.Column="1" Grid.Row="1" 
                             HorizontalAlignment="Center"
-                            Command="{Binding NavigateToGifPageCommand}"
+                            Command="{Binding NavigateToDocumentConverterPageCommand}"
                             Template="{StaticResource MenuButtonTemplate}"
                             ToolTip="Конвертер документов" >
                         <fa:ImageAwesome Icon="Regular_FileWord" Foreground="White" Height="40"/>
@@ -83,7 +83,16 @@
                             Command="{Binding NavigateToCreatePDFPageCommand}"
                             Template="{StaticResource MenuButtonTemplate}"
                             ToolTip="Конвертер изображений">
-                        <fa:ImageAwesome Icon="Regular_File" Foreground="Black" Height="40"/>
+                        <fa:ImageAwesome Icon="Regular_FilePdf" Foreground="White" Height="40"/>
+                    </Button>
+
+                    <Label Content="Объеденение" Grid.Row="0" Grid.Column="1" Style="{StaticResource TabItemLabelStyle}"/>
+                    <Button Grid.Column="1" Grid.Row="1" 
+                            HorizontalAlignment="Center"
+                            Command="{Binding NavigateToCreatePDFPageCommand}"
+                            Template="{StaticResource MenuButtonTemplate}"
+                            ToolTip="Конвертер изображений">
+                        <fa:ImageAwesome Icon="Regular_FilePdf" Foreground="White" Height="40"/>
                     </Button>
                 </Grid>
                 

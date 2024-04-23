@@ -50,7 +50,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Thumb}">
-                    <Border Width="10" Background="Black" BorderBrush="White" BorderThickness="2" CornerRadius="10"/>
+                    <Border Width="auto" Background="Black" BorderBrush="White" BorderThickness="2" CornerRadius="10"/>
                     <!--<Rectangle Fill="Cyan" Margin="2"></Rectangle>-->
                 </ControlTemplate>
             </Setter.Value>
@@ -86,7 +86,7 @@
                     </RepeatButton>
                 </Track.IncreaseRepeatButton>
             </Track>
-            <!--Разметка нидней кнопки управление-->
+            <!--Разметка нижней кнопки управление-->
             <RepeatButton Grid.Row="3" Height="18"
                           Style="{StaticResource ScrollBarLineButtonBottomStyle}"
                           Command="ScrollBar.LineDownCommand">

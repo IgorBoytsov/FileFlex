@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FileFlex.Utils
 {
-    internal class PdfProcessing
+    public class PdfProcessing
     {
     }
 }

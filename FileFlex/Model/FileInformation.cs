@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FontAwesome5;
+using System.Drawing;
 
 namespace FileFlex.Model
 {
@@ -20,8 +17,12 @@ namespace FileFlex.Model
 
         public string FileCreatedTieme { get; set; }
 
-        public string FileTimeOfChange{ get; set; }
+        public string FileTimeOfChange { get; set; }
 
         public string FileOwner { get; set; }
+
+        public EFontAwesomeIcon FontAwesomeIcon { get; set; }
+
+        public Color ColorIcon { get; set; }
     }
 }

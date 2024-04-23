@@ -8,14 +8,6 @@ namespace FileFlex.Utils
 {
     internal static class ImageProcessing
     {
-        #region Свойства
-        /// <summary>
-        /// Устанавливает качество изображение от 0 до 100
-        /// </summary>
-        public static int Quality { get; set; }
-
-        #endregion
-
         #region Методы для конвертации
 
         public static void SaveFileToPng(Bitmap Bitmap, string PathFile)
@@ -32,6 +24,19 @@ namespace FileFlex.Utils
       
 
         #region Методы для обработки изображение в формате Bitmap / BitmapImage
+
+        /// <summary>
+        /// Преобразует ссылку на изображение в Bitmap
+        /// </summary>
+        /// <param name="PathFile"></param>
+        /// <returns></returns>
+        public static Bitmap ImageToBitmap(string  PathFile)
+        {
+            using (Bitmap bitmap = new(PathFile))
+            {
+                return bitmap;
+            }
+        }
 
        /// <summary>
        /// Удаляет половину пикселей из изображения.
@@ -68,9 +73,15 @@ namespace FileFlex.Utils
                     MessageBox.Show(ex.Message);
                 }          
             });
+            bitmap.Dispose();
             return result;
         }
 
+        /// <summary>
+        /// Производит преоброазование из Bitmap в BitmapImage. 
+        /// </summary>
+        /// <param name="bitmap"></param>
+        /// <returns></returns>
         public static async Task<BitmapImage> ConvertBitmapToBitmapImageAsync(Bitmap bitmap)
         {
             return await Task.Run(() =>
@@ -96,12 +107,17 @@ namespace FileFlex.Utils
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Не получилось отрендерить изображение");
+                    MessageBox.Show($"Не получилось отрендерить изображение \n {ex.Message}");
                     return null;
                 }
             });
-        } 
+        }
 
+        /// <summary>
+        /// Производит преоброазование из BitmapImage в Bitmap. 
+        /// </summary>
+        /// <param name="bitmapImage"></param>
+        /// <returns></returns>
         public static Bitmap ConvertBitmapImageToBitmap(BitmapImage bitmapImage)
         {
             using (MemoryStream memory = new MemoryStream())
@@ -220,7 +236,7 @@ namespace FileFlex.Utils
         /// Изменение размера изображение, без его обрезки
         /// </summary>
         /// <returns>Изображение в Bitmap</returns>
-        public static Task<Bitmap> ResizeImage(Bitmap image, int width, int height)
+        public static Task<Bitmap> ResizeImageAsync(Bitmap image, int width, int height)
         {
             return Task.Run(() =>
             {
@@ -237,22 +253,28 @@ namespace FileFlex.Utils
 
                         graphics.DrawImage(image, 0, 0, width, height);
                     }
-
                     return newImage;
                 }
                 catch (Exception)
                 {
-                    MessageBox.Show("Значение слишком велики, изображение вернулось обычного размера");
+                    MessageBox.Show($"Значение слишком велики, изображение вернулось обычного размера");
                     return image;
                 }
                 
             });
         }
 
+        /// <summary>
+        /// Устанавливает параметр качества изображение. Где 0 это наихудшее качествао, а 100 наилудшее 
+        /// </summary>
+        /// <param name="bitmap"></param>
+        /// <param name="quality"></param>
+        /// <returns></returns>
         public static Bitmap SetQualityImage(Bitmap bitmap, int quality)
         {
             return null;
         }
+
         #endregion
     }
 }

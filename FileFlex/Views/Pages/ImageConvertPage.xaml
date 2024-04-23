@@ -10,7 +10,7 @@
       FontFamily="Bahnschrift SemiBold SemiCondensed"
       FontSize="15"
       Title="ImageConvertPage">
-
+    
     <Grid Background="#FF282C34">
         <Grid.RowDefinitions>
             <RowDefinition Height="1"/>
@@ -43,19 +43,34 @@
         <!--#region Элементы управление-->
 
         <WrapPanel Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Button Content="Предпросмотр" Command="{Binding PreviewRenderImageCommand}" Template="{StaticResource ControlButton}" Margin="0,0,10,0"/>
-            <Button Content="Конверт. и сохр." Template="{StaticResource ControlButton}" Margin="0,0,10,0"/>
-            <Button Content="Сохранить" Command="{Binding SaveCurrentFileCommand}" Template="{StaticResource ControlButton}" Margin="0,0,10,0"/>
-            <Button Content="Сбросить" Command="{Binding ClearOutputImageCommand}" Template="{StaticResource ControlButton}" Margin="0,0,10,0"/>
+            <Button Content="Предпросмотр" 
+                    Command="{Binding PreviewRenderImageCommand}" 
+                    Template="{StaticResource ControlButton}" 
+                    Margin="0,0,10,0"/>
+            
+            <Button Content="Конверт. и сохр. все" 
+                    Command="{Binding ConvertAndSaveAllImageCommand}" 
+                    Template="{StaticResource ControlButton}" 
+                    Margin="0,0,10,0"/>
+            
+            <Button Content="Сохранить" 
+                    Command="{Binding SaveCurrentFileCommand}" 
+                    Template="{StaticResource ControlButton}" 
+                    Margin="0,0,10,0"/>
+            
+            <Button Content="Сбросить" 
+                    Command="{Binding ClearOutputImageCommand}" 
+                    Template="{StaticResource ControlButton}" 
+                    Margin="0,0,10,0"/>
         </WrapPanel>
 
         <!--#endregion-->
 
         <!--#region Область добавления файлов-->
         <DockPanel Grid.Row="1" Grid.RowSpan="2" Grid.Column="1">
-            <Border BorderBrush="Blue" Background="White" BorderThickness="4" CornerRadius="30" DockPanel.Dock="Bottom">
+            <Border BorderBrush="Blue" Background="#FF282C34" BorderThickness="4" CornerRadius="30" DockPanel.Dock="Bottom">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <Label Content="Перетащите файл" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="15"/>
+                    <Label Content="Перетащите файл" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="15"/>
                     <Button Content="Выбрать файл" Command="{Binding SelectFileCommand}" Template="{StaticResource ControlButton}" HorizontalAlignment="Center" />
                 </StackPanel>
             </Border>
@@ -98,14 +113,17 @@
 
                 <DockPanel Grid.Column="0" Grid.Row="1" >
                     <Label Content="Целевой формат" Style="{StaticResource SettingLabelStyle}"/>
-                    <fa:ImageAwesome Icon="Solid_QuestionCircle" Foreground="LightBlue" Height="15" Width="15"  HorizontalAlignment="Left">
+                    <fa:ImageAwesome Icon="Solid_QuestionCircle" Style="{StaticResource ImageQuestionStyle}">
                         <fa:ImageAwesome.ToolTip>
-                            <TextBlock TextWrapping="WrapWithOverflow" Background="White" FontSize="20" Text="{Binding ToolTipTargetFormatLabelText}" />
+                            <TextBlock Style="{StaticResource ToolTipTextBlockStyle}" Text="{Binding ToolTipTargetFormatLabelText}" />
                         </fa:ImageAwesome.ToolTip>
                     </fa:ImageAwesome>
                 </DockPanel>
 
-                <ComboBox  Grid.Column="1" Grid.Row="1" ItemsSource="{Binding ConvertFormat}" SelectedItem="{Binding SelectedFormat}" Width="110" Height="25"/>
+                <ComboBox  Grid.Column="1" Grid.Row="1" 
+                           Width="100" Height="25"
+                           ItemsSource="{Binding ConvertFormat}" 
+                           SelectedItem="{Binding SelectedFormat}"/>
 
                 <Border Grid.ColumnSpan="2" Grid.Row="2" Background="#595958">
                     <DockPanel>
@@ -114,13 +132,15 @@
                     </DockPanel>
                 </Border>
 
-                <Slider Grid.ColumnSpan="2" Grid.Row="4" Value="{Binding SliderValue}" Maximum="100" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,10,0" />
+                <Slider Grid.ColumnSpan="2" Grid.Row="4" 
+                        Maximum="100" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,10,0" 
+                        Value="{Binding SliderValue}"/>
 
                 <DockPanel Grid.Column="0" Grid.Row="3">
                     <Label Content="Качество" Style="{StaticResource SettingLabelStyle}"/>
-                    <fa:ImageAwesome Icon="Solid_QuestionCircle" Foreground="LightBlue" Height="15" Width="15"  HorizontalAlignment="Left">
+                    <fa:ImageAwesome Icon="Solid_QuestionCircle" Style="{StaticResource ImageQuestionStyle}">
                         <fa:ImageAwesome.ToolTip>
-                            <TextBlock TextWrapping="WrapWithOverflow" Height="100" Width="500" Background="White" FontSize="20" Text="{Binding ToolTipQualityLabelText}" />
+                            <TextBlock Style="{StaticResource ToolTipTextBlockStyle}" Text="{Binding ToolTipQualityLabelText}" />
                         </fa:ImageAwesome.ToolTip>
                     </fa:ImageAwesome>
                 </DockPanel>
@@ -132,9 +152,9 @@
                     <DockPanel>
                         <fa:FontAwesome Icon="Solid_CropAlt" Height="15" Width="15"/>
                         <Label Content="Изменить размер" Style="{StaticResource SettingLabelStyle}"/>
-                        <fa:ImageAwesome Icon="Solid_QuestionCircle" Foreground="LightBlue" Height="15" Width="15"  HorizontalAlignment="Left">
+                        <fa:ImageAwesome Icon="Solid_QuestionCircle" Style="{StaticResource ImageQuestionStyle}">
                             <fa:ImageAwesome.ToolTip>
-                                <TextBlock TextWrapping="WrapWithOverflow" Height="100" Width="500" Background="White" FontSize="20" Text="{Binding ToolTipResizeLabelText}" />
+                                <TextBlock Style="{StaticResource ToolTipTextBlockStyle}" Text="{Binding ToolTipResizeLabelText}" />
                             </fa:ImageAwesome.ToolTip>
                         </fa:ImageAwesome>
                     </DockPanel>
@@ -152,13 +172,13 @@
                         <Label  Content="Цветовой фильтр" Style="{StaticResource SettingLabelStyle}"/>
                         <fa:ImageAwesome Icon="Solid_QuestionCircle" Foreground="LightBlue" Height="15" Width="15"  HorizontalAlignment="Left">
                             <fa:ImageAwesome.ToolTip>
-                                <TextBlock TextWrapping="WrapWithOverflow" Background="White" FontSize="20" Text="{Binding ToolTipCallorFilterLabelText}" />
+                                <TextBlock Style="{StaticResource ToolTipTextBlockStyle}" Text="{Binding ToolTipColorFilterLabelText}" />
                             </fa:ImageAwesome.ToolTip>
                         </fa:ImageAwesome>
                     </DockPanel>
                 </Border>
 
-                <ComboBox Style="{StaticResource DarkComboBoxColorStyle}" Grid.ColumnSpan="2" Grid.Row="14" ItemsSource="{Binding ColorFilter}" SelectedItem="{Binding SelectedColorFilter}" VerticalAlignment="Center" Width="200" Height="20" Margin="0,5,0,5"/>
+                <ComboBox Grid.ColumnSpan="2" Grid.Row="14" ItemsSource="{Binding ColorFilter}" SelectedItem="{Binding SelectedColorFilter}" VerticalAlignment="Center" Width="200" Height="20" Margin="0,5,0,5"/>
 
                 <Border Grid.ColumnSpan="2" Grid.Row="15" Background="#595958">
                     <DockPanel>
@@ -166,7 +186,7 @@
                         <Label Content="Дополнительные настройки" Style="{StaticResource SettingLabelStyle}"/>
                         <fa:ImageAwesome Icon="Solid_QuestionCircle" Foreground="LightBlue" Height="15" Width="15"  HorizontalAlignment="Left">
                             <fa:ImageAwesome.ToolTip>
-                                <TextBlock TextWrapping="WrapWithOverflow" Background="White" FontSize="20" Text="{Binding ToolTipAdditionalSettingsLabelText}" />
+                                <TextBlock Style="{StaticResource ToolTipTextBlockStyle}" Text="{Binding ToolTipAdditionalSettingsLabelText}" />
                             </fa:ImageAwesome.ToolTip>
                         </fa:ImageAwesome>
                     </DockPanel>
@@ -194,45 +214,76 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <GroupBox MaxHeight="700" Header="Исходное изображение" Grid.Row="0" Grid.Column="0" BorderBrush="Black" Foreground="White" BorderThickness="2" FontSize="20" Margin="10" FontFamily="Bahnschrift SemiBold SemiCondensed" >
+                <GroupBox MinHeight="300" MaxHeight="700" Header="Исходное изображение" Grid.Row="0" Grid.Column="0" BorderBrush="Black" Foreground="White" BorderThickness="2" FontSize="20" Margin="10" FontFamily="Bahnschrift SemiBold SemiCondensed" >
                     <Image Source="{Binding ImageSource}" HorizontalAlignment="Center" Margin="15" />
                 </GroupBox>
 
-                <StackPanel Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top">
+                <StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" HorizontalAlignment="Center" VerticalAlignment="Top">
                     <GroupBox MaxHeight="500" Header="Информация"  BorderBrush="Black" Foreground="White" BorderThickness="2" FontSize="30" Margin="10" FontFamily="Bahnschrift SemiBold SemiCondensed">
                         <Grid>
+                            
+                            <StackPanel Orientation="Horizontal">
 
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
+                                <StackPanel>
+                                    <Label Content="Путь :" 
+                                           Style="{StaticResource InfoLabelStyle}" 
+                                           Margin="10"/>
+                                    <Label Content="Название :"                                           
+                                           Style="{StaticResource InfoLabelStyle}" 
+                                           Margin="10"/>
+                                    <Label Content="Размер файла :" 
+                                           Grid.Row="2" Grid.Column="0" 
+                                           Style="{StaticResource InfoLabelStyle}" 
+                                           Margin="10"/>
+                                    <Label Content="Размер файла :" 
+                                           Style="{StaticResource InfoLabelStyle}" 
+                                           Margin="10"/>
+                                    <Label Content="Разрешение файл :" 
+                                           Style="{StaticResource InfoLabelStyle}" 
+                                           Margin="10"/>
+                                    <Label Content="Время создание :" 
+                                           Style="{StaticResource InfoLabelStyle}" 
+                                           Margin="10"/>
+                                    <Label Content="Время изменения :"
+                                           Style="{StaticResource InfoLabelStyle}" 
+                                           Margin="10"/>
+                                </StackPanel>
 
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
 
-                            <Label Content="Имя файла" Grid.Row="0" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
-                            <TextBox Text="{Binding ImageSource}" Grid.Row="0" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
-
-                            <Label Content="Тип файла" Grid.Row="1" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
-                            <TextBox Text="{Binding InputFileTypeSelected}" Grid.Row="1" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
-
-                            <Label Content="Размер файла" Grid.Row="2" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
-                            <TextBox Text="{Binding InputFileSizeSelected}" Grid.Row="2" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
-
-                            <Label Content="Разрешение файл" Grid.Row="3" Grid.Column="0" Style="{StaticResource InfoLabelStyle}" Margin="10"/>
-                            <TextBox Text="{Binding InputFileResolutionSelected}" Grid.Row="3" Grid.Column="1" Style="{StaticResource SettingTextBoxStyle}" Template="{StaticResource SettingTextBoxTemplate}" Margin="10"/>
-
+                                <StackPanel>
+                                    <Label Content="{Binding ImageSource}"
+                                           Foreground="#F0F1F3" 
+                                           Margin="10"/>
+                                    <Label Content="{Binding InputFileNameSelected}"
+                                           Foreground="#F0F1F3" 
+                                           Margin="10"/>
+                                    <Label Content="{Binding InputFileSizeSelected}" 
+                                           Foreground="#F0F1F3"
+                                           Margin="10"/>
+                                    <Label Content="{Binding InputFileSizeSelected}" 
+                                           Foreground="#F0F1F3"
+                                           Margin="10"/>
+                                    <Label Content="{Binding InputFileResolutionSelected}"                                           
+                                           Foreground="#F0F1F3" 
+                                           Margin="10"/>
+                                    <Label Content="{Binding InputFileCreatedTime}" 
+                                           Foreground="#F0F1F3" 
+                                           Margin="10"/>
+                                    <Label Content="{Binding InputTimeOfChange}" 
+                                           Foreground="#F0F1F3" 
+                                           Margin="10"/>
+                                </StackPanel>
+                                
+                            </StackPanel>
+                            
                         </Grid>
                     </GroupBox>
                 </StackPanel>
 
-                <GroupBox MaxHeight="700" Header="Выходное изображение" Grid.Row="0" Grid.Column="1" BorderBrush="Black" Foreground="White" BorderThickness="2" FontSize="20" Margin="10" FontFamily="Bahnschrift SemiBold SemiCondensed" >
+                <GroupBox MinHeight="300" MaxHeight="700" Header="Выходное изображение" Grid.Row="0" Grid.Column="1" BorderBrush="Black" Foreground="White" BorderThickness="2" FontSize="20" Margin="10" FontFamily="Bahnschrift SemiBold SemiCondensed" >
                     <Image Source="{Binding OutputImageSource}" HorizontalAlignment="Center" Margin="15" />
-                </GroupBox>               
+                </GroupBox>  
+             
             </Grid>
         </ScrollViewer>
 
