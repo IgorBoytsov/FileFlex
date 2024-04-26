@@ -81,7 +81,7 @@ namespace FileFlex.ViewModels
 
         public List<string> ConvertFormat { get; set; } = ["Не выбран", "PNG", "JPG"];
 
-        public List<string> ColorFilter { get; set; } = ["Без фильтра", "Цветное", "Градиент серого", "Монохромное", "Инвертировать цвета", "Ретро", "Сепия",];
+        public List<string> ColorFilter { get; set; } = ["Без фильтра", "Ч/Б", "Инвертировать цвета", "Ретро", "Сепия",];
 
         public ObservableCollection<string> SortingSelection { get; set; } = ["Все файлы", "Выбрать все PNG", "Выбрать все JPG",];
 
@@ -295,7 +295,11 @@ namespace FileFlex.ViewModels
             {
                 return _previewRenderImageCommand ??= new RelayCommand(async obj =>
                 {
-                    await PreviewRenderImageAsync(SelectedFileInformation.FileUri);
+                    if (SelectedFileInformation != null)
+                    {
+                        await PreviewRenderImageAsync(SelectedFileInformation.FileUri);
+                    }
+                    else return;  
                 });
             }
         }
@@ -346,7 +350,7 @@ namespace FileFlex.ViewModels
                         FileName = fileInfo.Name,
                         FileType = fileInfo.Extension,
                         FileSize = (fileInfo.Length / 1024).ToString("N2") + " Кб",
-                        FileCreatedTieme = fileInfo.CreationTime.ToString("f"),
+                        FileCreatedTime = fileInfo.CreationTime.ToString("f"),
                         FileTimeOfChange = fileInfo.LastWriteTime.ToString("f"),
                         FileResolution = await ImageProcessing.GetImageResolutionAsync(item),
                     });
@@ -365,10 +369,14 @@ namespace FileFlex.ViewModels
                 Bitmap bitmap = new Bitmap(path);
 
                 //bitmap = await ImageProcessing.RemoveHalfPixelsAsync(bitmap);
-                bitmap = await ImageProcessing.ResizeImageAsync(bitmap, WidthImageValue,HeightImageValue);
-                WidthImageValue = bitmap.Width;
-                HeightImageValue = bitmap.Height;
+                if (bitmap.Width != WidthImageValue && bitmap.Height != HeightImageValue)
+                {
+                    bitmap = await ImageProcessing.ResizeImageAsync(bitmap, WidthImageValue, HeightImageValue);
+                    WidthImageValue = bitmap.Width;
+                    HeightImageValue = bitmap.Height;
+                }
 
+                bitmap = await ImageProcessing.RetroFilter(bitmap);
                 SaveRender = bitmap;
                 OutputImageSource = await ImageProcessing.ConvertBitmapToBitmapImageAsync(bitmap);
             }
@@ -393,8 +401,8 @@ namespace FileFlex.ViewModels
                 InputFileTypeSelected = _selectedFileInformation.FileType;
                 InputFileSizeSelected = _selectedFileInformation.FileSize;
                 InputFileResolutionSelected = _selectedFileInformation.FileResolution;
-                InputFileCreatedTime = _selectedFileInformation.FileCreatedTieme;
-                InputTimeOfChange = _selectedFileInformation.FileCreatedTieme;
+                InputFileCreatedTime = _selectedFileInformation.FileCreatedTime;
+                InputTimeOfChange = _selectedFileInformation.FileCreatedTime;
 
             }
         }
@@ -465,7 +473,6 @@ namespace FileFlex.ViewModels
                             ImageProcessing.SaveFileToPng(SaveRender, SaveUrlJpeg);
                             break;
                     }
-
                     OutputImageSource = null;
                 }
             }

@@ -64,7 +64,66 @@
         </ScrollViewer>
 
         <!--#endregion-->
+        
+        <!--#region Отображение информации -->
 
+        <StackPanel Grid.Column="2" Grid.Row="3" VerticalAlignment="Top">
+            <GroupBox MaxHeight="500" Header="Информация"  BorderBrush="Black" Foreground="White" BorderThickness="2" FontSize="30" Margin="10" FontFamily="Bahnschrift SemiBold SemiCondensed">
+                <Grid>
+
+                    <StackPanel Orientation="Horizontal">
+
+                        <StackPanel>
+                            <Label Content="Путь :" 
+                            Style="{StaticResource InfoLabelStyle}" 
+                            Margin="10"/>
+                            <Label Content="Название :"                                           
+                            Style="{StaticResource InfoLabelStyle}" 
+                            Margin="10"/>
+                            <Label Content="Размер файла :" 
+                            Grid.Row="2" Grid.Column="0" 
+                            Style="{StaticResource InfoLabelStyle}" 
+                            Margin="10"/>
+                            <Label Content="Размер файла :" 
+                            Style="{StaticResource InfoLabelStyle}" 
+                            Margin="10"/>
+                            <Label Content="Время создание :" 
+                            Style="{StaticResource InfoLabelStyle}" 
+                            Margin="10"/>
+                            <Label Content="Время изменения :"
+                            Style="{StaticResource InfoLabelStyle}" 
+                            Margin="10"/>
+                        </StackPanel>
+
+
+                        <StackPanel>
+                            <Label Content="{Binding ImageSource}"
+                            Foreground="#F0F1F3" 
+                            Margin="10"/>
+                            <Label Content="{Binding InputFileNameSelected}"
+                            Foreground="#F0F1F3" 
+                            Margin="10"/>
+                            <Label Content="{Binding InputFileSizeSelected}" 
+                            Foreground="#F0F1F3"
+                            Margin="10"/>
+                            <Label Content="{Binding InputFileSizeSelected}" 
+                            Foreground="#F0F1F3"
+                            Margin="10"/>
+                            <Label Content="{Binding InputFileCreatedTime}" 
+                            Foreground="#F0F1F3" 
+                            Margin="10"/>
+                            <Label Content="{Binding InputTimeOfChange}" 
+                            Foreground="#F0F1F3" 
+                            Margin="10"/>
+                        </StackPanel>
+
+                    </StackPanel>
+
+                </Grid>
+            </GroupBox>
+        </StackPanel>
+
+        <!--#endregion-->
         <!--#region Отображение файлов -->
 
         <ListView Grid.Row="2" Grid.RowSpan="2" Grid.Column="4" 
@@ -108,7 +167,7 @@
                         <StackPanel Orientation="Horizontal" Margin="10">
 
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <fa:ImageAwesome Icon="{Binding FontAwesomeIcon}" Foreground="Green" Width="25" Height="25" />
+                                <fa:ImageAwesome Icon="{Binding FontAwesomeIcon}" Foreground="{Binding ColorIcon}" Width="25" Height="25" />
                             </StackPanel>
 
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">

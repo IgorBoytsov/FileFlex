@@ -12,6 +12,10 @@ namespace FileFlex.ViewModels.Services
     {
         private readonly Frame _frame;
 
+        private static readonly Page ImageConvert = new ImageConvertPage();
+        private static readonly Page DocumentConvert = new DocumentConverterPage();
+        private static readonly Page CreateGIF = new CreateGIFPage();
+
         public NavigationServices(Frame frame)
         {
             _frame = frame ?? throw new ArgumentNullException(nameof(frame));
@@ -21,18 +25,20 @@ namespace FileFlex.ViewModels.Services
         {
             switch (pageName)
             {
-                case "CreateGIFPage":
-                    _frame.Navigate(new CreateGIFPage());
+                case "ImageConvertPage":
+                    _frame.Navigate(ImageConvert);
                     break;
 
-                case "ImageConvertPage":
-                    _frame.Navigate(new ImageConvertPage());
+                case "DocumentConverterPage":
+                    _frame.Navigate(DocumentConvert);
                     break;
+                
                 case "CreatePDFPage":
                     _frame.Navigate(new CreatePDFPage());
                     break;
-                case "DocumentConverterPage":
-                    _frame.Navigate(new DocumentConverterPage());
+
+                case "CreateGIFPage":
+                    _frame.Navigate(CreateGIF);
                     break;
                 default:
                     throw new ArgumentException($"Страница '{pageName}' не найдена.");

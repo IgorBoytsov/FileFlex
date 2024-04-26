@@ -95,7 +95,7 @@
                         <fa:ImageAwesome Icon="Regular_FilePdf" Foreground="White" Height="40"/>
                     </Button>
                 </Grid>
-                
+
             </TabItem>
 
             <TabItem Header="GIF">
@@ -117,7 +117,7 @@
                             Command="{Binding NavigateToCreateGifPageCommand}"
                             Template="{StaticResource MenuButtonTemplate}"
                             ToolTip="Конвертер изображений">
-                        <fa:ImageAwesome Icon="Regular_FilePdf" Foreground="Black" Height="40"/>
+                        <fa:ImageAwesome Icon="Regular_FilePdf" Foreground="White" Height="40"/>
                     </Button>
                 </Grid>
             </TabItem>
@@ -141,7 +141,7 @@
                             Command="{Binding NavigateToImageConvertPageCommand}"
                             Template="{StaticResource MenuButtonTemplate}"
                             ToolTip="Конвертер изображений">
-                        <fa:ImageAwesome Icon="Regular_FileImage" Foreground="Black" Height="40"/>
+                        <fa:ImageAwesome Icon="Regular_FileImage" Foreground="White" Height="40"/>
                     </Button>
                 </Grid>
             </TabItem>

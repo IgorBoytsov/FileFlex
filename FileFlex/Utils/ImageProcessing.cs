@@ -78,7 +78,7 @@ namespace FileFlex.Utils
         }
 
         /// <summary>
-        /// Производит преоброазование из Bitmap в BitmapImage. 
+        /// Производит преобразование из Bitmap в BitmapImage. 
         /// </summary>
         /// <param name="bitmap"></param>
         /// <returns></returns>
@@ -107,14 +107,14 @@ namespace FileFlex.Utils
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Не получилось отрендерить изображение \n {ex.Message}");
+                    MessageBox.Show($"Не получилось от рендерить изображение \n {ex.Message}");
                     return null;
                 }
             });
         }
 
         /// <summary>
-        /// Производит преоброазование из BitmapImage в Bitmap. 
+        /// Производит преобразование из BitmapImage в Bitmap. 
         /// </summary>
         /// <param name="bitmapImage"></param>
         /// <returns></returns>
@@ -276,5 +276,145 @@ namespace FileFlex.Utils
         }
 
         #endregion
+        
+        #region Фильтры
+
+        /// <summary>
+        /// Накладывает "Ч/Б" фильтр на изображение.
+        /// </summary>
+        /// <param name="bitmap"></param>
+        /// <returns></returns>
+        public static Task<Bitmap> BlackAndWhiteFilter(Bitmap bitmap, double intensity = 1, int alpha = 100)
+        {
+           // Bitmap BAWBitmap = new(bitmap.Width, bitmap.Height);
+
+            return Task.Run(() =>
+            {
+                for (int x = 0; x < bitmap.Width; x++)
+                {
+                    for (int y = 0; y < bitmap.Height; y++)
+                    {
+                        Color OriginalColor = bitmap.GetPixel(x, y);
+
+                        int grayValue = (int)(OriginalColor.R * (0.3 * intensity) + OriginalColor.G * (0.59 * intensity) + OriginalColor.B * (0.11 * intensity));
+
+                        grayValue = Math.Min(Math.Max(grayValue, 0), 255);
+
+                        bitmap.SetPixel(x, y, Color.FromArgb(alpha ,grayValue, grayValue, grayValue));
+                    }
+                }
+                return bitmap;
+            });
+
+            
+        }
+        
+        /// <summary>
+        /// Накладывает фильтр "Сепия" на изображение
+        /// </summary>
+        /// <param name="bitmap"></param>
+        /// <param name="intensity"></param>
+        /// <returns></returns>
+        public static Task<Bitmap> SepiaFilter(Bitmap bitmap, double intensity = 1, int alpha = 100)
+        {
+           // Bitmap SepiaBitmap = new(bitmap.Width, bitmap.Height);
+
+            return Task.Run(() => 
+            {
+                for (int x = 0; x < bitmap.Width; x++)
+                {
+                    for (int y = 0; y < bitmap.Height; y++)
+                    {
+                        Color OriginalColor = bitmap.GetPixel(x, y);
+
+                        int sepiaR = (int)(OriginalColor.R * (0.393 * intensity) + OriginalColor.G * (0.769 * intensity) + OriginalColor.B * (0.189 * intensity));
+                        int sepiaG = (int)(OriginalColor.R * (0.349 * intensity) + OriginalColor.G * (0.686 * intensity) + OriginalColor.B * (0.168 * intensity));
+                        int sepiaB = (int)(OriginalColor.R * (0.272 * intensity) + OriginalColor.G * (0.534 * intensity) + OriginalColor.B * (0.131 * intensity));
+
+                        //int sepiaR = (int)(OriginalColor.R * (0.6 * intensity) + OriginalColor.G * (0.2 * intensity) + OriginalColor.B * (0.7 * intensity));
+                        //int sepiaG = (int)(OriginalColor.R * (0.1 * intensity) + OriginalColor.G * (0.1 * intensity) + OriginalColor.B * (0.8 * intensity));
+                        //int sepiaB = (int)(OriginalColor.R * (0.54 * intensity) + OriginalColor.G * (0.9 * intensity) + OriginalColor.B * (0.5 * intensity));
+
+                        sepiaR = Math.Min(sepiaR, 255);
+                        sepiaG = Math.Min(sepiaG, 255);
+                        sepiaB = Math.Min(sepiaB, 255);
+
+                        bitmap.SetPixel(x, y, Color.FromArgb(alpha, sepiaR, sepiaG, sepiaB));
+                    }
+                }
+                return bitmap;
+            });           
+        }
+
+        /// <summary>
+        /// Инверсия цветов изображение.
+        /// </summary>
+        /// <param name="bitmap"></param>
+        /// <returns></returns>
+        public static Task<Bitmap> ColoriInversionFilter(Bitmap bitmap, int alpha)
+        {
+           // Bitmap InvertedBitmap = new(bitmap.Width, bitmap.Height);
+
+            return Task.Run(() =>
+            {
+                for (int x = 0; x < bitmap.Width; x++)
+                {
+                    for (int y = 0; y < bitmap.Height; y++)
+                    {
+                        Color originalColor = bitmap.GetPixel(x, y);
+
+                        int invertedR = 255 - originalColor.R;
+                        int invertedG = 255 - originalColor.G;
+                        int invertedB = 255 - originalColor.B;
+
+                        bitmap.SetPixel(x, y, Color.FromArgb(alpha, invertedR, invertedG, invertedB));
+                    }
+                }
+                return bitmap;
+            });
+        }
+
+        /// <summary>
+        /// Накладывает фильтр "Ретро"
+        /// </summary>
+        /// <param name="bitmap"></param>
+        /// <param name="intensity"></param>
+        /// <param name="alpha"></param>
+        /// <returns></returns>
+        public static Task<Bitmap> RetroFilter(Bitmap bitmap, int intensity = 1, int alpha = 100) 
+        {
+            Random random = new();
+
+            return Task.Run(() => 
+            {
+                for (int x = 0; x < bitmap.Width; x++)
+                {
+                    for (int y = 0; y < bitmap.Height; y++)
+                    {
+                        Color OriginalColor = bitmap.GetPixel(x, y);
+
+                        //int retroR = (int)(OriginalColor.R * (0.393 * intensity) + OriginalColor.G * (0.769 * intensity) + OriginalColor.B * (0.189 * intensity));
+                        //int retroG = (int)(OriginalColor.R * (0.349 * intensity) + OriginalColor.G * (0.686 * intensity) + OriginalColor.B * (0.168 * intensity));
+                        //int retroB = (int)(OriginalColor.R * (0.272 * intensity) + OriginalColor.G * (0.534 * intensity) + OriginalColor.B * (0.131 * intensity));
+
+                        int retroR = (int)(OriginalColor.R * 0.393 + OriginalColor.G * 0.769 + OriginalColor.B * 0.189);
+                        int retroG = (int)(OriginalColor.R * 0.349 + OriginalColor.G * 0.686 + OriginalColor.B * 0.168);
+                        int retroB = (int)(OriginalColor.R * 0.272 + OriginalColor.G * 0.534 + OriginalColor.B * 0.131);
+
+                        int noise = random.Next(-30,31);
+
+                        retroR = Math.Clamp(retroR + noise, 0, 255);
+                        retroG = Math.Clamp(retroG + noise, 0, 255);
+                        retroB = Math.Clamp(retroB + noise, 0, 255);
+
+                        bitmap.SetPixel(x,y, Color.FromArgb(alpha ,retroR, retroG, retroB));
+
+                    }
+                }
+                return bitmap;
+            });
+        }
+
+        #endregion   
     }
 }
