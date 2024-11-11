@@ -5,11 +5,189 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FileFlex" 
         xmlns:fa="http://schemas.fontawesome.com/icons/" 
-        xmlns:windowviewmodels="clr-namespace:FileFlex.MVVM.ViewModels.WindowViewModels" 
-        d:DataContext="{d:DesignInstance Type=windowviewmodels:MainWindowViewModel}"
+        xmlns:vm="clr-namespace:FileFlex.MVVM.ViewModels.WindowViewModels" 
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
+        xmlns:behavior="clr-namespace:FileFlex.Utils.Behaviors" 
+        xmlns:converter="clr-namespace:FileFlex.Utils.ValueConverters"
+        d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Style="{StaticResource BaseStyle}"
+        WindowStartupLocation="CenterScreen"
+        Height="450" MinHeight="450"
+        Width="800" MinWidth="800"
+        d:Width="auto"
+        Title="MainWindow">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="34" />
+    </WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <converter:FileSizeConverter x:Key="FileSizeConverter"/>
+    </Window.Resources>
+
+    <!--#region Команды -->
+
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Close" />
+        <CommandBinding Command="{x:Static SystemCommands.MaximizeWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Maximize" />
+        <CommandBinding Command="{x:Static SystemCommands.MinimizeWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Minimize" />
+        <CommandBinding Command="{x:Static SystemCommands.RestoreWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Restore" />
+    </Window.CommandBindings>
+
+    <!--#endregion-->
+
+    <Border x:Name="MainWindowBorder" Style="{StaticResource MainContenBorder}">
+        <Grid>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height ="Auto"/>
+                <RowDefinition Height ="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Height="30" Background="#F999">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <TextBlock Text="FileFlex" Style="{StaticResource NameApp}"/>
+                </StackPanel>
+
+                <!--#region Кнопки управление окном -->
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+                    <Button Style="{StaticResource MinimizeButtonStyle}" WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Minimize"
+                            Command="{x:Static SystemCommands.MinimizeWindowCommand}"/>
+                    <Button x:Name="RestoreButton" Visibility="Collapsed" Style="{StaticResource RestoreButtonStyle}" 
+                            Command="{x:Static SystemCommands.RestoreWindowCommand}" WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Restore"/>
+                    <Button x:Name="MaximizeButton" Visibility="Visible" Style="{StaticResource MaximizeButtonStyle}" 
+                            Command="{x:Static SystemCommands.MaximizeWindowCommand}" WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Maximize" />
+                    <Button Style="{StaticResource CloseButtonStyle}" WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Close"
+                            Command="{x:Static SystemCommands.CloseWindowCommand}"/>
+                </StackPanel>
+
+                <!--#endregion-->
+
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="25"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MinWidth="200"/>
+                    <ColumnDefinition Width="300" MinWidth="200"/>
+                </Grid.ColumnDefinitions>
+
+                <!--#region Меню -->
+
+                <Menu Grid.ColumnSpan="3" FontSize="15" Background="{StaticResource MainAppColor}" Margin="3,3,0,0">
+
+                    <MenuItem Header="Файл" Foreground="{StaticResource MainAppTextColor}">
+
+                        <MenuItem Header="Добавить файл(лы)" Command="{Binding AddFilesCommand}" Foreground="{StaticResource MainAppColor}"/>
+
+                        <MenuItem Header="Выход" Foreground="{StaticResource MainAppColor}"/>
+
+                    </MenuItem>
+
+                    <MenuItem Header="Сервис" Foreground="{StaticResource MainAppTextColor}">
+
+                        <MenuItem Header="Настройки" Foreground="{StaticResource MainAppColor}"/>
+
+                    </MenuItem>
+
+                </Menu>
+
+                <!--#region Элементы управление -->
+
+                <WrapPanel Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <Button Content="Добавить" Command="{Binding AddFilesCommand}" Width="90" Height="27" Margin="5,0,0,0" />
+                </WrapPanel>
+
+                <!--#endregion-->
+
+                <!--#endregion-->
+
+                <GridSplitter Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" BorderBrush="Gray" BorderThickness="1"/>
+
+                <!--#region Список файлов -->
+
+                <ListView Grid.Column="0" Grid.Row="2"
+                          ItemsSource="{Binding Files}" d:ItemsSource="{d:SampleData ItemCount=5}" 
+                          SelectedItem="{Binding SelectedFile}"
+                          SelectionMode="Extended"
+                          FontSize="18" Margin="5,0,0,0"
+                          VirtualizingPanel.IsVirtualizing="True"
+                          VirtualizingStackPanel.VirtualizationMode="Recycling"
+                          VirtualizingPanel.CacheLength="15,15"
+                          VirtualizingPanel.CacheLengthUnit="Item"
+                          VirtualizingPanel.ScrollUnit="Pixel">
+                    <i:Interaction.Behaviors>
+                        <behavior:ListViewSelectedItemsBehavior SelectedItems="{Binding SelectedFiles}"/>
+                    </i:Interaction.Behaviors>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn  Width="38">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Image Source="{Binding FileIcon}" Width="23"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Название" Width="300">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <WrapPanel>
+                                            <TextBlock Text="{Binding FileName}" d:Text="Название" FontSize="20"/>
+                                        </WrapPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Расширение">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding FileExtension}" d:Text=".png"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Вес" Width="120">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <WrapPanel>
+                                            <TextBlock Text="{Binding FileWeight}" d:Text="16.4"/>
+                                            <TextBlock Text=" кб" d:Text=" мб"/>
+                                        </WrapPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Дата создания" Width="130">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding DateCreate, StringFormat='{}{0:dd.MM.yyyy}'}" d:Text="04.11.2020"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+
+                    <ListView.ContextMenu>
+                        <ContextMenu >
+                            <MenuItem Header="Добавить файлы" Command="{Binding AddFilesCommand}"/>
+                            <Separator/>
+                            <MenuItem Header="Убрать файлы из списка" Command="{Binding RemoveFilesCommand}"/>
+                            <MenuItem Header="Удалить файлы">
+                                <MenuItem Header="С устрйоства безвозвратно" Command="{Binding DeleteFilesCommand}"/>
+                                <MenuItem Header="С сохранением в карзине" Command="{Binding MoveFilesToTrashCommand}"/>
+                            </MenuItem>
+                            <MenuItem Header="Очистить список файлов" Command="{Binding ClearFilesCommand}"/>
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+
+                </ListView>
+
+                <!--#endregion-->
+
+            </Grid>
+        </Grid>
+    </Border>
 </Window>
