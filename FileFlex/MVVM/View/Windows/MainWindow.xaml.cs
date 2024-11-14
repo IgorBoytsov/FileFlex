@@ -15,6 +15,8 @@ namespace FileFlex
             StateChanged += MainWindowStateChangeRaised;
 
             DataContext = viewModel;
+
+            Closing += (s, e) => (DataContext as IDisposable)?.Dispose();
         }
 
         // Can execute
