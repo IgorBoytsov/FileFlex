@@ -13,9 +13,8 @@ namespace FileFlex.Utils.Services.FileDialogServices
             openFileDialog.Multiselect = true;
             openFileDialog.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), 
                                                            "Downloads");
-            openFileDialog.ShowDialog();
-
-            return openFileDialog.FileNames;
+            if (openFileDialog.ShowDialog() == true) return openFileDialog.FileNames;
+            else return null;
         }
     }
 }
