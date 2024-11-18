@@ -25,6 +25,7 @@
 
     <Window.Resources>
         <converter:FileSizeConverter x:Key="FileSizeConverter"/>
+        <converter:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
     </Window.Resources>
 
     <!--#region Команды -->
@@ -195,13 +196,22 @@
 
                         <!--#region Отображение .jpg, .jpeg, .jfif, .jpe, .png, .ico, .webp, .heic -->
 
-                        <Image Source="{Binding SelectedImage}" Visibility="{Binding ImageVisibility}" d:Source="D:\Тестовые изображение\LogoVarieble2.png" Margin="10" MaxHeight="500"/>
+                        <Image Source="{Binding SelectedImage}" d:Source="D:\Тестовые изображение\LogoVarieble2.png" Margin="10" MaxHeight="500"
+                               Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Image}"/>
+
+                        <!--#endregion-->
+
+                        <!--#region Отображение иконок выбранного файла. Если невозможно показать предпросмотр содержимого файла-->
+
+                        <Image Source="{Binding IconSelectedFile}" d:Source="D:\Тестовые изображение\Чужой.gif" Margin="10" MaxHeight="500"
+                               Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=IconFile}"/>
 
                         <!--#endregion-->
 
                         <!--#region Отображение .gif -->
 
-                        <Image Source="{Binding CurrentFrame}" Visibility="{Binding ImageGIFVisibility}" d:Source="D:\Тестовые изображение\Чужой.gif" Margin="10" MaxHeight="500"/>
+                        <Image Source="{Binding CurrentFrame}" d:Source="D:\Тестовые изображение\Чужой.gif" Margin="10" MaxHeight="500"
+                               Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=GIF}"/>
 
                         <!--#endregion-->
 
@@ -209,7 +219,7 @@
 
                         <TextBlock Text="Общие свойства" HorizontalAlignment="Center"/>
 
-                        <WrapPanel Visibility="{Binding ImageBasePropVisibility}">
+                        <WrapPanel>
                             <StackPanel>
                                 <TextBlock Text="Директория"/>
                                 <TextBlock Text="Создан"/>
@@ -219,11 +229,10 @@
                             </StackPanel>
 
                             <StackPanel Margin="5,0,0,0">
-                                <TextBlock Text="{Binding ImagePropertyInfo.Directory}"/>
-                                <TextBlock Text="{Binding ImagePropertyInfo.CreationTime}"/>
-                                <TextBlock Text="{Binding ImagePropertyInfo.WriteTime}"/>
-                                <TextBlock Text="{Binding ImagePropertyInfo.AccessTime}"/>
-                                <TextBlock Text="{Binding SelectedFile.FileWeight}"/>
+                                <TextBlock Text="{Binding BaseProperties.Directory}"/>
+                                <TextBlock Text="{Binding BaseProperties.CreationTime}"/>
+                                <TextBlock Text="{Binding BaseProperties.WriteTime}"/>
+                                <TextBlock Text="{Binding BaseProperties.AccessTime}"/>
                             </StackPanel>
                         </WrapPanel>
 

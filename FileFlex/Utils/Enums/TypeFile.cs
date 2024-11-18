@@ -2,24 +2,14 @@
 {
     public enum TypeFile
     {
-        JPEG,
-        PNG,
-        Ico,
+        /// <summary>
+        ///  Для следующих файлов: JPEG, PNG, Ico, TIFF, WebP
+        /// </summary>
+        Image,
+        /// <summary>
+        /// Для файлов без возможности отображение содержимого. К примеру .exe
+        /// </summary>
+        IconFile,
         GIF,
-        TIFF,
-        WebP,
-        EPF,
-        SVG,
-
-        Word,
-        Excel,
-        Txt,
-        Pdf,
-
-        fb2,
-        ePub,
-
-        Mp3,
-        Flac,
     }
 }

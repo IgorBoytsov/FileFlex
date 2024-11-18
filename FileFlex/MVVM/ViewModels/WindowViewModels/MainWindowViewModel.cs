@@ -70,7 +70,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
         private RelayCommand _moveFilesToTrashCommand;
         public RelayCommand MoveFilesToTrashCommand { get => _moveFilesToTrashCommand ??= new(obj => { InteractionFiles(FileAction.MoveToTrash); }); }
 
-        #endregion
+        #endregion   
 
         /*------------------------------------------------------------------------------------------------*/
 
@@ -130,9 +130,47 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
             }
         }
 
+        private BitmapImage _iconSelectedFile;
+        public BitmapImage IconSelectedFile
+        {
+            get => _iconSelectedFile;
+            set
+            {
+                _iconSelectedFile = value;
+                OnPropertyChanged();
+            }
+        }
+
         #endregion
 
-        #region Свойства: Visibility 
+        #region Свойство : Отображение базовой информации файла
+
+        private FileBaseProperties _baseProperties;
+        public FileBaseProperties BaseProperties
+        {
+            get => _baseProperties;
+            set
+            {
+                _baseProperties = value;
+                OnPropertyChanged();
+            }
+        }
+
+        #endregion
+
+        #region Свойства: Visibility предпросмотра
+
+        private TypeFile _currentDisplayFile;
+        public TypeFile CurrentDisplayFile
+        {
+            get => _currentDisplayFile;
+            set
+            {
+                _currentDisplayFile = value;
+                OnPropertyChanged();
+                UpdateVisibility();
+            }
+        }
 
         private Visibility _imageVisibility;
         public Visibility ImageVisibility
@@ -143,8 +181,19 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                 _imageVisibility = value;
                 OnPropertyChanged();
             }
-        } 
-        
+        }
+
+        private Visibility _fileIconVisibility;
+        public Visibility FileIconVisibility
+        {
+            get => _fileIconVisibility;
+            set
+            {
+                _fileIconVisibility = value;
+                OnPropertyChanged();
+            }
+        }
+
         private Visibility _imageGIFVisibility;
         public Visibility ImageGIFVisibility
         {
@@ -154,19 +203,12 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                 _imageGIFVisibility = value;
                 OnPropertyChanged();
             }
-        } 
+        }
 
-        private Visibility _imageBasePropVisibility;
-        public Visibility ImageBasePropVisibility
-        {
-            get => _imageBasePropVisibility;
-            set
-            {
-                _imageBasePropVisibility = value;
-                OnPropertyChanged();
-            }
-        }  
-        
+        #endregion
+
+        #region Свойства : Visibility свойств файла
+
         private Visibility _imageExtendedPropVisibility;
         public Visibility ImageExtendedPropVisibility
         {
@@ -181,6 +223,21 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
         #endregion
 
         /*------------------------------------------------------------------------------------------------*/
+
+        #region Метод : Обновление Visibility 
+
+        private void UpdateVisibility()
+        {
+            // Отображение предпросмотра файла.
+            ImageVisibility = CurrentDisplayFile == TypeFile.Image ? Visibility.Visible : Visibility.Collapsed;
+            ImageGIFVisibility = CurrentDisplayFile == TypeFile.GIF ? Visibility.Visible : Visibility.Collapsed;
+            FileIconVisibility = CurrentDisplayFile == TypeFile.IconFile ? Visibility.Visible : Visibility.Collapsed;
+
+            // Отображение свойства файла.
+            ImageExtendedPropVisibility = CurrentDisplayFile == TypeFile.Image ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        #endregion
 
         #region Методы возоимодействиe с списком файлов : Открытие \ добавление, удаление, очистка, перемещение в карзину
 
@@ -365,7 +422,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                     {".ico",  () => RenderImage(fileData) },
                     {".webp", () => RenderImage(fileData) },
                     {".heic", () => RenderImage(fileData) },
-                    {".gif", () => RenderImage(fileData) },
+                    {".gif",  () => RenderImage(fileData) },
                 };
 
                 var propAction = new Dictionary<string, Action>
@@ -379,14 +436,21 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                     {".ico",  () => ExtractImageProperty(fileData) },
                     {".webp", () => ExtractImageProperty(fileData) },
                     {".heic", () => ExtractImageProperty(fileData) },
-                    {".gif", () => ExtractImageProperty(fileData) },
+                    {".gif",  () => ExtractImageProperty(fileData) },
                 };
 
                 if (renderAction.TryGetValue(fileData.FileExtension.ToLower(), out Action render)) render();
-                else SelectedImage = null;
+                else
+                {
+                    IconSelectedFile = fileData.FileIcon;
+                    CurrentDisplayFile = TypeFile.IconFile;
+                }
 
                 if (propAction.TryGetValue(fileData.FileExtension.ToLower(), out Action prop)) prop();
-                else return;
+                else
+                {
+                    BaseProperties = ExtractBaseFileProperty(fileData.FilePath);
+                };
             }
         }
 
@@ -401,19 +465,19 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                 ".jpg" or ".jpeg" or ".jfif" or ".jpe" or ".png" or ".ico" or ".webp" or ".heic" => () =>
                 {
                     SelectedImage = fileData.FilePath;
-                    SetVisibilityImage();
+                    CurrentDisplayFile = TypeFile.Image;
                 }
                 ,
                 ".gif" => () =>
                 {
                     LoadGif(fileData.FilePath);
-                    SetVisibilityImageGif();
+                    CurrentDisplayFile = TypeFile.GIF;
                 }
                 ,
                 _ => () =>
                 {
-                    SelectedImage = null;
-                    ImageGIFVisibility = Visibility.Collapsed;
+                    IconSelectedFile = fileData.FileIcon;
+                    CurrentDisplayFile = TypeFile.IconFile;
                 }
             };
             action.Invoke();
@@ -486,28 +550,6 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         #endregion
 
-        #region Методы: Visibility  
-
-        private void SetVisibilityImage()
-        {
-            ImageVisibility = Visibility.Visible;
-            ImageGIFVisibility = Visibility.Collapsed;
-
-            ImageBasePropVisibility = Visibility.Visible;
-            ImageExtendedPropVisibility = Visibility.Visible;
-        }
-
-        private void SetVisibilityImageGif()
-        {
-            ImageVisibility = Visibility.Collapsed;
-            ImageGIFVisibility = Visibility.Visible;
-
-            ImageBasePropVisibility = Visibility.Visible;
-            ImageExtendedPropVisibility = Visibility.Visible;
-        }
-
-        #endregion
-
         /*------------------------------------------------------------------------------------------------*/
 
         #region Метод : Получение базовых свойств файла
@@ -537,6 +579,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
         private async void ExtractImageProperty(FileData fileData)
         {
             var baseProp = ExtractBaseFileProperty(fileData.FilePath);
+            BaseProperties = baseProp;
 
             var (width, height) = await ImagePropertiesHelper.WidthAndHeightAsync(fileData.FilePath, fileData.FileExtension);
             var (DpiX, DpiY) = ImagePropertiesHelper.Dpi(fileData.FilePath);       
@@ -567,15 +610,15 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         #region  Метод получение свойства файлов : Документы
 
-        #endregion 
+        #endregion
 
         #region  Метод получение свойства файлов : Медиафайлы
 
-        #endregion 
+        #endregion
 
         #region  Метод получение свойства файлов : Аудиофайлы 
 
-        #endregion 
+        #endregion
 
         /*------------------------------------------------------------------------------------------------*/
 
