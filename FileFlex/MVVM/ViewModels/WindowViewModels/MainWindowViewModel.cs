@@ -569,6 +569,8 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         private async void ExtractImageProperty(FileData fileData)
         {
+            FileProps.Clear();
+
             var baseProp = ExtractBaseFileProperty(fileData.FilePath);
             BaseProperties = baseProp;
 
@@ -578,12 +580,19 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
             var author = ImagePropertiesHelper.Authors(fileData.FilePath);
             var framesCount = ImagePropertiesHelper.FramesCount(fileData.FilePath);
 
-            FileProps.Clear();
-            FileProps.Add(new FileProperties(){ PropName = "Разрешение", PropValue = $"{width} x {height}" });
-            FileProps.Add(new FileProperties(){ PropName = "Точки на дюйм", PropValue = $"X: {DpiX} Y: {DpiY}" });
-            FileProps.Add(new FileProperties(){ PropName = "Формат пикселя", PropValue = pixelFormat });
-            FileProps.Add(new FileProperties(){ PropName = "Автор", PropValue = author });
-            FileProps.Add(new FileProperties(){ PropName = "Число кадров", PropValue = framesCount.ToString() });
+            var propImage = new Dictionary<string, string>
+            {
+                { "Разрешение",       $"{width} x {height}" },
+                { "Точки на дюйм",    $"X: {DpiX} Y: {DpiY}" },
+                { "Формат пикселя",   pixelFormat },
+                { "Автор",            author },
+                { "Число кадров",     framesCount.ToString() },
+            };
+
+            foreach (var prop in propImage)
+            {
+                FileProps.Add(new FileProperties { PropName = prop.Key, PropValue = prop.Value });
+            }
         }
 
         #endregion
@@ -608,35 +617,43 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
             var baseProp = ExtractBaseFileProperty(fileData.FilePath);
             BaseProperties = baseProp;
 
-            FileVersionInfo exeProp = FileVersionInfo.GetVersionInfo(fileData.FilePath);
+            FileVersionInfo fileVersionExeProp = FileVersionInfo.GetVersionInfo(fileData.FilePath);
 
-            FileProps.Add(new FileProperties() { PropName = "Название компании",                        PropValue = exeProp.CompanyName });
-            FileProps.Add(new FileProperties() { PropName = "Номер сборки файла",                       PropValue = exeProp.FileBuildPart.ToString() });
-            FileProps.Add(new FileProperties() { PropName = "Подробное описание",                       PropValue = exeProp.FileDescription });
-            FileProps.Add(new FileProperties() { PropName = "Мажорная часть версии файла",              PropValue = exeProp.FileMajorPart.ToString() });
-            FileProps.Add(new FileProperties() { PropName = "Минорная часть версии файла",              PropValue = exeProp.FileMinorPart.ToString() });
-            FileProps.Add(new FileProperties() { PropName = "Имя файла",                                PropValue = exeProp.FileName });
-            FileProps.Add(new FileProperties() { PropName = "Частная часть версии файла",               PropValue = exeProp.FilePrivatePart.ToString() });
-            FileProps.Add(new FileProperties() { PropName = "Полная версии файла",                      PropValue = exeProp.FileVersion });
-            FileProps.Add(new FileProperties() { PropName = "Внутреннее имя файла",                     PropValue = exeProp.InternalName });
-            FileProps.Add(new FileProperties() { PropName = "Отладочный файл?",                         PropValue = exeProp.IsDebug == true ? "Да" : "Нет" });
-            FileProps.Add(new FileProperties() { PropName = "Исправлен файл?",                          PropValue = exeProp.IsPatched == true ? "Да" : "Нет" });
-            FileProps.Add(new FileProperties() { PropName = "Предварительная версия?",                  PropValue = exeProp.IsPreRelease == true ? "Да" : "Нет" });
-            FileProps.Add(new FileProperties() { PropName = "Частная сборка?",                          PropValue = exeProp.IsPrivateBuild == true ? "Да" : "Нет" });
-            FileProps.Add(new FileProperties() { PropName = "Специальная сборка?",                      PropValue = exeProp.IsSpecialBuild == true ? "Да" : "Нет" });
-            FileProps.Add(new FileProperties() { PropName = "Язык файла",                               PropValue = exeProp.Language });
-            FileProps.Add(new FileProperties() { PropName = "Авторские права",                          PropValue = exeProp.LegalCopyright });
-            FileProps.Add(new FileProperties() { PropName = "Зарегистрированные торговые марки",        PropValue = exeProp.LegalTrademarks });
-            FileProps.Add(new FileProperties() { PropName = "Оригинальное имя файла",                   PropValue = exeProp.OriginalFilename });
-            FileProps.Add(new FileProperties() { PropName = "Строка, описывающая частную сборку",       PropValue = exeProp.PrivateBuild });
-            FileProps.Add(new FileProperties() { PropName = "Номер сборки продукта",                    PropValue = exeProp.ProductBuildPart.ToString() });
-            FileProps.Add(new FileProperties() { PropName = "Мажорная часть версии продукта",           PropValue = exeProp.ProductMajorPart.ToString() });
-            FileProps.Add(new FileProperties() { PropName = "Минорная часть версии продукта",           PropValue = exeProp.ProductMinorPart.ToString() });
-            FileProps.Add(new FileProperties() { PropName = "Название продукта",                        PropValue = exeProp.ProductName });
-            FileProps.Add(new FileProperties() { PropName = "Частная часть версии продукта",            PropValue = exeProp.ProductPrivatePart.ToString() });
-            FileProps.Add(new FileProperties() { PropName = "Полная строка версии продукта",            PropValue = exeProp.ProductVersion });
-            FileProps.Add(new FileProperties() { PropName = "Строка, описывающая специальную сборку",   PropValue = exeProp.SpecialBuild });
-            FileProps.Add(new FileProperties() { PropName = "Комментарии",                              PropValue = exeProp.Comments });
+            var propExe = new Dictionary<string, string>
+            {
+                { "Название компании",                      fileVersionExeProp.CompanyName },
+                { "Название продукта",                      fileVersionExeProp.ProductName },
+                { "Имя файла",                              fileVersionExeProp.FileName },
+                { "Подробное описание",                     fileVersionExeProp.FileDescription },
+                { "Полная версии файла",                    fileVersionExeProp.FileVersion },
+                { "Язык файла",                             fileVersionExeProp.Language },
+                { "Внутреннее имя файла",                   fileVersionExeProp.InternalName },
+                { "Номер сборки файла",                     fileVersionExeProp.FileBuildPart.ToString() },
+                { "Номер сборки продукта",                  fileVersionExeProp.ProductBuildPart.ToString() },
+                { "Мажорная часть версии файла",            fileVersionExeProp.FileMajorPart.ToString() },
+                { "Минорная часть версии файла",            fileVersionExeProp.FileMinorPart.ToString() },
+                { "Частная часть версии файла",             fileVersionExeProp.FilePrivatePart.ToString() },
+                { "Мажорная часть версии продукта",         fileVersionExeProp.ProductMajorPart.ToString() },
+                { "Минорная часть версии продукта",         fileVersionExeProp.ProductMinorPart.ToString() },
+                { "Частная часть версии продукта",          fileVersionExeProp.ProductPrivatePart.ToString() },
+                { "Отладочный файл?",                       fileVersionExeProp.IsDebug ? "Да" : "Нет" },
+                { "Исправлен файл?",                        fileVersionExeProp.IsPatched ? "Да" : "Нет" },
+                { "Предварительная версия?",                fileVersionExeProp.IsPreRelease ? "Да" : "Нет" },
+                { "Частная сборка?",                        fileVersionExeProp.IsPrivateBuild ? "Да" : "Нет" },
+                { "Специальная сборка?",                    fileVersionExeProp.IsSpecialBuild ? "Да" : "Нет" },
+                { "Авторские права",                        fileVersionExeProp.LegalCopyright },
+                { "Зарегистрированные торговые марки",      fileVersionExeProp.LegalTrademarks },
+                { "Оригинальное имя файла",                 fileVersionExeProp.OriginalFilename },
+                { "Строка, описывающая частную сборку",     fileVersionExeProp.PrivateBuild },
+                { "Полная строка версии продукта",          fileVersionExeProp.ProductVersion },
+                { "Строка, описывающая специальную сборку", fileVersionExeProp.SpecialBuild },
+                { "Комментарии",                            fileVersionExeProp.Comments }
+            };
+
+            foreach (var prop in propExe)
+            {
+                FileProps.Add(new FileProperties { PropName = prop.Key, PropValue = prop.Value });
+            }
         }
 
         #endregion
