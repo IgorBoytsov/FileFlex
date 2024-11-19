@@ -109,7 +109,7 @@
                     <Button Content="Добавить" Command="{Binding AddFilesCommand}" Width="90" Height="27" Margin="5,0,0,0" />
                 </WrapPanel>
 
-                <!--#endregion--> 
+                <!--#endregion-->
 
                 <GridSplitter Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" BorderBrush="Gray" BorderThickness="1"/>
 
@@ -191,20 +191,21 @@
                 <!--#endregion-->
 
                 <!--#region Отображение данных файла -->
+
                 <ScrollViewer Grid.Column="1" Grid.Row="2" Margin="5,0,0,0">
                     <StackPanel>
 
-                        <!--#region Отображение .jpg, .jpeg, .jfif, .jpe, .png, .ico, .webp, .heic -->
+                        <!--#region Отображение иконок выбранного файла. Если невозможно показать предпросмотр содержимого файла-->
 
-                        <Image Source="{Binding SelectedImage}" d:Source="D:\Тестовые изображение\LogoVarieble2.png" Margin="10" MaxHeight="500"
-                               Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Image}"/>
+                        <Image Source="{Binding IconSelectedFile}" d:Source="D:\Тестовые изображение\icon_calculator.ico" Margin="10" MaxHeight="500"
+                               Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=IconFile}"/>
 
                         <!--#endregion-->
 
-                        <!--#region Отображение иконок выбранного файла. Если невозможно показать предпросмотр содержимого файла-->
+                        <!--#region Отображение .jpg, .jpeg, .jfif, .jpe, .png, .ico, .webp, .heic -->
 
-                        <Image Source="{Binding IconSelectedFile}" d:Source="D:\Тестовые изображение\Чужой.gif" Margin="10" MaxHeight="500"
-                               Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=IconFile}"/>
+                        <Image Source="{Binding SelectedImage}" d:Source="D:\Тестовые изображение\20240907163311_1.jpg" Margin="10" MaxHeight="500"
+                               Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Image}"/>
 
                         <!--#endregion-->
 
@@ -218,6 +219,8 @@
                         <!--#region Список свойств изображений-->
 
                         <TextBlock Text="Общие свойства" HorizontalAlignment="Center"/>
+
+                        <!--#region Общие файлы для всех файлов -->
 
                         <WrapPanel>
                             <StackPanel>
@@ -236,43 +239,38 @@
                             </StackPanel>
                         </WrapPanel>
 
+                        <!--#endregion-->
+
                         <TextBlock Text="Расширеные свойства" HorizontalAlignment="Center"/>
 
-                        <WrapPanel Visibility="{Binding ImageExtendedPropVisibility}">
-                            <StackPanel>
-                                <TextBlock Text="Разрешение"/>
-                                <TextBlock Text="Ширина"/>
-                                <TextBlock Text="Высота"/>
-                                <TextBlock Text="dpiX"/>
-                                <TextBlock Text="dpiY"/>
-                                <TextBlock Text="Формат пикселй"/>
-                                <TextBlock Text="Автор"/>
-                                <TextBlock Text="Количество кадров"/>
-                            </StackPanel>
-
-                            <StackPanel Margin="5,0,0,0">
-                                <WrapPanel>
-                                    <TextBlock Text="{Binding ImagePropertyInfo.Width}"/>
-                                    <TextBlock Text="x"/>
-                                    <TextBlock Text="{Binding ImagePropertyInfo.Height}"/>
-                                </WrapPanel>
-                                <TextBlock Text="{Binding ImagePropertyInfo.Width}"/>
-                                <TextBlock Text="{Binding ImagePropertyInfo.Height}"/>
-                                <TextBlock Text="{Binding ImagePropertyInfo.DpiX}"/>
-                                <TextBlock Text="{Binding ImagePropertyInfo.DpiY}"/>
-                                <TextBlock Text="{Binding ImagePropertyInfo.PixelFormat}"/>
-                                <TextBlock Text="{Binding ImagePropertyInfo.Author}"/>
-                                <TextBlock Text="{Binding ImagePropertyInfo.FramesCount}"/>
-                            </StackPanel>
-
-                        </WrapPanel>
+                        <!--#region Вывод расщиреных свойств -->
+                      
+                        <ItemsControl ItemsSource="{Binding FileProps}" d:ItemsSource="{d:SampleData ItemCount=5}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="{Binding PropName}" TextWrapping="WrapWithOverflow" d:Text="Разрешение"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" HorizontalAlignment="Right" Margin="10,0,15,0">
+                                            <TextBlock Text="{Binding PropValue}" TextWrapping="Wrap" TextOptions.TextFormattingMode="Display" d:Text="2560x1440"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        
+                        <!--#endregion-->
                         
                         <!--#endregion-->
 
                     </StackPanel>
                 </ScrollViewer>
-                
-                
+
                 <!--#endregion-->
 
             </Grid>

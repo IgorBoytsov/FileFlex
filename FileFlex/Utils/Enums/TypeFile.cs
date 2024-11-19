@@ -11,5 +11,6 @@
         /// </summary>
         IconFile,
         GIF,
+        Exe,
     }
 }

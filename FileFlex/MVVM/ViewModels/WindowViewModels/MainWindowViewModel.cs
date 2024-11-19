@@ -16,6 +16,7 @@ using System.Drawing;
 using System.Windows.Threading;
 using System.Windows.Interop;
 using System.Drawing.Imaging;
+using System.Diagnostics;
 
 namespace FileFlex.MVVM.ViewModels.WindowViewModels
 {
@@ -26,6 +27,8 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
         private List<FileData> _files = [];
 
         public ObservableCollection<FileData> Files { get; set; } = [];
+
+        public ObservableCollection<FileProperties> FileProps { get; set; } = [];
 
         #endregion
 
@@ -51,15 +54,13 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
             _saveFileDialogService = fileDialogServices[1];
         }
 
-        #region Получение и отображение информации о файле
-
         #region Команды
 
         private RelayCommand _addFilesCommand;
-        public RelayCommand AddFilesCommand { get => _addFilesCommand ??= new (obj => { InteractionFiles(FileAction.Add); }); } 
-        
+        public RelayCommand AddFilesCommand { get => _addFilesCommand ??= new(obj => { InteractionFiles(FileAction.Add); }); }
+
         private RelayCommand _clearFilesCommand;
-        public RelayCommand ClearFilesCommand { get => _clearFilesCommand ??= new (obj => { InteractionFiles(FileAction.Clear); }); }
+        public RelayCommand ClearFilesCommand { get => _clearFilesCommand ??= new(obj => { InteractionFiles(FileAction.Clear); }); }
 
         private RelayCommand _removeFilesCommand;
         public RelayCommand RemoveFilesCommand { get => _removeFilesCommand ??= new(obj => { InteractionFiles(FileAction.Remove); }); }
@@ -70,11 +71,13 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
         private RelayCommand _moveFilesToTrashCommand;
         public RelayCommand MoveFilesToTrashCommand { get => _moveFilesToTrashCommand ??= new(obj => { InteractionFiles(FileAction.MoveToTrash); }); }
 
-        #endregion   
+        #endregion             
+
+        #region Получение и отображение информации о файле
 
         /*------------------------------------------------------------------------------------------------*/
 
-        #region Свойства: выбора файла
+        #region Свойства : выбора файла
 
         private FileData _selectedFile;
         public FileData SelectedFile
@@ -92,7 +95,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         #endregion
 
-        #region Свойства: отображение файлов
+        #region Свойства : отображение файлов
 
         private string _selectedImage;
         public string SelectedImage
@@ -116,17 +119,6 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                     _currentFrame = value;
                     OnPropertyChanged(nameof(CurrentFrame));
                 }
-            }
-        }
-
-        private ImageProperties _imagePropertyInfo;
-        public ImageProperties ImagePropertyInfo
-        {
-            get => _imagePropertyInfo;
-            set
-            {
-                _imagePropertyInfo = value;
-                OnPropertyChanged();
             }
         }
 
@@ -158,7 +150,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         #endregion
 
-        #region Свойства: Visibility предпросмотра
+        #region Свойства : Visibility предпросмотра
 
         private TypeFile _currentDisplayFile;
         public TypeFile CurrentDisplayFile
@@ -207,21 +199,6 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         #endregion
 
-        #region Свойства : Visibility свойств файла
-
-        private Visibility _imageExtendedPropVisibility;
-        public Visibility ImageExtendedPropVisibility
-        {
-            get => _imageExtendedPropVisibility;
-            set
-            {
-                _imageExtendedPropVisibility = value;
-                OnPropertyChanged();
-            }
-        }
-
-        #endregion
-
         /*------------------------------------------------------------------------------------------------*/
 
         #region Метод : Обновление Visibility 
@@ -232,9 +209,6 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
             ImageVisibility = CurrentDisplayFile == TypeFile.Image ? Visibility.Visible : Visibility.Collapsed;
             ImageGIFVisibility = CurrentDisplayFile == TypeFile.GIF ? Visibility.Visible : Visibility.Collapsed;
             FileIconVisibility = CurrentDisplayFile == TypeFile.IconFile ? Visibility.Visible : Visibility.Collapsed;
-
-            // Отображение свойства файла.
-            ImageExtendedPropVisibility = CurrentDisplayFile == TypeFile.Image ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #endregion
@@ -423,6 +397,9 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                     {".webp", () => RenderImage(fileData) },
                     {".heic", () => RenderImage(fileData) },
                     {".gif",  () => RenderImage(fileData) },
+
+                    // Специфические файлы
+                    {".exe",  () => RenderExe(fileData) },
                 };
 
                 var propAction = new Dictionary<string, Action>
@@ -437,6 +414,9 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                     {".webp", () => ExtractImageProperty(fileData) },
                     {".heic", () => ExtractImageProperty(fileData) },
                     {".gif",  () => ExtractImageProperty(fileData) },
+
+                    // Специфические файлы
+                    {".exe",  () => ExtractExeProperty(fileData) },
                 };
 
                 if (renderAction.TryGetValue(fileData.FileExtension.ToLower(), out Action render)) render();
@@ -450,6 +430,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                 else
                 {
                     BaseProperties = ExtractBaseFileProperty(fileData.FilePath);
+                    FileProps.Clear();
                 };
             }
         }
@@ -550,6 +531,16 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         #endregion
 
+        #region Метод отображение : Exe
+
+        private void RenderExe(FileData fileData)
+        {
+            IconSelectedFile = fileData.FileIcon;
+            CurrentDisplayFile = TypeFile.IconFile;
+        }
+
+        #endregion
+
         /*------------------------------------------------------------------------------------------------*/
 
         #region Метод : Получение базовых свойств файла
@@ -586,27 +577,16 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
             var pixelFormat = ImagePropertiesHelper.PixelFormat(fileData.FilePath, fileData.FileExtension);
             var author = ImagePropertiesHelper.Authors(fileData.FilePath);
             var framesCount = ImagePropertiesHelper.FramesCount(fileData.FilePath);
-           
-            var imageProp = new ImageProperties()
-            {
-                AccessTime = baseProp.AccessTime,
-                CreationTime = baseProp.CreationTime,
-                WriteTime = baseProp.WriteTime,
-                Directory = baseProp.Directory,
 
-                Width = width,
-                Height = height,
-                DpiX = DpiX,
-                DpiY = DpiY,
-                PixelFormat = pixelFormat,
-                Author = author,
-                FramesCount = framesCount,
-            };
-
-            ImagePropertyInfo = imageProp;
+            FileProps.Clear();
+            FileProps.Add(new FileProperties(){ PropName = "Разрешение", PropValue = $"{width} x {height}" });
+            FileProps.Add(new FileProperties(){ PropName = "Точки на дюйм", PropValue = $"X: {DpiX} Y: {DpiY}" });
+            FileProps.Add(new FileProperties(){ PropName = "Формат пикселя", PropValue = pixelFormat });
+            FileProps.Add(new FileProperties(){ PropName = "Автор", PropValue = author });
+            FileProps.Add(new FileProperties(){ PropName = "Число кадров", PropValue = framesCount.ToString() });
         }
 
-        #endregion 
+        #endregion
 
         #region  Метод получение свойства файлов : Документы
 
@@ -617,6 +597,47 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
         #endregion
 
         #region  Метод получение свойства файлов : Аудиофайлы 
+
+        #endregion
+
+        #region  Метод получение свойства файлов : Exe 
+
+        private void ExtractExeProperty(FileData fileData)
+        {
+            FileProps.Clear();
+            var baseProp = ExtractBaseFileProperty(fileData.FilePath);
+            BaseProperties = baseProp;
+
+            FileVersionInfo exeProp = FileVersionInfo.GetVersionInfo(fileData.FilePath);
+
+            FileProps.Add(new FileProperties() { PropName = "Название компании",                        PropValue = exeProp.CompanyName });
+            FileProps.Add(new FileProperties() { PropName = "Номер сборки файла",                       PropValue = exeProp.FileBuildPart.ToString() });
+            FileProps.Add(new FileProperties() { PropName = "Подробное описание",                       PropValue = exeProp.FileDescription });
+            FileProps.Add(new FileProperties() { PropName = "Мажорная часть версии файла",              PropValue = exeProp.FileMajorPart.ToString() });
+            FileProps.Add(new FileProperties() { PropName = "Минорная часть версии файла",              PropValue = exeProp.FileMinorPart.ToString() });
+            FileProps.Add(new FileProperties() { PropName = "Имя файла",                                PropValue = exeProp.FileName });
+            FileProps.Add(new FileProperties() { PropName = "Частная часть версии файла",               PropValue = exeProp.FilePrivatePart.ToString() });
+            FileProps.Add(new FileProperties() { PropName = "Полная версии файла",                      PropValue = exeProp.FileVersion });
+            FileProps.Add(new FileProperties() { PropName = "Внутреннее имя файла",                     PropValue = exeProp.InternalName });
+            FileProps.Add(new FileProperties() { PropName = "Отладочный файл?",                         PropValue = exeProp.IsDebug == true ? "Да" : "Нет" });
+            FileProps.Add(new FileProperties() { PropName = "Исправлен файл?",                          PropValue = exeProp.IsPatched == true ? "Да" : "Нет" });
+            FileProps.Add(new FileProperties() { PropName = "Предварительная версия?",                  PropValue = exeProp.IsPreRelease == true ? "Да" : "Нет" });
+            FileProps.Add(new FileProperties() { PropName = "Частная сборка?",                          PropValue = exeProp.IsPrivateBuild == true ? "Да" : "Нет" });
+            FileProps.Add(new FileProperties() { PropName = "Специальная сборка?",                      PropValue = exeProp.IsSpecialBuild == true ? "Да" : "Нет" });
+            FileProps.Add(new FileProperties() { PropName = "Язык файла",                               PropValue = exeProp.Language });
+            FileProps.Add(new FileProperties() { PropName = "Авторские права",                          PropValue = exeProp.LegalCopyright });
+            FileProps.Add(new FileProperties() { PropName = "Зарегистрированные торговые марки",        PropValue = exeProp.LegalTrademarks });
+            FileProps.Add(new FileProperties() { PropName = "Оригинальное имя файла",                   PropValue = exeProp.OriginalFilename });
+            FileProps.Add(new FileProperties() { PropName = "Строка, описывающая частную сборку",       PropValue = exeProp.PrivateBuild });
+            FileProps.Add(new FileProperties() { PropName = "Номер сборки продукта",                    PropValue = exeProp.ProductBuildPart.ToString() });
+            FileProps.Add(new FileProperties() { PropName = "Мажорная часть версии продукта",           PropValue = exeProp.ProductMajorPart.ToString() });
+            FileProps.Add(new FileProperties() { PropName = "Минорная часть версии продукта",           PropValue = exeProp.ProductMinorPart.ToString() });
+            FileProps.Add(new FileProperties() { PropName = "Название продукта",                        PropValue = exeProp.ProductName });
+            FileProps.Add(new FileProperties() { PropName = "Частная часть версии продукта",            PropValue = exeProp.ProductPrivatePart.ToString() });
+            FileProps.Add(new FileProperties() { PropName = "Полная строка версии продукта",            PropValue = exeProp.ProductVersion });
+            FileProps.Add(new FileProperties() { PropName = "Строка, описывающая специальную сборку",   PropValue = exeProp.SpecialBuild });
+            FileProps.Add(new FileProperties() { PropName = "Комментарии",                              PropValue = exeProp.Comments });
+        }
 
         #endregion
 
