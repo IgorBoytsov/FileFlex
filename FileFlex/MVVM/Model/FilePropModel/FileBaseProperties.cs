@@ -9,5 +9,7 @@
         public string AccessTime { get; set; }
 
         public string WriteTime { get; set; }
+
+        public double FileWeight { get; set; }
     }
 }

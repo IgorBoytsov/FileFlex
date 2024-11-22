@@ -1,4 +1,62 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+   
+    <!--Все окна-->
     
+    <!--#region ContentWindowBorder -->
+
+    <Style x:Key="MainContenBorder" TargetType="Border">
+        <Setter Property="BorderBrush" Value="LightCoral"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    
+    <!--#endregion-->
+
+    <!-- MainWindow -->
+
+    <!--#region Вокруг отображение содержимого файла -->
+    
+    <Style x:Key="PreviewFileBorder" TargetType="Border">
+        <Setter Property="Height" Value="210"/>
+        <Setter Property="Background" Value="LightGray"/>
+        <Setter Property="BorderBrush" Value="Gray"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="CornerRadius" Value="5"/>
+        <Setter Property="Margin" Value="7,2,7,2"/>
+    </Style>
+    
+    <!--#endregion-->
+
+    <!--#region Вокруг отображение свойств файла -->
+    
+    <Style x:Key="PreviewFilePropBorder" TargetType="Border">
+        <Setter Property="Background" Value="LightGray"/>
+        <Setter Property="BorderBrush" Value="Gray"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="CornerRadius" Value="5"/>
+        <!--<Setter Property="Margin" Value="7,0,7,0"/>-->
+        <Setter Property="Padding" Value="5,2,5,2"/>
+    </Style>
+    
+    <!--#endregion-->
+
+    <!--#region Над списком файлов (Элементы управление) -->
+
+    <Style x:Key="ControlsFilesBorder" TargetType="Border">
+        <Setter Property="Background" Value="#2758A5"/>
+        <Setter Property="Margin" Value="5,0,0,0"/>
+        <Setter Property="CornerRadius" Value="10,10,0,0"/>
+    </Style>
+
+    <!--#endregion-->
+
+    <!--#region Вокруг названия выбранного файла -->
+
+    <Style x:Key="FileNameBorder" TargetType="Border" BasedOn="{StaticResource ControlsFilesBorder}">
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Margin" Value="11,0,24,0"/>
+    </Style>
+    
+    <!--#endregion-->
+
 </ResourceDictionary>

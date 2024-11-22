@@ -1,0 +1,49 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--#region Значек списка -->
+    
+    <DataTemplate x:Key="ListTemplate">
+        <StackPanel>
+            <WrapPanel>
+                <Rectangle Width="8" Height="8" Stroke="Transparent" StrokeThickness="2" Fill="White" />
+                <Rectangle Width="20" Height="6" Stroke="Transparent" StrokeThickness="2" Fill="White" />
+            </WrapPanel>
+            <WrapPanel>
+                <Rectangle Width="8" Height="8" Stroke="Transparent" StrokeThickness="2" Fill="White" />
+                <Rectangle Width="20" Height="6" Stroke="Transparent" StrokeThickness="2" Fill="White" />
+            </WrapPanel>
+            <WrapPanel>
+                <Rectangle Width="8" Height="8" Stroke="Transparent" StrokeThickness="2" Fill="White" />
+                <Rectangle Width="20" Height="6" Stroke="Transparent" StrokeThickness="2" Fill="White" />
+            </WrapPanel>
+        </StackPanel>
+    </DataTemplate>
+    
+    <!--#endregion-->
+
+    <!--#region Значек таблицы -->
+    
+    <DataTemplate x:Key="TilesTemplate">
+        <StackPanel>
+            <WrapPanel>
+                <Rectangle Width="8" Height="8" Stroke="Transparent" StrokeThickness="2" Fill="White" />
+                <Rectangle Width="8" Height="8" Stroke="Transparent" StrokeThickness="2" Fill="White" />
+                <Rectangle Width="8" Height="8" Stroke="Transparent" StrokeThickness="2" Fill="White" />
+            </WrapPanel>
+            <WrapPanel>
+                <Rectangle Width="8" Height="8" Stroke="Transparent" StrokeThickness="2" Fill="White" />
+                <Rectangle Width="8" Height="8" Stroke="Transparent" StrokeThickness="2" Fill="White" />
+                <Rectangle Width="8" Height="8" Stroke="Transparent" StrokeThickness="2" Fill="White" />
+            </WrapPanel>
+            <WrapPanel>
+                <Rectangle Width="8" Height="8" Stroke="Transparent" StrokeThickness="2" Fill="White" />
+                <Rectangle Width="8" Height="8" Stroke="Transparent" StrokeThickness="2" Fill="White" />
+                <Rectangle Width="8" Height="8" Stroke="Transparent" StrokeThickness="2" Fill="White" />
+            </WrapPanel>
+        </StackPanel>
+    </DataTemplate>
+    
+    <!--#endregion-->
+    
+</ResourceDictionary>

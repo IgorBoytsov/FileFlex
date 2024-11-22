@@ -1,0 +1,41 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:fa="http://schemas.fontawesome.com/icons/" >
+
+    <!--#region Добавление файлов (Иконка : папки с плюсом ) -->
+    
+    <Style x:Key="AddFileIcon" TargetType="fa:ImageAwesome">
+        <Setter Property="Icon" Value="Solid_FolderPlus"/>
+        <Setter Property="Foreground" Value="Green"/>
+    </Style>
+    
+    <!--#endregion-->
+
+    <!--#region Очистка файлов ( Иконка : черта ) -->
+    
+    <Style x:Key="ClearFileIcon" TargetType="fa:ImageAwesome">
+        <Setter Property="Icon" Value="Solid_Minus"/>
+        <Setter Property="Foreground" Value="Orange"/>
+    </Style>
+    
+    <!--#endregion-->
+
+    <!--#region Очистка списка ( Иконка : ластик ) -->
+
+    <Style x:Key="ClearListFileIcon" TargetType="fa:ImageAwesome">
+        <Setter Property="Icon" Value="Solid_Eraser"/>
+        <Setter Property="Foreground" Value="#FFC8BA03"/>
+    </Style>
+
+    <!--#endregion-->
+
+    <!--#region Удаление файлов ( Иконка : мусорная карзина ) -->
+
+    <Style x:Key="DeleteFileIcon" TargetType="fa:ImageAwesome">
+        <Setter Property="Icon" Value="Solid_Trash"/>
+        <Setter Property="Foreground" Value="Red"/>
+    </Style>
+
+    <!--#endregion-->
+    
+</ResourceDictionary>

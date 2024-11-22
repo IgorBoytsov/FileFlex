@@ -1,5 +1,7 @@
 ﻿using FileFlex.MVVM.ViewModels.WindowViewModels;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace FileFlex
@@ -13,9 +15,8 @@ namespace FileFlex
         {
             InitializeComponent();
             StateChanged += MainWindowStateChangeRaised;
-
             DataContext = viewModel;
-
+            
             Closing += (s, e) => (DataContext as IDisposable)?.Dispose();
         }
 
@@ -65,5 +66,46 @@ namespace FileFlex
                 MaximizeButton.Visibility = Visibility.Visible;
             }
         }
+
+        // Пока что не используется
+        #region Сброс выделение элементов в списке ( По клику вне списка, По клику вне элемента внутри списка )
+
+        private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Проверяем, был ли клик внутри ListView
+            if (e.OriginalSource is DependencyObject source)
+            {
+                var item = ItemsControl.ContainerFromElement(FilesListView, source);
+                // Если клик был не по элементу внутри ListView, то сбрасываем выделение
+                if (item == null && !IsClickInsideElement(FilesListView, e))
+                {
+                    FilesListView.SelectedItems.Clear();
+                }
+            }
+        }
+
+        private void ListView_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Проверяем, был ли клик внутри элемента ListView
+            if (e.OriginalSource is DependencyObject source)
+            {
+                var item = ItemsControl.ContainerFromElement((ListView)sender, source);
+                // Если клик не по элементу, то сбрасываем выделение
+                if (item == null)
+                {
+                    FilesListView.SelectedItems.Clear();
+                }
+            }
+        }
+
+        // Проверка, был ли клик по указанному элементу или его дочерним элементам
+        private static bool IsClickInsideElement(FrameworkElement element, MouseButtonEventArgs e)
+        {
+            var position = e.GetPosition(element);
+            return position.X >= 0 && position.X <= element.ActualWidth &&
+                   position.Y >= 0 && position.Y <= element.ActualHeight;
+        }
+
+        #endregion
     }
 }

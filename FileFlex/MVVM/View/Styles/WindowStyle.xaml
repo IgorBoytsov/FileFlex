@@ -1,4 +1,9 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="BaseStyle" TargetType="Window">
+        <Setter Property="Background" Value="{StaticResource MainAppColor}"/>
+        <Setter Property="Foreground" Value="Black"/>
+    </Style>
     
 </ResourceDictionary>

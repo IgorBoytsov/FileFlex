@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <Folder Include="MVVM\ViewModels\PageViewModels\" />
+    <Folder Include="MVVM\View\Images\" />
     <Folder Include="MVVM\View\Pages\" />
   </ItemGroup>
 

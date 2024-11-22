@@ -26,6 +26,15 @@
     <Window.Resources>
         <converter:FileSizeConverter x:Key="FileSizeConverter"/>
         <converter:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
+
+        <ItemsPanelTemplate x:Key="StackPanelTemplate">
+            <StackPanel/>
+        </ItemsPanelTemplate>
+
+        <ItemsPanelTemplate x:Key="WrapPanelTemplate">
+            <WrapPanel/>
+        </ItemsPanelTemplate>
+
     </Window.Resources>
 
     <!--#region Команды -->
@@ -41,7 +50,6 @@
 
     <Border x:Name="MainWindowBorder" Style="{StaticResource MainContenBorder}">
         <Grid>
-
             <Grid.RowDefinitions>
                 <RowDefinition Height ="Auto"/>
                 <RowDefinition Height ="*"/>
@@ -69,12 +77,12 @@
                 <!--#endregion-->
 
             </Grid>
+            
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="25"/>
-                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="40"/>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="25"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" MinWidth="200"/>
@@ -83,12 +91,12 @@
 
                 <!--#region Меню -->
 
-                <Menu Grid.ColumnSpan="3" FontSize="15" Background="{StaticResource MainAppColor}" Margin="3,3,0,0">
+                <Menu Grid.ColumnSpan="3" FontSize="15" Background="{StaticResource MainAppColor}" Margin="3,0,0,0">
 
                     <MenuItem Header="Файл" Foreground="{StaticResource MainAppTextColor}">
 
                         <MenuItem Header="Добавить файл(лы)" Command="{Binding AddFilesCommand}" Foreground="{StaticResource MainAppColor}"/>
-
+                        
                         <MenuItem Header="Выход" Foreground="{StaticResource MainAppColor}"/>
 
                     </MenuItem>
@@ -103,89 +111,273 @@
 
                 <!--#endregion-->
 
-                <!--#region Элементы управление -->
+                <!--#region Название выбранного файла \ количество выбранных файлов -->
 
-                <WrapPanel Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center">
-                    <Button Content="Добавить" Command="{Binding AddFilesCommand}" Width="90" Height="27" Margin="5,0,0,0" />
-                </WrapPanel>
-
+                <Border Grid.Column="1" Grid.Row="1" Style="{StaticResource FileNameBorder}">
+                    <WrapPanel  VerticalAlignment="Center">
+                        <TextBlock Text="Название:" Margin="5,0,0,0" FontSize="15" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding SelectedFile.FileName}" d:Text="Тестовое название"
+                                   FontSize="15" Margin="10,0,0,0"/>
+                    </WrapPanel>
+                </Border>
+                
                 <!--#endregion-->
 
-                <GridSplitter Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" BorderBrush="Gray" BorderThickness="1"/>
+                <!--#region Элементы управление -->
 
+                <Border Grid.Row="1" Style="{StaticResource ControlsFilesBorder}">
+                    <DockPanel VerticalAlignment="Center"  Margin="10,0,10,0">
+                        
+                        <Popup IsOpen="{Binding IsFilterPopupOpen}" PlacementTarget="{Binding ElementName=FilterButton}" Placement="Bottom" StaysOpen="False">
+                            <Border Background="Black" Width="100" Height="100">
+                                
+                            </Border>
+                        </Popup>
+
+                        <WrapPanel VerticalAlignment="Center">
+                            <ContentControl ContentTemplate="{StaticResource ListTemplate}"/>
+                            <ToggleButton Command="{Binding ToggleItemsPanelTemplateCommand}" Style="{StaticResource ItemsPanelTemplateToggleButton}"/>
+                            <ContentControl ContentTemplate="{StaticResource TilesTemplate}"/>
+                        </WrapPanel>
+
+                        <Button Name="FilterButton" 
+                                Command="{Binding OpenFilterCommand}"
+                                Template="{StaticResource TransparentAppButton}"
+                                Width="30" Height="30" Margin="5,0,5,0"
+                                HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <Button.Content>
+                                <fa:ImageAwesome Icon="Solid_Filter" Foreground="White"/>
+                            </Button.Content>
+                        </Button>
+                        
+                    </DockPanel>
+
+                </Border>
+                
+                <!--#endregion-->
+
+                <GridSplitter Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" BorderBrush="{StaticResource MainAppColor}" BorderThickness="1"/>
+                
                 <!--#region Список файлов -->
 
-                <ListView Grid.Column="0" Grid.Row="2"
+                <ListView x:Name="FilesListView" Grid.Column="0" Grid.Row="2"
                           ItemsSource="{Binding Files}" d:ItemsSource="{d:SampleData ItemCount=5}" 
                           SelectedItem="{Binding SelectedFile}"
-                          SelectionMode="Extended"
-                          FontSize="18" Margin="5,0,0,0"
-                          VirtualizingPanel.IsVirtualizing="True"
-                          VirtualizingStackPanel.VirtualizationMode="Recycling"
-                          VirtualizingPanel.CacheLength="15,15"
-                          VirtualizingPanel.CacheLengthUnit="Item"
-                          VirtualizingPanel.ScrollUnit="Pixel">
+                          FontSize="18" Margin="5,0,0,6"
+                          HorizontalContentAlignment="Center"
+                          VerticalContentAlignment="Center"
+                          ScrollViewer.CanContentScroll="False"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                          SelectionMode="Extended">
+
                     <i:Interaction.Behaviors>
                         <behavior:ListViewSelectedItemsBehavior SelectedItems="{Binding SelectedFiles}"/>
                     </i:Interaction.Behaviors>
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn  Width="38">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Image Source="{Binding FileIcon}" Width="23"/>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Название" Width="300">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <WrapPanel>
-                                            <TextBlock Text="{Binding FileName}" d:Text="Название" FontSize="20"/>
-                                        </WrapPanel>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Расширение">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding FileExtension}" d:Text=".png"/>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Вес" Width="120">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <WrapPanel>
-                                            <TextBlock Text="{Binding FileWeight}" d:Text="16.4"/>
-                                            <TextBlock Text=" кб" d:Text=" мб"/>
-                                        </WrapPanel>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="Дата создания" Width="130">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding DateCreate, StringFormat='{}{0:dd.MM.yyyy}'}" d:Text="04.11.2020"/>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
+
+                    <ListView.Resources>
+
+                        <Style TargetType="ListView">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListView">
+                                        <Border BorderBrush="#2758A5" BorderThickness="4" CornerRadius="0, 0, 10, 10" Background="LightGray">
+                                            <ScrollViewer>
+                                                <ItemsPresenter />
+                                            </ScrollViewer>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="ItemsPanel" Value="{StaticResource StackPanelTemplate}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsWrapView}" Value="True">
+                                    <Setter Property="ItemsPanel" Value="{StaticResource WrapPanelTemplate}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Margin" Value="5,5,2,5" />
+                            <Setter Property="Padding" Value="10" />
+                            <Setter Property="Background" Value="White" />
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListViewItem">
+                                        <Border Name="Border" Background="{TemplateBinding Background}" CornerRadius="5" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Border" Property="Background" Value="LightBlue" />
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Border" Property="Background" Value="SlateBlue" />
+                                                <Setter TargetName="Border" Property="BorderBrush" Value="White" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+
+                    </ListView.Resources>
+                    
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel>
+                                <Image Source="{Binding FileIcon}" Width="23"/>
+                                <TextBlock Text="{Binding FileName}" TextWrapping="WrapWithOverflow" Margin="5,0,0,0" d:Text="Название" FontSize="20"/>
+                                <TextBlock Text="{Binding FileExtension}" FontSize="20" d:Text=".png"/>
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
 
                     <ListView.ContextMenu>
-                        <ContextMenu >
-                            <MenuItem Header="Добавить файлы" Command="{Binding AddFilesCommand}"/>
+                        <ContextMenu Style="{StaticResource AppContextMenu}">
+                            
+                            <ContextMenu.Resources>
+                                
+                                <!--<Style TargetType="ContextMenu">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ContextMenu">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="8"
+                                                        Padding="{TemplateBinding Padding}">
+                                                    <StackPanel IsItemsHost="True" />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                                
+                                <Style TargetType="MenuItem">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Foreground" Value="Black"/>
+                                    <Setter Property="Padding" Value="10,5"/>
+                                    <Setter Property="FontFamily" Value="Segoe UI"/>
+                                    <Setter Property="FontSize" Value="14"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="MenuItem">
+                                                <Grid>
+                                                    <Border x:Name="Border"
+                                                            Background="{TemplateBinding Background}"
+                                                            CornerRadius="5"
+                                                            Padding="{TemplateBinding Padding}">
+                                                        <DockPanel>
+                                                            --><!-- Иконка или пустое пространство --><!--
+                                                            <ContentPresenter ContentSource="Icon"
+                                                                              VerticalAlignment="Center"
+                                                                              Margin="0,0,5,0"/>
+
+                                                            --><!-- Основной текст --><!--
+                                                            <ContentPresenter ContentSource="Header" 
+                                                                              VerticalAlignment="Center" />
+
+                                                            --><!-- Стрелка для подменю --><!--
+                                                            <Path x:Name="Arrow"
+                                                                  Margin="5,0,0,0"
+                                                                  VerticalAlignment="Center"
+                                                                  HorizontalAlignment="Right"
+                                                                  Visibility="Collapsed"
+                                                                  Fill="{TemplateBinding Foreground}"
+                                                                  Data="M 0 0 L 6 4 L 0 8 Z" />
+                                                        </DockPanel>
+                                                    </Border>
+
+                                                    --><!-- Popup для подменю --><!--
+                                                    <Popup x:Name="SubMenuPopup"
+                                                           Placement="Right"
+                                                           PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                                           IsOpen="{TemplateBinding IsSubmenuOpen}"
+                                                           AllowsTransparency="True"
+                                                           StaysOpen="False">
+                                                        <Border Background="White"
+                                                                BorderBrush="#FF1A1A1A"
+                                                                BorderThickness="1"
+                                                                CornerRadius="5"
+                                                                Padding="5"
+                                                                Effect="{DynamicResource PopupShadow}">
+                                                            <StackPanel>
+                                                                <ItemsPresenter />
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </Popup>
+                                                </Grid>
+
+                                                --><!-- Триггеры --><!--
+                                                <ControlTemplate.Triggers>
+                                                    --><!-- Показывать стрелку только если есть подменю --><!--
+                                                    <Trigger Property="Role" Value="TopLevelHeader">
+                                                        <Setter TargetName="Arrow" Property="Visibility" Value="Visible"/>
+                                                    </Trigger>
+                                                    <Trigger Property="Role" Value="SubmenuHeader">
+                                                        <Setter TargetName="Arrow" Property="Visibility" Value="Visible"/>
+                                                    </Trigger>
+                                                    
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Foreground" Value="White"/>
+                                                        <Setter TargetName="Border" Property="Background">
+                                                            <Setter.Value>
+                                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                                    <GradientStop Color="SlateBlue" Offset="0"/>
+                                                                    <GradientStop Color="SlateBlue" Offset="1"/>
+                                                                </LinearGradientBrush>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Trigger>
+                                                    <Trigger Property="IsSubmenuOpen" Value="True">
+                                                        <Setter TargetName="Border" Property="Background" Value="SlateBlue"/>
+                                                    </Trigger>
+                                                  
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter Property="Foreground" Value="Gray"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>-->
+
+                            </ContextMenu.Resources>
+
+                            <MenuItem Header="Добавить файлы" Command="{Binding AddFilesCommand}">
+                                <MenuItem.Icon>
+                                    <fa:ImageAwesome Style="{StaticResource AddFileIcon}"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            
                             <Separator/>
-                            <MenuItem Header="Убрать файлы из списка" Command="{Binding RemoveFilesCommand}"/>
+                            
+                            <MenuItem Header="Убрать файлы из списка" Command="{Binding RemoveFilesCommand}">
+                                <MenuItem.Icon>
+                                    <fa:ImageAwesome Style="{StaticResource ClearFileIcon}"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            
                             <MenuItem Header="Удалить файлы">
+                                <MenuItem.Icon>
+                                    <fa:ImageAwesome Style="{StaticResource DeleteFileIcon}"/>
+                                </MenuItem.Icon>
+                                
                                 <MenuItem Header="С устрйоства безвозвратно" Command="{Binding DeleteFilesCommand}"/>
                                 <MenuItem Header="С сохранением в карзине" Command="{Binding MoveFilesToTrashCommand}"/>
+                                
                             </MenuItem>
-                            <MenuItem Header="Очистить список файлов" Command="{Binding ClearFilesCommand}"/>
+                            
+                            <MenuItem Header="Очистить список файлов" Command="{Binding ClearFilesCommand}">
+                                <MenuItem.Icon>
+                                    <fa:ImageAwesome Style="{StaticResource ClearListFileIcon}"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            
                         </ContextMenu>
                     </ListView.ContextMenu>
-
+                    
                 </ListView>
 
                 <!--#endregion-->
@@ -194,75 +386,105 @@
 
                 <ScrollViewer Grid.Column="1" Grid.Row="2" Margin="5,0,0,0">
                     <StackPanel>
+                        <Border Style="{StaticResource PreviewFileBorder}">
+                            <StackPanel>
 
-                        <!--#region Отображение иконок выбранного файла. Если невозможно показать предпросмотр содержимого файла-->
+                                <!--#region Отображение иконок выбранного файла. Если невозможно показать предпросмотр содержимого файла -->
 
-                        <Image Source="{Binding IconSelectedFile}" d:Source="D:\Тестовые изображение\icon_calculator.ico" Margin="10" MaxHeight="500"
-                               Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=IconFile}"/>
+                                <Image Source="{Binding IconSelectedFile}" d:Source="D:\Тестовые изображение\icon_calculator.ico"
+                                       Style="{StaticResource PreviewFileImage}"
+                                       Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=IconFile}"/>
 
-                        <!--#endregion-->
+                                <!--#endregion-->
 
-                        <!--#region Отображение .jpg, .jpeg, .jfif, .jpe, .png, .ico, .webp, .heic -->
+                                <!--#region Отображение .jpg, .jpeg, .jfif, .jpe, .png, .ico, .webp, .heic -->
 
-                        <Image Source="{Binding SelectedImage}" d:Source="D:\Тестовые изображение\20240907163311_1.jpg" Margin="10" MaxHeight="500"
-                               Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Image}"/>
+                                <Image Source="{Binding SelectedImage}" d:Source="D:\Тестовые изображение\20240728231859_1.jpg"
+                                       Style="{StaticResource PreviewFileImage}"
+                                       Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Image}"/>
 
-                        <!--#endregion-->
+                                <!--#endregion-->
 
-                        <!--#region Отображение .gif -->
+                                <!--#region Отображение .gif -->
 
-                        <Image Source="{Binding CurrentFrame}" d:Source="D:\Тестовые изображение\Чужой.gif" Margin="10" MaxHeight="500"
-                               Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=GIF}"/>
+                                <Image Source="{Binding CurrentFrame}" d:Source="D:\Тестовые изображение\Чужой.gif"
+                                       Style="{StaticResource PreviewFileImage}"
+                                       Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=GIF}"/>
 
-                        <!--#endregion-->
+                                <!--#endregion-->
+
+                            </StackPanel>
+                        </Border>
 
                         <!--#region Список свойств изображений-->
 
-                        <TextBlock Text="Общие свойства" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Общие свойства" Style="{StaticResource HeadingFilePropTextBlock}"/>
 
                         <!--#region Общие файлы для всех файлов -->
+                        
+                        <Border Style="{StaticResource PreviewFilePropBorder}">
+                            <WrapPanel>
+                                <StackPanel>
+                                    <TextBlock Text="Директория" Style="{StaticResource FilePropNameTextBlock}"/>
+                                    <TextBlock Text="Создан" Style="{StaticResource FilePropNameTextBlock}"/>
+                                    <TextBlock Text="Изменен" Style="{StaticResource FilePropNameTextBlock}"/>
+                                    <TextBlock Text="Открыт" Style="{StaticResource FilePropNameTextBlock}"/>
+                                    <TextBlock Text="Вес" Style="{StaticResource FilePropNameTextBlock}"/>
+                                </StackPanel>
 
-                        <WrapPanel>
-                            <StackPanel>
-                                <TextBlock Text="Директория"/>
-                                <TextBlock Text="Создан"/>
-                                <TextBlock Text="Изменен"/>
-                                <TextBlock Text="Открыт"/>
-                                <TextBlock Text="Вес"/>
-                            </StackPanel>
-
-                            <StackPanel Margin="5,0,0,0">
-                                <TextBlock Text="{Binding BaseProperties.Directory}"/>
-                                <TextBlock Text="{Binding BaseProperties.CreationTime}"/>
-                                <TextBlock Text="{Binding BaseProperties.WriteTime}"/>
-                                <TextBlock Text="{Binding BaseProperties.AccessTime}"/>
-                            </StackPanel>
-                        </WrapPanel>
+                                <StackPanel Margin="5,0,0,0">
+                                    <TextBlock Text="{Binding BaseProperties.Directory}" Style="{StaticResource FilePropValueTextBlock}"/>
+                                    <TextBlock Text="{Binding BaseProperties.CreationTime}" Style="{StaticResource FilePropValueTextBlock}"/>
+                                    <TextBlock Text="{Binding BaseProperties.WriteTime}" Style="{StaticResource FilePropValueTextBlock}"/>
+                                    <TextBlock Text="{Binding BaseProperties.AccessTime}" Style="{StaticResource FilePropValueTextBlock}"/>
+                                    <TextBlock Text="{Binding BaseProperties.FileWeight}" Style="{StaticResource FilePropValueTextBlock}"/>
+                                </StackPanel>
+                            </WrapPanel>
+                        </Border>
 
                         <!--#endregion-->
 
-                        <TextBlock Text="Расширеные свойства" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Расширеные свойства" Style="{StaticResource HeadingFilePropTextBlock}"/>
 
                         <!--#region Вывод расщиреных свойств -->
-                      
-                        <ItemsControl ItemsSource="{Binding FileProps}" d:ItemsSource="{d:SampleData ItemCount=5}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <StackPanel Grid.Column="0">
-                                            <TextBlock Text="{Binding PropName}" TextWrapping="WrapWithOverflow" d:Text="Разрешение"/>
-                                        </StackPanel>
-                                        <StackPanel Grid.Column="1" HorizontalAlignment="Right" Margin="10,0,15,0">
-                                            <TextBlock Text="{Binding PropValue}" TextWrapping="Wrap" TextOptions.TextFormattingMode="Display" d:Text="2560x1440"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                        
+                        <Border Style="{StaticResource PreviewFilePropBorder}">
+                            <StackPanel>
+                                <Rectangle Height="0.5" Fill="Black" HorizontalAlignment="Stretch" VerticalAlignment="Top"/> <!--Вверх-->
+                                <ItemsControl ItemsSource="{Binding FileProps}" d:ItemsSource="{d:SampleData ItemCount=5}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Border BorderBrush="Black" BorderThickness="1,0.5,0.5,0.5">
+                                                    <WrapPanel Grid.Column="0">
+                                                        <TextBlock Text="{Binding PropName}" Style="{StaticResource FilePropNameTextBlock}" d:Text="Разрешение"/>
+                                                    </WrapPanel>
+                                                </Border>
+
+                                                <Border Grid.Column="1" BorderBrush="Black" BorderThickness="0.5,0.5,1,0.5">
+                                                    <WrapPanel  HorizontalAlignment="Left" Margin="10,0,15,0" Cursor="Hand">
+                                                        <TextBlock Text="{Binding PropValue}" Style="{StaticResource FilePropValueTextBlock}" ToolTipService.InitialShowDelay="1000" ToolTipService.Placement="Right" d:Text="2560x1440">
+                                                            <TextBlock.InputBindings>
+                                                                <MouseBinding Command="{Binding DataContext.CopyPropValueCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}" MouseAction="LeftClick"/>
+                                                            </TextBlock.InputBindings>
+                                                            <TextBlock.ToolTip>
+                                                                <TextBlock Text="Скопировать"/>
+                                                            </TextBlock.ToolTip>
+                                                        </TextBlock>
+                                                    </WrapPanel>
+                                                </Border>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <Rectangle Height="0.5" Fill="Black" HorizontalAlignment="Stretch" VerticalAlignment="Top"/> <!--Низ-->
+                            </StackPanel>
+                        </Border>
                         
                         <!--#endregion-->
                         

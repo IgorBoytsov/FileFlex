@@ -56,11 +56,19 @@ namespace FileFlex.Utils.Helpers
                 format == ".png" ||
                 format == ".ico")
             {
-                using (Image image = Image.FromFile(path))
+                try
                 {
-                    System.Drawing.Imaging.PixelFormat pixelFormat = image.PixelFormat;
-                    return image.PixelFormat.ToString();
+                    using (Image image = Image.FromFile(path))
+                    {
+                        System.Drawing.Imaging.PixelFormat pixelFormat = image.PixelFormat;
+                        return image.PixelFormat.ToString();
+                    }
                 }
+                catch (Exception ex) 
+                {
+                    return $"Не удалось считать: {ex.Message}";
+                }
+               
             }
             if (format == ".webp" ||
                 format == ".heic" ||
@@ -143,12 +151,20 @@ namespace FileFlex.Utils.Helpers
 
         public static int FramesCount(string imagePath)
         {
-            var bitmapDecoder = BitmapDecoder.Create(
+            try
+            {
+                var bitmapDecoder = BitmapDecoder.Create(
                 new Uri(imagePath),
                 BitmapCreateOptions.IgnoreColorProfile,
                 BitmapCacheOption.Default);
+
+                return bitmapDecoder.Frames.Count;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
             
-            return bitmapDecoder.Frames.Count;
         }
     }
 }

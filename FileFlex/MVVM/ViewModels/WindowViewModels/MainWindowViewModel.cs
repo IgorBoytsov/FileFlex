@@ -22,7 +22,17 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 {
     public class MainWindowViewModel : BaseViewModel
     {
-        #region Коллекции
+        /*--Общие константы-------------------------------------------------------------------------------*/
+
+        #region Константы : Текст
+
+        private const string EMPTY_PROP = "Отсутствует";
+
+        #endregion
+
+        /*--Общие коллекции-------------------------------------------------------------------------------*/
+
+        #region Коллекции : Списки файлов, Свойств
 
         private List<FileData> _files = [];
 
@@ -32,6 +42,8 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         #endregion
 
+        /*--Сервисы---------------------------------------------------------------------------------------*/
+
         private readonly IServiceProvider _serviceProvider;
 
         private readonly INavigationService _pageNavigationService;
@@ -39,6 +51,8 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         private readonly IFileDialogService _openFileDialogService;
         private readonly IFileDialogService _saveFileDialogService;
+
+        /*--Конструктор-----------------------------------------------------------------------------------*/
 
         public MainWindowViewModel(IServiceProvider serviceProvider)
         {
@@ -52,7 +66,12 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
             _openFileDialogService = fileDialogServices[0];
             _saveFileDialogService = fileDialogServices[1];
+
+            EmptyFileProps();
+            EmptyBaseFileProps();
         }
+
+        /*--RelayCommands---------------------------------------------------------------------------------*/
 
         #region Команды
 
@@ -71,11 +90,109 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
         private RelayCommand _moveFilesToTrashCommand;
         public RelayCommand MoveFilesToTrashCommand { get => _moveFilesToTrashCommand ??= new(obj => { InteractionFiles(FileAction.MoveToTrash); }); }
 
-        #endregion             
+        private RelayCommand _copyPropValueCommand;
+        public RelayCommand CopyPropValueCommand => _copyPropValueCommand ??= new RelayCommand(CopyPropValue);
 
-        #region Получение и отображение информации о файле
+        private RelayCommand _toggleItemsPanelTemplateCommand;
+        public RelayCommand ToggleItemsPanelTemplateCommand { get => _toggleItemsPanelTemplateCommand ??= new(obj => { ToggleItemsPanelTemplate(); }); }
+        
+        private RelayCommand _openFilterCommand;
+        public RelayCommand OpenFilterCommand { get => _openFilterCommand ??= new(obj => { IsFilterPopupOpen = true; }); }
 
-        /*------------------------------------------------------------------------------------------------*/
+        #endregion
+
+        /*--Установка значений по умолчанию---------------------------------------------------------------*/
+
+        #region Метод : Установка списка с свойствами (PropName = "Отсутствует", PropValue = "Отсутствует")
+
+        private void EmptyFileProps()
+        {
+            FileProps.Clear();
+            FileProps.Add(new FileProperties{ PropName = EMPTY_PROP, PropValue = EMPTY_PROP });
+        }
+
+        #endregion
+
+        #region Метод : Установка базовых свойств файла ( BaseProperties == "Отсутствует")
+
+        private void EmptyBaseFileProps()
+        {
+            BaseProperties = new FileBaseProperties()
+            {
+                Directory = EMPTY_PROP,
+                CreationTime = EMPTY_PROP,
+                AccessTime = EMPTY_PROP,
+                WriteTime = EMPTY_PROP,
+                FileWeight = 0,
+            };
+        }
+
+        #endregion 
+
+        /*-Изменение Visibility для отображение контента файла--------------------------------------------*/
+
+        #region Свойства : Visibility предпросмотра
+
+        private TypeFile _currentDisplayFile;
+        public TypeFile CurrentDisplayFile
+        {
+            get => _currentDisplayFile;
+            set
+            {
+                _currentDisplayFile = value;
+                OnPropertyChanged();
+                UpdateVisibility();
+            }
+        }
+
+        private Visibility _imageVisibility;
+        public Visibility ImageVisibility
+        {
+            get => _imageVisibility;
+            set
+            {
+                _imageVisibility = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Visibility _fileIconVisibility;
+        public Visibility FileIconVisibility
+        {
+            get => _fileIconVisibility;
+            set
+            {
+                _fileIconVisibility = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Visibility _imageGIFVisibility;
+        public Visibility ImageGIFVisibility
+        {
+            get => _imageGIFVisibility;
+            set
+            {
+                _imageGIFVisibility = value;
+                OnPropertyChanged();
+            }
+        }
+
+        #endregion
+
+        #region Метод : Обновление Visibility 
+
+        private void UpdateVisibility()
+        {
+            // Отображение предпросмотра файла.
+            ImageVisibility = CurrentDisplayFile == TypeFile.Image ? Visibility.Visible : Visibility.Collapsed;
+            ImageGIFVisibility = CurrentDisplayFile == TypeFile.GIF ? Visibility.Visible : Visibility.Collapsed;
+            FileIconVisibility = CurrentDisplayFile == TypeFile.IconFile ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        #endregion
+
+        /*-Взаимодействие с файлами из списка-------------------------------------------------------------*/
 
         #region Свойства : выбора файла
 
@@ -131,84 +248,6 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                 _iconSelectedFile = value;
                 OnPropertyChanged();
             }
-        }
-
-        #endregion
-
-        #region Свойство : Отображение базовой информации файла
-
-        private FileBaseProperties _baseProperties;
-        public FileBaseProperties BaseProperties
-        {
-            get => _baseProperties;
-            set
-            {
-                _baseProperties = value;
-                OnPropertyChanged();
-            }
-        }
-
-        #endregion
-
-        #region Свойства : Visibility предпросмотра
-
-        private TypeFile _currentDisplayFile;
-        public TypeFile CurrentDisplayFile
-        {
-            get => _currentDisplayFile;
-            set
-            {
-                _currentDisplayFile = value;
-                OnPropertyChanged();
-                UpdateVisibility();
-            }
-        }
-
-        private Visibility _imageVisibility;
-        public Visibility ImageVisibility
-        {
-            get => _imageVisibility;
-            set
-            {
-                _imageVisibility = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private Visibility _fileIconVisibility;
-        public Visibility FileIconVisibility
-        {
-            get => _fileIconVisibility;
-            set
-            {
-                _fileIconVisibility = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private Visibility _imageGIFVisibility;
-        public Visibility ImageGIFVisibility
-        {
-            get => _imageGIFVisibility;
-            set
-            {
-                _imageGIFVisibility = value;
-                OnPropertyChanged();
-            }
-        }
-
-        #endregion
-
-        /*------------------------------------------------------------------------------------------------*/
-
-        #region Метод : Обновление Visibility 
-
-        private void UpdateVisibility()
-        {
-            // Отображение предпросмотра файла.
-            ImageVisibility = CurrentDisplayFile == TypeFile.Image ? Visibility.Visible : Visibility.Collapsed;
-            ImageGIFVisibility = CurrentDisplayFile == TypeFile.GIF ? Visibility.Visible : Visibility.Collapsed;
-            FileIconVisibility = CurrentDisplayFile == TypeFile.IconFile ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #endregion
@@ -377,7 +416,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         #endregion  
 
-        /*------------------------------------------------------------------------------------------------*/
+        /*-Отображение контента файлов--------------------------------------------------------------------*/
 
         #region Метод : Отображение информации файла, контента файла
 
@@ -430,7 +469,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                 else
                 {
                     BaseProperties = ExtractBaseFileProperty(fileData.FilePath);
-                    FileProps.Clear();
+                    EmptyFileProps();
                 };
             }
         }
@@ -541,7 +580,22 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         #endregion
 
-        /*------------------------------------------------------------------------------------------------*/
+        /*-Отображение свойств файлов---------------------------------------------------------------------*/
+
+        #region Свойство : Отображение базовой информации файла
+
+        private FileBaseProperties _baseProperties;
+        public FileBaseProperties BaseProperties
+        {
+            get => _baseProperties;
+            set
+            {
+                _baseProperties = value;
+                OnPropertyChanged();
+            }
+        }
+
+        #endregion
 
         #region Метод : Получение базовых свойств файла
 
@@ -553,6 +607,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
             var creationTime = fileInfo.CreationTime;
             var accessTime = fileInfo.LastAccessTime;
             var writeTime = fileInfo.LastWriteTime;
+            var FileWeight = fileInfo.Length;
 
             return new FileBaseProperties()
             {
@@ -560,6 +615,8 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                 CreationTime = creationTime.ToString("f"),
                 AccessTime = accessTime.ToString("f"),
                 WriteTime = writeTime.ToString("f"),
+                //FileWeight = Math.Round((double)fileInfo.Length / (1024 * 1024), 3), //Получаем размер в МБ,
+                FileWeight = Math.Round((double)FileWeight / 1024, 1), //Получаем размер в КБ,
             };
         }
 
@@ -618,7 +675,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
             BaseProperties = baseProp;
 
             FileVersionInfo fileVersionExeProp = FileVersionInfo.GetVersionInfo(fileData.FilePath);
-
+       
             var propExe = new Dictionary<string, string>
             {
                 { "Название компании",                      fileVersionExeProp.CompanyName },
@@ -658,8 +715,61 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         #endregion
 
-        /*------------------------------------------------------------------------------------------------*/
+        /*-Взаимодействие с свойствами файлов-------------------------------------------------------------*/
+
+        #region Метод : Копирования значений у свойства
+
+        private void CopyPropValue(object value)
+        {
+            if (value is FileProperties fileProp)
+                Clipboard.SetText($"Свойство: {fileProp.PropName} \n Значение: {fileProp.PropValue}");
+        }
 
         #endregion
+
+        /*-Выбор ItemsPanelTemplate для отображения-------------------------------------------------------*/
+
+        #region Свойство : Хранение значение для триггера 
+
+        private bool _isWrapView = false;
+        public bool IsWrapView
+        {
+            get => _isWrapView;
+            set
+            {
+                _isWrapView = value;
+                OnPropertyChanged();
+            }
+        }
+
+        #endregion
+
+        #region Метод : Выбор ItemsPanelTemplate
+
+        private void ToggleItemsPanelTemplate()
+        {
+            IsWrapView = !IsWrapView;
+        }
+
+        #endregion
+
+        /*-Popup------------------------------------------------------------------------------------------*/
+
+        #region Свойство : IsFilterPopupOpen - фильтрация файлов
+
+        private bool _isFilterPopupOpen = false;
+        public bool IsFilterPopupOpen
+        {
+            get => _isFilterPopupOpen;
+            set
+            {
+                _isFilterPopupOpen = value;
+                OnPropertyChanged();
+            }
+        }
+
+        #endregion 
+
+        /*------------------------------------------------------------------------------------------------*/
     }
 }

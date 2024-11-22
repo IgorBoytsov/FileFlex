@@ -5,14 +5,25 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                
+                <ResourceDictionary Source="MVVM/View/Brushes/BrushesResources.xaml"/>
+
                 <ResourceDictionary Source="MVVM/View/Styles/BorderStyle.xaml"/>
-                <ResourceDictionary Source="MVVM/View/Styles/Brushes.xaml"/>
                 <ResourceDictionary Source="MVVM/View/Styles/ButtonStyle.xaml"/>
                 <ResourceDictionary Source="MVVM/View/Styles/ComboBoxStyle.xaml"/>
+                <ResourceDictionary Source="MVVM/View/Styles/ContextMenuStyle.xaml"/>
+                <ResourceDictionary Source="MVVM/View/Styles/FontAwesomeStyle.xaml"/>
+                <ResourceDictionary Source="MVVM/View/Styles/ImageStyle.xaml"/>
+                <ResourceDictionary Source="MVVM/View/Styles/MenuStyle.xaml"/>
                 <ResourceDictionary Source="MVVM/View/Styles/ScrollViewerStyle.xaml"/>
+                <ResourceDictionary Source="MVVM/View/Styles/SeparatorStyle.xaml"/>
                 <ResourceDictionary Source="MVVM/View/Styles/TextBlockStyle.xaml"/>
                 <ResourceDictionary Source="MVVM/View/Styles/TextBoxStyle.xaml"/>
+                <ResourceDictionary Source="MVVM/View/Styles/ToggleButtonStyle.xaml"/>
                 <ResourceDictionary Source="MVVM/View/Styles/WindowStyle.xaml"/>
+
+                <ResourceDictionary Source="MVVM/View/Shapes/ShapesResource.xaml"/>
+                
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
