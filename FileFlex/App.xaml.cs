@@ -1,6 +1,4 @@
-﻿using FileFlex.MVVM.ViewModels.BaseVM;
-using FileFlex.MVVM.ViewModels.WindowViewModels;
-using FileFlex.Utils.Services;
+﻿using FileFlex.MVVM.ViewModels.WindowViewModels;
 using FileFlex.Utils.Services.FileConvertServices;
 using FileFlex.Utils.Services.FileDialogServices;
 using FileFlex.Utils.Services.NavigationServices;
@@ -48,8 +46,8 @@ namespace FileFlex
             services.AddSingleton<IFileConvertService, ImageConvertService>();
             services.AddSingleton<IFileConvertService, DocumentConvertService>();
 
-            services.AddSingleton<INavigationService, PageNavigationService>();
-            services.AddSingleton<INavigationService, WindowNavigationService>();
+            services.AddSingleton<IPageNavigationService, PageNavigationService>();
+            services.AddSingleton<IWindowNavigationService, WindowNavigationService>();
 
             services.AddSingleton<IFileDialogService, OpenFileDialogService>();
             services.AddSingleton<IFileDialogService, SaveFileDialogService>();
