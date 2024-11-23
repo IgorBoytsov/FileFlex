@@ -3,5 +3,7 @@
 
     <SolidColorBrush x:Key="MainAppColor" Color="#121212"/>
     <SolidColorBrush x:Key="MainAppTextColor" Color="White"/>
-   
+
+    <SolidColorBrush x:Key="ContextMenuSelectedColor" Color="#FFA395F5"/>
+    
 </ResourceDictionary>

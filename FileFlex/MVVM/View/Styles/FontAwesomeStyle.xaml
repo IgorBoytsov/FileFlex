@@ -2,10 +2,12 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:fa="http://schemas.fontawesome.com/icons/" >
 
-    <!--#region Добавление файлов (Иконка : папки с плюсом ) -->
+    <!--Контекстное меню в MainWidnow (Список файлов)-->
+    
+    <!--#region Добавление файлов (Иконка : файл с плюсом ) -->
     
     <Style x:Key="AddFileIcon" TargetType="fa:ImageAwesome">
-        <Setter Property="Icon" Value="Solid_FolderPlus"/>
+        <Setter Property="Icon" Value="Solid_FileMedical"/>
         <Setter Property="Foreground" Value="Green"/>
     </Style>
     
@@ -37,5 +39,41 @@
     </Style>
 
     <!--#endregion-->
-    
+
+    <!--#region Удаление файлов с устройства подменю ( Иконка : персональный комьютер ) -->
+
+    <Style x:Key="DeleteFileFromPCSubmenuIcon" TargetType="fa:ImageAwesome">
+        <Setter Property="Icon" Value="Solid_Desktop"/>
+        <Setter Property="Foreground" Value="Red"/>
+    </Style>
+
+    <!--#endregion-->
+
+    <!--#region Удаление файлов в карзину подменю ( Иконка : мусорная карзина ) -->
+
+    <Style x:Key="DeleteFileFromTrashSubmenuIcon" TargetType="fa:ImageAwesome">
+        <Setter Property="Icon" Value="Solid_Trash"/>
+        <Setter Property="Foreground" Value="Green"/>
+    </Style>
+
+    <!--#endregion-->
+
+    <!--#region Конвертация ( Иконка : стрелки по кругу ) -->
+
+    <Style x:Key="ConvertFileIcon" TargetType="fa:ImageAwesome">
+        <Setter Property="Icon" Value="Solid_Retweet"/>
+        <Setter Property="Foreground" Value="Blue"/>
+    </Style>
+
+    <!--#endregion-->
+
+    <!--#region Конвертация изображения ( Иконка : стрелки по кругу ) -->
+
+    <Style x:Key="ConvertImageFileIcon" TargetType="fa:ImageAwesome">
+        <Setter Property="Icon" Value="Regular_FileImage"/>
+        <Setter Property="Foreground" Value="Blue"/>
+    </Style>
+
+    <!--#endregion-->
+
 </ResourceDictionary>

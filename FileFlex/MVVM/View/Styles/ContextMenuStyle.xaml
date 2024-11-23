@@ -86,19 +86,11 @@
                                 </Trigger>
 
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Foreground" Value="White"/>
-                                    <Setter TargetName="Border" Property="Background">
-                                        <Setter.Value>
-                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                <GradientStop Color="SlateBlue" Offset="0"/>
-                                                <GradientStop Color="SlateBlue" Offset="1"/>
-                                            </LinearGradientBrush>
-                                        </Setter.Value>
-                                    </Setter>
+                                    <Setter TargetName="Border" Property="Background" Value="{StaticResource ContextMenuSelectedColor}"/>
                                 </Trigger>
-                                <Trigger Property="IsSubmenuOpen" Value="True">
-                                    <Setter TargetName="Border" Property="Background" Value="SlateBlue"/>
-                                </Trigger>
+                                <!--<Trigger Property="IsSubmenuOpen" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="{StaticResource ContextMenuSelectedColor}"/>
+                                </Trigger>-->
                                 <Trigger Property="IsEnabled" Value="False">
                                     <Setter Property="Foreground" Value="Gray"/>
                                 </Trigger>
