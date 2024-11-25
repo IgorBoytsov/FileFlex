@@ -52,7 +52,7 @@
 
             <ContentControl HorizontalAlignment="Center" 
                             VerticalAlignment="Center"
-                            FontSize="16"
+                            FontSize="{TemplateBinding FontSize}"
                             Foreground="#F0F1F3"
                             Content="{TemplateBinding Content}"/>
         </Border>
@@ -94,5 +94,14 @@
     </ControlTemplate>
     
     <!--#endregion-->
+    
+    <!--Кастомное окно с сообщениями-->
+
+    <Style x:Key="ResultButtonCustomMessageWindow" TargetType="Button">
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="Width" Value="100"/>
+        <Setter Property="Height" Value="25"/>
+        <Setter Property="Margin" Value="5,0,5,0"/>
+    </Style>
     
 </ResourceDictionary>
