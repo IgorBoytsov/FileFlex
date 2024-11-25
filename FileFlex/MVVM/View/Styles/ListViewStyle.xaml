@@ -1,0 +1,88 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--#region Панели для вывода -->
+    
+    <ItemsPanelTemplate x:Key="StackPanelTemplate">
+        <StackPanel/>
+    </ItemsPanelTemplate>
+
+    <ItemsPanelTemplate x:Key="WrapPanelTemplate">
+        <WrapPanel/>
+    </ItemsPanelTemplate>
+    
+    <!--#endregion-->
+
+    <!--#region ItemsTemplate (ListView) -->
+
+    <DataTemplate x:Key="ShortDescriptionFile">
+        <DockPanel>
+            <Image Source="{Binding FileIcon}" Width="23"/>
+            <TextBlock Text="{Binding FileName}" TextWrapping="WrapWithOverflow" Margin="5,0,0,0" FontSize="20"/>
+            <TextBlock Text="{Binding FileExtension}" FontSize="20"/>
+        </DockPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DetailedDescriptionFile">
+        <DockPanel>
+            <Image Source="{Binding FileIcon}" Width="23"/>
+            <TextBlock Text="{Binding FileName}" TextWrapping="WrapWithOverflow" Margin="5,0,0,0" FontSize="20"/>
+            <TextBlock Text="{Binding FileExtension}" FontSize="20"/>
+            <TextBlock Text="{Binding DateCreate}" FontSize="20" DockPanel.Dock="Right"/>
+            <TextBlock Text="{Binding FileWeight}" FontSize="20" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+        </DockPanel>
+    </DataTemplate>
+
+    <!--#endregion-->
+
+    <Style x:Key="PreviewFileList" TargetType="ListView">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListView">
+                    <Border BorderBrush="#2758A5" BorderThickness="4" CornerRadius="0, 0, 10, 10" Background="LightGray">
+                        <ScrollViewer>
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemsPanel" Value="{StaticResource StackPanelTemplate}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsWrapView}" Value="True">
+                <Setter Property="ItemsPanel" Value="{StaticResource WrapPanelTemplate}" />
+            </DataTrigger>
+        </Style.Triggers>
+        
+        <Style.Resources>
+            <Style TargetType="ListViewItem">
+                <Setter Property="Margin" Value="5,5,2,5" />
+                <Setter Property="Padding" Value="10" />
+                <Setter Property="Background" Value="White" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListViewItem">
+                            <Border Name="Border" Background="{TemplateBinding Background}" CornerRadius="5" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="LightBlue" />
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="SlateBlue" />
+                                    <Setter TargetName="Border" Property="BorderBrush" Value="White" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Style.Resources>
+        
+    </Style>
+
+    
+
+</ResourceDictionary>

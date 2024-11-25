@@ -15,6 +15,7 @@
                 <ResourceDictionary Source="MVVM/View/Styles/ContextMenuStyle.xaml"/>
                 <ResourceDictionary Source="MVVM/View/Styles/FontAwesomeStyle.xaml"/>
                 <ResourceDictionary Source="MVVM/View/Styles/ImageStyle.xaml"/>
+                <ResourceDictionary Source="MVVM/View/Styles/ListViewStyle.xaml"/>
                 <ResourceDictionary Source="MVVM/View/Styles/MenuStyle.xaml"/>
                 <ResourceDictionary Source="MVVM/View/Styles/ScrollViewerStyle.xaml"/>
                 <ResourceDictionary Source="MVVM/View/Styles/SeparatorStyle.xaml"/>
