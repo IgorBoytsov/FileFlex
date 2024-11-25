@@ -4,9 +4,11 @@ using System.Windows;
 
 namespace FileFlex.Utils.Services.NavigationServices
 {
-    public class WindowNavigationService : IWindowNavigationService
+    public class WindowNavigationService(IServiceProvider serviceProvider) : IWindowNavigationService
     {
         private readonly Dictionary<string, Window> _openWindows = new();
+
+        private readonly IServiceProvider _serviceProvider = serviceProvider;
 
         public void NavigateTo(string pageName, object parameter = null)
         {
@@ -20,11 +22,16 @@ namespace FileFlex.Utils.Services.NavigationServices
                 return;
             }
 
+            OpenWindow(pageName, parameter);
+        }
+
+        private void OpenWindow(string pageName, object parameter = null)
+        {
             Action action = pageName switch
             {
                 "ConvertImageWindow" => () =>
                 {
-                    var viewModel = new ConvertImageWindowViewModel();
+                    var viewModel = new ConvertImageWindowViewModel(_serviceProvider);
                     var convertImageWindow = new ConvertImageWindow
                     {
                         DataContext = viewModel
@@ -32,7 +39,7 @@ namespace FileFlex.Utils.Services.NavigationServices
                     viewModel.Update(parameter);
 
                     _openWindows[pageName] = convertImageWindow;
-                    convertImageWindow.Closed += (s, e) => _openWindows.Remove(pageName); 
+                    convertImageWindow.Closed += (s, e) => _openWindows.Remove(pageName);
                     convertImageWindow.Show();
                 }
                 ,
