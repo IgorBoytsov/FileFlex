@@ -1,4 +1,5 @@
 ﻿using FileFlex.MVVM.ViewModels.WindowViewModels;
+using FileFlex.Utils.Services.CustomWindowServices;
 using FileFlex.Utils.Services.FileConvertServices;
 using FileFlex.Utils.Services.FileDialogServices;
 using FileFlex.Utils.Services.NavigationServices;
@@ -42,6 +43,8 @@ namespace FileFlex
         {
             services.AddSingleton<MainWindowViewModel>();
             services.AddSingleton<MainWindow>();
+
+            services.AddSingleton<ICustomMessageService, CustomMessageWindowService>();
 
             services.AddSingleton<IFileConvertService, ImageConvertService>();
             services.AddSingleton<IFileConvertService, DocumentConvertService>();

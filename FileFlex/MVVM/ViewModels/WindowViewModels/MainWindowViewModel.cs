@@ -10,6 +10,7 @@ using FileFlex.Utils.Enums;
 using Microsoft.VisualBasic.FileIO;
 using FileFlex.Utils.Helpers;
 using FileFlex.Utils.Services.NavigationServices;
+using FileFlex.Utils.Services.CustomWindowServices;
 using FileFlex.MVVM.Model.FilePropModel;
 using System.Windows.Media.Imaging;
 using System.Drawing;
@@ -17,7 +18,6 @@ using System.Windows.Threading;
 using System.Windows.Interop;
 using System.Drawing.Imaging;
 using System.Diagnostics;
-using FileFlex.MVVM.View.Windows;
 
 namespace FileFlex.MVVM.ViewModels.WindowViewModels
 {
@@ -47,11 +47,13 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly IPageNavigationService _pageNavigationService;
         private readonly IWindowNavigationService _windowNavigationService;
+        private readonly IPageNavigationService _pageNavigationService;
 
         private readonly IFileDialogService _openFileDialogService;
         private readonly IFileDialogService _saveFileDialogService;
+
+        private readonly ICustomMessageService _customMessageWindowService;
 
         /*--Конструктор-----------------------------------------------------------------------------------*/
 
@@ -62,12 +64,15 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
             var windowNavigationService = _serviceProvider.GetService<IWindowNavigationService>();
             var pageNavigationService = _serviceProvider.GetService<IPageNavigationService>();
             var fileDialogServices = _serviceProvider.GetServices<IFileDialogService>().ToList();
+            var customMessageServices = _serviceProvider.GetServices<ICustomMessageService>().ToList();
 
             _windowNavigationService = windowNavigationService;
             _pageNavigationService = pageNavigationService;
 
             _openFileDialogService = fileDialogServices[0];
             _saveFileDialogService = fileDialogServices[1];
+
+            _customMessageWindowService = customMessageServices[0];
 
             EmptyFileProps();
             EmptyBaseFileProps();
@@ -203,7 +208,24 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         private void ConvertImageWindowOpen()
         {
-            _windowNavigationService.NavigateTo("ConvertImageWindow", SelectedFiles);
+            if (SelectedFiles.Count != 0 || SelectedFile != null)
+            {
+                var files = new List<FileData>();
+
+                if (SelectedFiles.Count > 1)
+                    files.AddRange(SelectedFiles);
+                else
+                    files.Add(SelectedFile);
+
+                _windowNavigationService.NavigateTo("ConvertImageWindow", files);
+
+                files.Clear();
+            }
+            else
+            {
+                _customMessageWindowService.Show("Вы не выбрали файлы.", "Отсутствие файлов.", TypeMessage.Error);
+            }
+
         }
 
         #endregion
@@ -270,8 +292,6 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         #region Методы возоимодействиe с списком файлов : Открытие \ добавление, удаление, очистка, перемещение в карзину
 
-        // TODO: После создание кастюмного окна с сообщениями  Сделать проверку на то, что пользователь согласен удалить файлы с устройства.
-
         private void InteractionFiles(FileAction fileAction)
         {
             Action action = fileAction switch
@@ -306,7 +326,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                 {
                     if (SelectedFiles.Count > 1)
                     {
-                        if (MessageBox.Show($"Вы точно хотите убрать {SelectedFiles.Count} файлов?", "Предупреждение", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        if (_customMessageWindowService.Show($"Вы точно хотите убрать {SelectedFiles.Count} файлов?", "Предупреждение", TypeMessage.Warning))
                         {
                             var filesToRemove = SelectedFiles.ToList();
                             foreach (var file in filesToRemove)
@@ -319,7 +339,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                     {
                         if (SelectedFile != null)
                         {
-                            if (MessageBox.Show($"Вы точно хотите убрать файл?", "Предупреждение", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                            if (_customMessageWindowService.Show($"Вы точно хотите убрать файл?", "Предупреждение", TypeMessage.Warning))
                             {
                                 RemoveItemInFiles(SelectedFile);
                             }
@@ -331,7 +351,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                 {
                     if (Files != null && _files != null)
                     {
-                        if (MessageBox.Show("Вы точно хотите очистить список?", "Предупреждение", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        if (_customMessageWindowService.Show("Вы точно хотите очистить список?", "Предупреждение", TypeMessage.Warning))
                         {
                             Files.Clear();
                             _files.Clear();
@@ -343,7 +363,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                 {
                     if (SelectedFiles.Count > 1)
                     {
-                        if (MessageBox.Show($"Вы точно хотите удалить {SelectedFiles.Count} файлов с устройства? Восстановить их будет нельзя!", "Предупреждение", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        if (_customMessageWindowService.Show($"Вы точно хотите удалить {SelectedFiles.Count} файлов с устройства? Восстановить их будет нельзя!", "Предупреждение", TypeMessage.Warning))
                         {
                             var filesToRemove = SelectedFiles.ToList();
                             foreach (var file in filesToRemove)
@@ -360,7 +380,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                     {
                         if (SelectedFile != null)
                         {
-                            if (MessageBox.Show($"Вы точно хотите удалить файл? Восстановить его будет нельзя!", "Предупреждение", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                            if (_customMessageWindowService.Show($"Вы точно хотите удалить файл? Восстановить его будет нельзя!", "Предупреждение", TypeMessage.Warning))
                             {
                                 if (File.Exists(SelectedFile.FilePath))
                                 {
@@ -377,7 +397,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                 {
                     if (SelectedFiles.Count > 1)
                     {
-                        if (MessageBox.Show($"Вы точно хотите переместить {SelectedFiles.Count} файлов в корзину? Восстановить их будет можно.", "Предупреждение", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        if (_customMessageWindowService.Show($"Вы точно хотите переместить {SelectedFiles.Count} файлов в корзину? Восстановить их будет можно.", "Предупреждение", TypeMessage.Warning))
                         {
                             var filesToRemove = SelectedFiles.ToList();
                             foreach (var file in filesToRemove)
@@ -394,7 +414,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                     {
                         if (SelectedFile != null)
                         {
-                            if (MessageBox.Show($"Вы точно хотите переместить файл в корзину? Восстановить его будет можно.", "Предупреждение", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                            if (_customMessageWindowService.Show($"Вы точно хотите переместить файл в корзину? Восстановить его будет можно.", "Предупреждение", TypeMessage.Warning))
                             {
                                 if (File.Exists(SelectedFile.FilePath))
                                 {
