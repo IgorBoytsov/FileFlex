@@ -17,6 +17,7 @@ using System.Windows.Threading;
 using System.Windows.Interop;
 using System.Drawing.Imaging;
 using System.Diagnostics;
+using FileFlex.MVVM.View.Windows;
 
 namespace FileFlex.MVVM.ViewModels.WindowViewModels
 {
@@ -46,8 +47,8 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly INavigationService _pageNavigationService;
-        private readonly INavigationService _windowNavigationService;
+        private readonly IPageNavigationService _pageNavigationService;
+        private readonly IWindowNavigationService _windowNavigationService;
 
         private readonly IFileDialogService _openFileDialogService;
         private readonly IFileDialogService _saveFileDialogService;
@@ -58,11 +59,12 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
         {
             _serviceProvider = serviceProvider;
 
-            var navigationServices = _serviceProvider.GetServices<INavigationService>().ToList();
+            var windowNavigationService = _serviceProvider.GetService<IWindowNavigationService>();
+            var pageNavigationService = _serviceProvider.GetService<IPageNavigationService>();
             var fileDialogServices = _serviceProvider.GetServices<IFileDialogService>().ToList();
 
-            _pageNavigationService = navigationServices[0];
-            _windowNavigationService = navigationServices[1];
+            _windowNavigationService = windowNavigationService;
+            _pageNavigationService = pageNavigationService;
 
             _openFileDialogService = fileDialogServices[0];
             _saveFileDialogService = fileDialogServices[1];
@@ -97,7 +99,10 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
         public RelayCommand ToggleItemsPanelTemplateCommand { get => _toggleItemsPanelTemplateCommand ??= new(obj => { ToggleItemsPanelTemplate(); }); }
         
         private RelayCommand _openFilterCommand;
-        public RelayCommand OpenFilterCommand { get => _openFilterCommand ??= new(obj => { IsFilterPopupOpen = true; }); }
+        public RelayCommand OpenFilterCommand { get => _openFilterCommand ??= new(obj => { IsFilterPopupOpen = true; }); } 
+        
+        private RelayCommand _openConvertImageCommand;
+        public RelayCommand OpenConvertImageCommand { get => _openConvertImageCommand ??= new(obj => { ConvertImageWindowOpen(); }); }
 
         #endregion
 
@@ -188,6 +193,17 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
             ImageVisibility = CurrentDisplayFile == TypeFile.Image ? Visibility.Visible : Visibility.Collapsed;
             ImageGIFVisibility = CurrentDisplayFile == TypeFile.GIF ? Visibility.Visible : Visibility.Collapsed;
             FileIconVisibility = CurrentDisplayFile == TypeFile.IconFile ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        #endregion
+
+        /*-Открытие окон----------------------------------------------------------------------------------*/
+
+        #region Методы открытие Window : Конвертеры
+
+        private void ConvertImageWindowOpen()
+        {
+            _windowNavigationService.NavigateTo("ConvertImageWindow", SelectedFiles);
         }
 
         #endregion
