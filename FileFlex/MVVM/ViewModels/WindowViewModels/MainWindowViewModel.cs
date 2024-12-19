@@ -18,6 +18,7 @@ using System.Windows.Threading;
 using System.Windows.Interop;
 using System.Drawing.Imaging;
 using System.Diagnostics;
+using FileFlex.Utils.Settings;
 
 namespace FileFlex.MVVM.ViewModels.WindowViewModels
 {
@@ -43,6 +44,49 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         #endregion
 
+        /*-Свойства---------------------------------------------------------------------------------------*/
+
+        #region Свойство : Текущий тип отображенного файла
+
+        private TypeFile _currentDisplayFile = TypeFile.None;
+        public TypeFile CurrentDisplayFile
+        {
+            get => _currentDisplayFile;
+            set
+            {
+                _currentDisplayFile = value;
+                OnPropertyChanged();
+            }
+        }
+
+        #endregion 
+
+        #region Свойства : Путь сохранение файлов, путь открытие файлов
+
+        private string _openFilePath;
+        public string OpenFilePath
+        {
+            get => _openFilePath;
+            set
+            {
+                _openFilePath = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _saveFilePath;
+        public string SaveFilePath
+        {
+            get => _saveFilePath;
+            set
+            {
+                _saveFilePath = value;
+                OnPropertyChanged();
+            }
+        }
+
+        #endregion
+
         /*--Сервисы---------------------------------------------------------------------------------------*/
 
         private readonly IServiceProvider _serviceProvider;
@@ -55,6 +99,8 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         private readonly ICustomMessageService _customMessageWindowService;
 
+        private readonly SettingsManager _settingsManager;
+
         /*--Конструктор-----------------------------------------------------------------------------------*/
 
         public MainWindowViewModel(IServiceProvider serviceProvider)
@@ -65,6 +111,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
             var pageNavigationService = _serviceProvider.GetService<IPageNavigationService>();
             var fileDialogServices = _serviceProvider.GetServices<IFileDialogService>().ToList();
             var customMessageServices = _serviceProvider.GetServices<ICustomMessageService>().ToList();
+            var settingsManager = _serviceProvider.GetRequiredService<SettingsManager>();
 
             _windowNavigationService = windowNavigationService;
             _pageNavigationService = pageNavigationService;
@@ -74,6 +121,11 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
             _customMessageWindowService = customMessageServices[0];
 
+            _settingsManager = settingsManager;
+
+            _settingsManager.UpdateSettings += OnSettingsUpdated;
+            OnSettingsUpdated();
+
             EmptyFileProps();
             EmptyBaseFileProps();
         }
@@ -81,6 +133,8 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
         /*--RelayCommands---------------------------------------------------------------------------------*/
 
         #region Команды
+
+        // Взаимодействие с фалами
 
         private RelayCommand _addFilesCommand;
         public RelayCommand AddFilesCommand { get => _addFilesCommand ??= new(obj => { InteractionFiles(FileAction.Add); }); }
@@ -97,17 +151,31 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
         private RelayCommand _moveFilesToTrashCommand;
         public RelayCommand MoveFilesToTrashCommand { get => _moveFilesToTrashCommand ??= new(obj => { InteractionFiles(FileAction.MoveToTrash); }); }
 
+        // Взаимодействие с свойствами
+
         private RelayCommand _copyPropValueCommand;
         public RelayCommand CopyPropValueCommand => _copyPropValueCommand ??= new RelayCommand(CopyPropValue);
 
+        // Переключение сетки отображение файлов
+
         private RelayCommand _toggleItemsPanelTemplateCommand;
         public RelayCommand ToggleItemsPanelTemplateCommand { get => _toggleItemsPanelTemplateCommand ??= new(obj => { ToggleItemsPanelTemplate(); }); }
-        
+
+        // Popup
+
         private RelayCommand _openFilterCommand;
-        public RelayCommand OpenFilterCommand { get => _openFilterCommand ??= new(obj => { IsFilterPopupOpen = true; }); } 
-        
+        public RelayCommand OpenFilterCommand { get => _openFilterCommand ??= new(obj => { IsFilterPopupOpen = true; }); }
+
+        // Открытие окон
+
         private RelayCommand _openConvertImageCommand;
         public RelayCommand OpenConvertImageCommand { get => _openConvertImageCommand ??= new(obj => { ConvertImageWindowOpen(); }); }
+
+        private RelayCommand _fileViewerCommand;
+        public RelayCommand FileViewerWindowCommand { get => _fileViewerCommand ??= new(obj => { FileViewerOpen(); }); }
+
+        private RelayCommand _openSettingsWindowCommand;
+        public RelayCommand OpenSettingsWindowCommand { get => _openSettingsWindowCommand ??= new(obj => { SettingsWindowOpen(); }); }
 
         #endregion
 
@@ -139,93 +207,121 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         #endregion 
 
-        /*-Изменение Visibility для отображение контента файла--------------------------------------------*/
-
-        #region Свойства : Visibility предпросмотра
-
-        private TypeFile _currentDisplayFile;
-        public TypeFile CurrentDisplayFile
-        {
-            get => _currentDisplayFile;
-            set
-            {
-                _currentDisplayFile = value;
-                OnPropertyChanged();
-                UpdateVisibility();
-            }
-        }
-
-        private Visibility _imageVisibility;
-        public Visibility ImageVisibility
-        {
-            get => _imageVisibility;
-            set
-            {
-                _imageVisibility = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private Visibility _fileIconVisibility;
-        public Visibility FileIconVisibility
-        {
-            get => _fileIconVisibility;
-            set
-            {
-                _fileIconVisibility = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private Visibility _imageGIFVisibility;
-        public Visibility ImageGIFVisibility
-        {
-            get => _imageGIFVisibility;
-            set
-            {
-                _imageGIFVisibility = value;
-                OnPropertyChanged();
-            }
-        }
-
-        #endregion
-
-        #region Метод : Обновление Visibility 
-
-        private void UpdateVisibility()
-        {
-            // Отображение предпросмотра файла.
-            ImageVisibility = CurrentDisplayFile == TypeFile.Image ? Visibility.Visible : Visibility.Collapsed;
-            ImageGIFVisibility = CurrentDisplayFile == TypeFile.GIF ? Visibility.Visible : Visibility.Collapsed;
-            FileIconVisibility = CurrentDisplayFile == TypeFile.IconFile ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-        #endregion
-
         /*-Открытие окон----------------------------------------------------------------------------------*/
+
+        #region Методы открытие Window : Настрйки
+
+        private void SettingsWindowOpen()
+        {
+            _windowNavigationService.NavigateTo("SettingsWindow");
+        }
+
+        #endregion 
 
         #region Методы открытие Window : Конвертеры
 
         private void ConvertImageWindowOpen()
         {
-            if (SelectedFiles.Count != 0 || SelectedFile != null)
-            {
-                var files = new List<FileData>();
+            if (SelectedFiles.Count != 0)
+            {              
+                var transferredFiles = new List<FileData>();
+                var filesNotTransferred = new List<FileData>();
 
                 if (SelectedFiles.Count > 1)
-                    files.AddRange(SelectedFiles);
+                {
+                    foreach (var file in SelectedFiles)
+                    {
+                        if (CheckFileFormatToImageConvert(file))
+                        {
+                            transferredFiles.Add(file);
+                        }
+                        else
+                        {
+                            filesNotTransferred.Add(file);
+                        }
+                    }
+                    if (filesNotTransferred.Count > 0)
+                    {
+                        string fileNameList = "";
+                        foreach (var file in filesNotTransferred)
+                        {
+                            fileNameList += ", " + file.FileName + file.FileExtension;
+                        }
+                        _customMessageWindowService.Show($"Следующие файлы не были переданы {fileNameList}.", "Не переданные файлы.", TypeMessage.Information);
+                    }
+                }
                 else
-                    files.Add(SelectedFile);
+                {
+                    if (CheckFileFormatToImageConvert(SelectedFile))
+                    {
+                        transferredFiles.Add(SelectedFile);
+                    }
+                    else
+                    {
+                        _customMessageWindowService.Show($"Данный файл нельзя использовать в конвертере изображений.", "Не переданные файлы.", TypeMessage.Information);
+                    }
+                }
 
-                _windowNavigationService.NavigateTo("ConvertImageWindow", files);
+                if (transferredFiles.Count > 0)
+                {
+                    _windowNavigationService.NavigateTo("ConvertImageWindow", transferredFiles);
+                }
 
-                files.Clear();
+                transferredFiles.Clear();
+                filesNotTransferred.Clear();
             }
             else
             {
-                _customMessageWindowService.Show("Вы не выбрали файлы.", "Отсутствие файлов.", TypeMessage.Error);
-            }
+                _windowNavigationService.NavigateTo("ConvertImageWindow");
+            } 
+        }
 
+        #endregion
+
+        #region Методы открытие Window : Просмотр файлов
+
+        private void FileViewerOpen()
+        {
+            if (SelectedFile != null)
+            {
+                if (CheckFileFormatToImageConvert(SelectedFile))
+                {
+                    _windowNavigationService.NavigateTo("ImageViewerWindow", SelectedFile);
+                    return;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Методы : Проверки формата файла
+
+        private static bool CheckFileFormatToImageConvert(FileData files)
+        {
+            if (files.FileExtension == ".jpg" ||
+                files.FileExtension == ".jpeg" ||
+                files.FileExtension == ".jfif" ||
+                files.FileExtension == ".jpe" ||
+                files.FileExtension == ".png" ||
+                files.FileExtension == ".ico" ||
+                files.FileExtension == ".webp" ||
+                files.FileExtension == ".heic" ||
+                files.FileExtension == ".gif")
+                return true;
+            else
+                return false;
+        }
+
+        #endregion
+
+        /*-Обновление \ Получение значение из файла с настройками-----------------------------------------*/
+
+        #region Метод : Обновление значений из файла настроек
+
+        private void OnSettingsUpdated()
+        {
+            OpenFilePath = _settingsManager.OpenFilePath;
+            SaveFilePath = _settingsManager.SaveFilePath;
         }
 
         #endregion
@@ -355,6 +451,9 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                         {
                             Files.Clear();
                             _files.Clear();
+                            EmptyFileProps();
+                            EmptyBaseFileProps();
+                            CurrentDisplayFile = TypeFile.None;
                         }
                     }
                 }
@@ -804,8 +903,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
             }
         }
 
-        #endregion 
+        #endregion
 
-        /*------------------------------------------------------------------------------------------------*/
     }
 }

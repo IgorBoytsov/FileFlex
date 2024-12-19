@@ -46,7 +46,8 @@ namespace FileFlex
         // Close
         private void CommandBinding_Executed_Close(object sender, ExecutedRoutedEventArgs e)
         {
-            SystemCommands.CloseWindow(this);
+            //SystemCommands.CloseWindow(this);
+            Application.Current.Shutdown();
         }
 
         // State change

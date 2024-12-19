@@ -17,7 +17,7 @@
         Width="1050" MinWidth="800"
         d:Width="auto"
         d:Height="auto"
-        Title="MainWindow">
+        Title="FileFlex">
 
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="34" />
@@ -41,17 +41,45 @@
 
     <Border x:Name="MainWindowBorder" Style="{StaticResource MainContenBorder}">
         <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height ="Auto"/>
                 <RowDefinition Height ="*"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Height="30" Background="#F999">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                    <Image Source="/LogoVarieble3.ico" />
-                    <TextBlock Text="FileFlex" Style="{StaticResource NameApp}"/>
-                </StackPanel>
+            <!--#region Меню -->
 
+            <Menu Grid.Column="0" VerticalAlignment="Center" WindowChrome.IsHitTestVisibleInChrome="True" FontSize="15" Background="Transparent" Margin="3,2,0,0">
+
+                <MenuItem Header="Файл" Style="{StaticResource AppMenuItem}">
+
+                    <MenuItem Header="Добавить файл(лы)" Command="{Binding AddFilesCommand}" Foreground="{StaticResource MainAppColor}"/>
+
+                    <MenuItem Header="Выход" Foreground="{StaticResource MainAppColor}"/>
+
+                </MenuItem>
+
+                <MenuItem Header="Конвертер" Style="{StaticResource AppMenuItem}">
+                    
+                    <MenuItem Header="Изображений" Command="{Binding OpenConvertImageCommand}" Foreground="{StaticResource MainAppColor}"/>
+                    
+                </MenuItem>
+                
+                <MenuItem Header="Сервис" Style="{StaticResource AppMenuItem}">
+
+                    <MenuItem Header="Настройки" Command="{Binding OpenSettingsWindowCommand}" Foreground="{StaticResource MainAppColor}"/>
+
+                </MenuItem>
+
+            </Menu>
+
+            <!--#endregion-->
+
+            <Grid Grid.Column="1" Grid.Row="0" Style="{StaticResource HeaderWindow}">
+   
                 <!--#region Кнопки управление окном -->
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
@@ -68,8 +96,8 @@
                 <!--#endregion-->
 
             </Grid>
-            
-            <Grid Grid.Row="1">
+
+            <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,5,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="40"/>
@@ -77,51 +105,17 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" MinWidth="200"/>
-                    <ColumnDefinition Width="300" MinWidth="200" MaxWidth="1000"/>
+                    <ColumnDefinition Width="300" MinWidth="200" MaxWidth="500"/>
                 </Grid.ColumnDefinitions>
 
-                <!--#region Меню -->
-
-                <Menu Grid.ColumnSpan="3" FontSize="15" Background="{StaticResource MainAppColor}" Margin="3,0,0,0">
-
-                    <MenuItem Header="Файл" Foreground="{StaticResource MainAppTextColor}">
-
-                        <MenuItem Header="Добавить файл(лы)" Command="{Binding AddFilesCommand}" Foreground="{StaticResource MainAppColor}"/>
-                        
-                        <MenuItem Header="Выход" Foreground="{StaticResource MainAppColor}"/>
-
-                    </MenuItem>
-
-                    <MenuItem Header="Сервис" Foreground="{StaticResource MainAppTextColor}">
-
-                        <MenuItem Header="Настройки" Foreground="{StaticResource MainAppColor}"/>
-
-                    </MenuItem>
-
-                </Menu>
-
-                <!--#endregion-->
-
-                <!--#region Название выбранного файла \ количество выбранных файлов -->
-
-                <Border Grid.Column="1" Grid.Row="1" Style="{StaticResource FileNameBorder}">
-                    <WrapPanel  VerticalAlignment="Center">
-                        <TextBlock Text="Название:" Margin="5,0,0,0" FontSize="15" FontWeight="Bold"/>
-                        <TextBlock Text="{Binding SelectedFile.FileName}" d:Text="Тестовое название"
-                                   FontSize="15" Margin="10,0,0,0"/>
-                    </WrapPanel>
-                </Border>
-                
-                <!--#endregion-->
-
-                <!--#region Элементы управление -->
+                <!--#region Элементы управление списка файлов -->
 
                 <Border Grid.Row="1" Style="{StaticResource ControlsFilesBorder}">
                     <DockPanel VerticalAlignment="Center"  Margin="10,0,10,0">
-                        
+
                         <Popup IsOpen="{Binding IsFilterPopupOpen}" PlacementTarget="{Binding ElementName=FilterButton}" Placement="Bottom" StaysOpen="False">
                             <Border Background="Black" Width="100" Height="100">
-                                
+
                             </Border>
                         </Popup>
 
@@ -140,21 +134,22 @@
                                 <fa:ImageAwesome Icon="Solid_Filter" Foreground="White"/>
                             </Button.Content>
                         </Button>
-                        
+
                     </DockPanel>
 
                 </Border>
-                
+
                 <!--#endregion-->
 
                 <GridSplitter Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" BorderBrush="{StaticResource MainAppColor}" BorderThickness="1"/>
-                
+
                 <!--#region Список файлов -->
 
                 <ListView x:Name="FilesListView" Grid.Column="0" Grid.Row="2"
-                          ItemsSource="{Binding Files}" d:ItemsSource="{d:SampleData ItemCount=5}" 
+                          ItemsSource="{Binding Files}" d:ItemsSource="{d:SampleData ItemCount=2}" 
                           SelectedItem="{Binding SelectedFile}"
                           Style="{StaticResource PreviewFileList}"
+                          ItemTemplate="{StaticResource ShortDescriptionFile}"
                           FontSize="18" Margin="5,0,0,6"
                           HorizontalContentAlignment="Center"
                           VerticalContentAlignment="Center"
@@ -165,25 +160,23 @@
                         <behavior:ListViewSelectedItemsBehavior SelectedItems="{Binding SelectedFiles}"/>
                     </i:Interaction.Behaviors>
 
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <DockPanel>
-                                <Image Source="{Binding FileIcon}" Width="23"/>
-                                <TextBlock Text="{Binding FileName}" TextWrapping="WrapWithOverflow" Margin="5,0,0,0" FontSize="20"/>
-                                <TextBlock Text="{Binding FileExtension}" FontSize="20"/>
-                            </DockPanel>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-
                     <ListView.ContextMenu>
                         <ContextMenu Style="{StaticResource AppContextMenu}">
-                            
+
                             <MenuItem Header="Добавить файлы" Command="{Binding AddFilesCommand}">
                                 <MenuItem.Icon>
                                     <fa:ImageAwesome Style="{StaticResource AddFileIcon}"/>
                                 </MenuItem.Icon>
                             </MenuItem>
-                            
+
+                            <Separator/>
+
+                            <MenuItem Header="Просмотр" Command="{Binding FileViewerWindowCommand}">
+                                <MenuItem.Icon>
+                                    <fa:ImageAwesome Style="{StaticResource ViewerFile}"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+
                             <Separator/>
 
                             <MenuItem Header="Конвертировать">
@@ -198,15 +191,15 @@
                                 </MenuItem>
 
                             </MenuItem>
-                            
+
                             <Separator/>
-                            
+
                             <MenuItem Header="Убрать файлы из списка" Command="{Binding RemoveFilesCommand}">
                                 <MenuItem.Icon>
                                     <fa:ImageAwesome Style="{StaticResource ClearFileIcon}"/>
                                 </MenuItem.Icon>
                             </MenuItem>
-                            
+
                             <MenuItem Header="Удалить файлы">
                                 <MenuItem.Icon>
                                     <fa:ImageAwesome Style="{StaticResource DeleteFileIcon}"/>
@@ -222,7 +215,7 @@
                                         <fa:ImageAwesome Style="{StaticResource DeleteFileFromTrashSubmenuIcon}"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                
+
                             </MenuItem>
 
                             <MenuItem Header="Очистить список файлов" Command="{Binding ClearFilesCommand}">
@@ -230,12 +223,27 @@
                                     <fa:ImageAwesome Style="{StaticResource ClearListFileIcon}"/>
                                 </MenuItem.Icon>
                             </MenuItem>
-                            
+
                         </ContextMenu>
                     </ListView.ContextMenu>
-                    
+
                 </ListView>
 
+                <!--#endregion-->
+
+                <!--#region Элементы управление выбранным файлом -->
+
+                <StackPanel Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0">
+                    <Button Command="{Binding FileViewerWindowCommand}" Template="{StaticResource TransparentAppButton}" Width="25" Height="25">
+                        <Button.Content>
+                            <fa:ImageAwesome Style="{StaticResource ViewerFile}"/>
+                        </Button.Content>
+                        <Button.ToolTip>
+                            <TextBlock Text="Просмотр"/>
+                        </Button.ToolTip>
+                    </Button>
+                </StackPanel>
+                
                 <!--#endregion-->
 
                 <!--#region Отображение данных файла -->
@@ -243,13 +251,22 @@
                 <ScrollViewer Grid.Column="1" Grid.Row="2" Margin="5,0,0,0">
                     <StackPanel>
                         <Border Style="{StaticResource PreviewFileBorder}">
-                            <StackPanel>
+                            <StackPanel VerticalAlignment="Center">
+
+                                <!--#region Отсуствие выбранного файла -->
+
+                                <TextBlock Text="Отсуствует файл" Style="{StaticResource NoneFile}"
+                                           Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=None}"
+                                           d:Visibility="Visible"/>
+
+                                <!--#endregion-->
 
                                 <!--#region Отображение иконок выбранного файла. Если невозможно показать предпросмотр содержимого файла -->
 
                                 <Image Source="{Binding IconSelectedFile}" d:Source="D:\Тестовые изображение\icon_calculator.ico"
                                        Style="{StaticResource PreviewFileImage}"
-                                       Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=IconFile}"/>
+                                       Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=IconFile}"
+                                       d:Visibility="Collapsed"/>
 
                                 <!--#endregion-->
 
@@ -257,7 +274,8 @@
 
                                 <Image Source="{Binding SelectedImage}" d:Source="D:\Тестовые изображение\20240728231859_1.jpg"
                                        Style="{StaticResource PreviewFileImage}"
-                                       Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Image}"/>
+                                       Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Image}"
+                                       d:Visibility="Collapsed"/>
 
                                 <!--#endregion-->
 
@@ -265,7 +283,8 @@
 
                                 <Image Source="{Binding CurrentFrame}" d:Source="D:\Тестовые изображение\Чужой.gif"
                                        Style="{StaticResource PreviewFileImage}"
-                                       Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=GIF}"/>
+                                       Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=GIF}"
+                                       d:Visibility="Collapsed"/>
 
                                 <!--#endregion-->
 
@@ -277,7 +296,7 @@
                         <TextBlock Text="Общие свойства" Style="{StaticResource HeadingFilePropTextBlock}"/>
 
                         <!--#region Общие файлы для всех файлов -->
-                        
+
                         <Border Style="{StaticResource PreviewFilePropBorder}">
                             <WrapPanel>
                                 <StackPanel>
@@ -303,10 +322,11 @@
                         <TextBlock Text="Расширеные свойства" Style="{StaticResource HeadingFilePropTextBlock}"/>
 
                         <!--#region Вывод расщиреных свойств -->
-                        
+
                         <Border Style="{StaticResource PreviewFilePropBorder}">
                             <StackPanel>
-                                <Rectangle Height="0.5" Fill="Black" HorizontalAlignment="Stretch" VerticalAlignment="Top"/> <!--Вверх-->
+                                <Rectangle Height="0.5" Fill="Black" HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
+                                <!--Вверх-->
                                 <ItemsControl ItemsSource="{Binding FileProps}" d:ItemsSource="{d:SampleData ItemCount=5}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
@@ -316,13 +336,13 @@
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
 
-                                                <Border BorderBrush="Black" BorderThickness="1,0.5,0.5,0.5">
+                                                <Border BorderBrush="Transparent" BorderThickness="1,0.5,0.5,0.5">
                                                     <WrapPanel Grid.Column="0">
                                                         <TextBlock Text="{Binding PropName}" Style="{StaticResource FilePropNameTextBlock}" d:Text="Разрешение"/>
                                                     </WrapPanel>
                                                 </Border>
 
-                                                <Border Grid.Column="1" BorderBrush="Black" BorderThickness="0.5,0.5,1,0.5">
+                                                <Border Grid.Column="1" BorderBrush="Transparent" BorderThickness="0.5,0.5,1,0.5">
                                                     <WrapPanel  HorizontalAlignment="Left" Margin="10,0,15,0" Cursor="Hand">
                                                         <TextBlock Text="{Binding PropValue}" Style="{StaticResource FilePropValueTextBlock}" ToolTipService.InitialShowDelay="1000" ToolTipService.Placement="Right" d:Text="2560x1440">
                                                             <TextBlock.InputBindings>
@@ -338,12 +358,13 @@
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
-                                <Rectangle Height="0.5" Fill="Black" HorizontalAlignment="Stretch" VerticalAlignment="Top"/> <!--Низ-->
+                                <Rectangle Height="0.5" Fill="Black" HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
+                                <!--Низ-->
                             </StackPanel>
                         </Border>
-                        
+
                         <!--#endregion-->
-                        
+
                         <!--#endregion-->
 
                     </StackPanel>
