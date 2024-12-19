@@ -8,6 +8,7 @@
     <Style x:Key="MainContenBorder" TargetType="Border">
         <Setter Property="BorderBrush" Value="LightCoral"/>
         <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Background" Value="{StaticResource AppGradientBrush}"/>
     </Style>
     
     <!--#endregion-->
@@ -18,11 +19,12 @@
     
     <Style x:Key="PreviewFileBorder" TargetType="Border">
         <Setter Property="Height" Value="210"/>
-        <Setter Property="Background" Value="LightGray"/>
-        <Setter Property="BorderBrush" Value="Gray"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <!--<Setter Property="BorderBrush" Value="{StaticResource AppBorderBrush}"/>-->
+        <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="2"/>
         <Setter Property="CornerRadius" Value="5"/>
-        <Setter Property="Margin" Value="7,2,7,2"/>
+        <Setter Property="Margin" Value="7,0,7,2"/>
     </Style>
     
     <!--#endregion-->
@@ -30,11 +32,12 @@
     <!--#region Вокруг отображение свойств файла -->
     
     <Style x:Key="PreviewFilePropBorder" TargetType="Border">
-        <Setter Property="Background" Value="LightGray"/>
-        <Setter Property="BorderBrush" Value="Gray"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <!--<Setter Property="BorderBrush" Value="{StaticResource AppBorderBrush}"/>-->
+        <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="2"/>
         <Setter Property="CornerRadius" Value="5"/>
-        <!--<Setter Property="Margin" Value="7,0,7,0"/>-->
+        <Setter Property="Margin" Value="7,0,7,0"/>
         <Setter Property="Padding" Value="5,2,5,2"/>
     </Style>
     
@@ -43,7 +46,8 @@
     <!--#region Над списком файлов (Элементы управление) -->
 
     <Style x:Key="ControlsFilesBorder" TargetType="Border">
-        <Setter Property="Background" Value="#2758A5"/>
+        <!--<Setter Property="Background" Value="#2758A5"/>-->
+        <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Margin" Value="5,0,0,0"/>
         <Setter Property="CornerRadius" Value="10,10,0,0"/>
     </Style>

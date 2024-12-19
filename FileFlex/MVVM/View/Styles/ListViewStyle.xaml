@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!--#region Панели для вывода -->
-    
+
     <ItemsPanelTemplate x:Key="StackPanelTemplate">
         <StackPanel/>
     </ItemsPanelTemplate>
@@ -10,7 +10,7 @@
     <ItemsPanelTemplate x:Key="WrapPanelTemplate">
         <WrapPanel/>
     </ItemsPanelTemplate>
-    
+
     <!--#endregion-->
 
     <!--#region ItemsTemplate (ListView) -->
@@ -33,13 +33,28 @@
         </DockPanel>
     </DataTemplate>
 
+    <DataTemplate x:Key="ConvertFile">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+            <Image Source="{Binding FileIcon}" Grid.Row="0" HorizontalAlignment="Center" Width="100"/>
+            <TextBlock Text="{Binding FileName}" Grid.Row="1" 
+                       HorizontalAlignment="Center" VerticalAlignment="Center" 
+                       TextWrapping="WrapWithOverflow" Margin="5,0,0,0" FontSize="15"/>
+        </Grid>
+    </DataTemplate>
+
     <!--#endregion-->
+
+    <!--#region MainWindow список файлов -->
 
     <Style x:Key="PreviewFileList" TargetType="ListView">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListView">
-                    <Border BorderBrush="#2758A5" BorderThickness="4" CornerRadius="0, 0, 10, 10" Background="LightGray">
+                    <Border BorderThickness="1" BorderBrush="{StaticResource AppBorderBrush}" Background="{StaticResource AppListViewBackground}" CornerRadius="10, 10, 10, 10">
                         <ScrollViewer>
                             <ItemsPresenter />
                         </ScrollViewer>
@@ -53,22 +68,24 @@
                 <Setter Property="ItemsPanel" Value="{StaticResource WrapPanelTemplate}" />
             </DataTrigger>
         </Style.Triggers>
-        
+
         <Style.Resources>
+
             <Style TargetType="ListViewItem">
-                <Setter Property="Margin" Value="5,5,2,5" />
-                <Setter Property="Padding" Value="10" />
-                <Setter Property="Background" Value="White" />
-                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="Margin" Value="5,5,5,5"/>
+                <Setter Property="Padding" Value="10"/>
+                <Setter Property="Background" Value="#FF2C313B"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="ListViewItem">
-                            <Border Name="Border" Background="{TemplateBinding Background}" CornerRadius="5" Padding="{TemplateBinding Padding}">
+                            <Border Name="Border" Background="{TemplateBinding Background}" BorderThickness="0" BorderBrush="White" CornerRadius="5" Padding="{TemplateBinding Padding}">
                                 <ContentPresenter />
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="Border" Property="Background" Value="LightBlue" />
+                                    <Setter TargetName="Border" Property="Background" Value="Gray" />
                                 </Trigger>
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter TargetName="Border" Property="Background" Value="SlateBlue" />
@@ -80,9 +97,56 @@
                 </Setter>
             </Style>
         </Style.Resources>
-        
+
+    </Style>
+    
+    <!--#endregion-->
+
+    <!--#region ComveryImageWindow Список изображение -->
+
+    <Style x:Key="ComveryImageFileList" TargetType="ListView" BasedOn="{StaticResource PreviewFileList}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListView">
+                    <Border BorderThickness="0" BorderBrush="{StaticResource AppBorderBrush}" Background="{StaticResource AppListViewBackground}">
+                        <ScrollViewer>
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Resources>
+            <Style TargetType="ListViewItem">
+                <Setter Property="Width" Value="150"/>
+                <Setter Property="Height" Value="150"/>
+                <Setter Property="Margin" Value="5,5,5,5"/>
+                <Setter Property="Padding" Value="10"/>
+                <Setter Property="Background" Value="#FF2C313B"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListViewItem">
+                            <Border Name="Border" Background="{TemplateBinding Background}" BorderThickness="0" BorderBrush="White" CornerRadius="5" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="Gray" />
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="SlateBlue" />
+                                    <Setter TargetName="Border" Property="BorderBrush" Value="White" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Style.Resources>
     </Style>
 
-    
+    <!--#endregion-->
 
 </ResourceDictionary>

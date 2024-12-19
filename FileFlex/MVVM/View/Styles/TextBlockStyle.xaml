@@ -7,11 +7,22 @@
     </Style>
 
     <!-- MainWindow -->
+    
+    <!--#region Отсуствие выбранного файла -->
+
+    <Style x:Key="NoneFile" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource MainAppTextColor}"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+    
+    <!--#endregion-->
 
     <!--#region Заголовк над блоками с выводом свойств -->
    
     <Style x:Key="HeadingFilePropTextBlock" TargetType="TextBlock">
         <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Foreground" Value="{StaticResource MainAppTextColor}"/>
         <Setter Property="FontSize" Value="17"/>
         <Setter Property="FontWeight" Value="Bold"/>
     </Style>
@@ -22,7 +33,7 @@
     
     <Style x:Key="FilePropNameTextBlock" TargetType="TextBlock">
         <Setter Property="Margin" Value="5,2,5,2"/>
-        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Foreground" Value="{StaticResource MainAppTextColor}"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
     </Style>
@@ -33,7 +44,7 @@
    
     <Style x:Key="FilePropValueTextBlock" TargetType="TextBlock">
         <Setter Property="Margin" Value="0,2,0,2"/>
-        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Foreground" Value="{StaticResource MainAppTextColor}"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>

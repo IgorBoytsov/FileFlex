@@ -2,8 +2,50 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <SolidColorBrush x:Key="MainAppColor" Color="#121212"/>
+    
+    <!--<SolidColorBrush x:Key="ContextMenuSelectedColor" Color="#FFA395F5"/>-->
+    <SolidColorBrush x:Key="ContextMenuSelectedColor" Color="Gray"/>
+
+    <!--#region Градиент : Фон приложения  -->
+
+    <LinearGradientBrush x:Key="AppGradientBrush" StartPoint="1,0" EndPoint="0,1">
+        <GradientStop Color="#100d10" Offset="0" />
+        <GradientStop Color="#150c15" Offset="0.25" />
+        <GradientStop Color="#130f1a" Offset="0.75" />
+        <GradientStop Color="#0e141f" Offset="1" />
+    </LinearGradientBrush>
+
+    <!--#endregion-->
+
+    <!--#region Кисти : Цвета текста -->
+
     <SolidColorBrush x:Key="MainAppTextColor" Color="White"/>
 
-    <SolidColorBrush x:Key="ContextMenuSelectedColor" Color="#FFA395F5"/>
+    <!--#endregion-->
+
+    <!--#region Кисти : Цвет бордера -->
+    
+    <!--<SolidColorBrush x:Key="AppBorderBrush" Color="#FF3179FD"/>-->
+    
+    <LinearGradientBrush x:Key="AppBorderBrush" StartPoint="1,0" EndPoint="0,1">
+        <GradientStop Color="#3179fd" Offset="0" />
+        <GradientStop Color="#084dd9" Offset="0.5" />
+        <GradientStop Color="#06338e" Offset="1" />
+    </LinearGradientBrush> 
+    
+    <LinearGradientBrush x:Key="AppRussianFlagBorderBrush" StartPoint="1,0" EndPoint="0,1">
+        <GradientStop Color="White" Offset="0" />
+        <GradientStop Color="Blue" Offset="0.5" />
+        <GradientStop Color="Red" Offset="1" />
+    </LinearGradientBrush>
+    
+    <!--#endregion-->
+
+    <!--#region Кисти : Цвет фона ListView -->
+    
+    <!--<SolidColorBrush x:Key="AppListViewBackground" Color="#0e141f"/>-->
+    <SolidColorBrush x:Key="AppListViewBackground" Color="Transparent"/>
+    
+    <!--#endregion-->
     
 </ResourceDictionary>

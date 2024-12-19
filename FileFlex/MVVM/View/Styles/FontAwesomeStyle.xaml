@@ -76,4 +76,13 @@
 
     <!--#endregion-->
 
+    <!--#region Просмотр файла в отдельном окне ( Иконка : стрелки по кругу ) -->
+
+    <Style x:Key="ViewerFile" TargetType="fa:ImageAwesome">
+        <Setter Property="Icon" Value="Solid_Expand"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <!--#endregion-->
+
 </ResourceDictionary>

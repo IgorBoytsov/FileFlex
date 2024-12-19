@@ -1,14 +1,19 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <Style x:Key="AppMenuItem" TargetType="MenuItem">
+        <Setter Property="Height" Value="28"/>
+        <Setter Property="Foreground" Value="{StaticResource MainAppTextColor}"/>
+    </Style>
+    
     <!--#region Мое -->
     
-    <!-- Стиль для Menu --><!--
+     <!--Стиль для Menu--><!-- 
     <Style TargetType="{x:Type Menu}">
         <Setter Property="Background" Value="#FF2D2D30"/>
-        --><!-- Темный фон --><!--
+         --><!--Темный фон--><!-- 
         <Setter Property="Foreground" Value="White"/>
-        --><!-- Белый текст --><!--
+         --><!--Белый текст--><!-- 
         <Setter Property="FontFamily" Value="Segoe UI"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="Padding" Value="5,0"/>
@@ -18,11 +23,11 @@
                     <Border Background="{TemplateBinding Background}" 
                             SnapsToDevicePixels="True">
                         <Grid>
-                            --><!-- Верхняя граница -->
-                            <!--<Border Height="3" Background="#FF383838"/>-->
-                            <!-- Содержимое меню --><!--
+                             --><!--Верхняя граница--><!-- 
+                            <Border Height="3" Background="#FF383838"/>
+                             --><!--Содержимое меню--><!-- 
                             <ItemsPresenter Margin="0,3,0,3" />
-                            --><!-- Нижняя тень --><!--
+                             --><!--Нижняя тень--><!-- 
                             <Rectangle Height="2" Fill="Black" Opacity="0.2" VerticalAlignment="Bottom" />
                         </Grid>
                     </Border>
@@ -31,7 +36,7 @@
         </Setter>
     </Style>
 
-    --><!-- Стиль для MenuItem --><!--
+     --><!--Стиль для MenuItem--><!-- 
     <Style TargetType="{x:Type MenuItem}">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="White"/>
@@ -67,15 +72,15 @@
                         </Popup>
                     </Grid>
                     <ControlTemplate.Triggers>
-                        --><!-- Подсветка фона при наведении --><!--
+                         --><!--Подсветка фона при наведении--><!-- 
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Border" Property="Background" Value="Gray"/>
                         </Trigger>
-                        --><!-- Подсветка фона при открытом подменю --><!--
+                         --><!--Подсветка фона при открытом подменю--><!-- 
                         <Trigger Property="IsSubmenuOpen" Value="True">
                             <Setter TargetName="Border" Property="Background" Value="#FF505050"/>
                         </Trigger>
-                        --><!-- Деактивация элемента --><!--
+                         --><!--Деактивация элемента--><!-- 
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Foreground" Value="Gray"/>
                         </Trigger>
@@ -83,10 +88,10 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>-->
+    </Style>
 
-    <!-- Тень для Popup -->
-    <!--<DropShadowEffect x:Key="PopupShadow" Color="Black" ShadowDepth="3" BlurRadius="8" Opacity="0.5"/>-->
+     --><!--Тень для Popup--><!-- 
+    <DropShadowEffect x:Key="PopupShadow" Color="Black" ShadowDepth="3" BlurRadius="8" Opacity="0.5"/>-->
 
     <!--#endregion-->
     
