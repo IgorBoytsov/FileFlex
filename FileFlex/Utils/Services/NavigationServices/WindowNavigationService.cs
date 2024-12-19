@@ -43,6 +43,33 @@ namespace FileFlex.Utils.Services.NavigationServices
                     convertImageWindow.Show();
                 }
                 ,
+                "ImageViewerWindow" => () =>
+                {
+                    var viewModel = new ImageViewerWindowViewModel();
+                    var convertImageWindow = new ImageViewerWindow
+                    {
+                        DataContext = viewModel
+                    };
+                    viewModel.Update(parameter);
+
+                    _openWindows[pageName] = convertImageWindow;
+                    convertImageWindow.Closed += (s, e) => _openWindows.Remove(pageName);
+                    convertImageWindow.Show();
+                }
+                ,
+                "SettingsWindow" => () =>
+                {
+                    var viewModel = new SettingsWindowViewModel(_serviceProvider);
+                    var settingsWindow = new SettingsWindow
+                    {
+                        DataContext = viewModel
+                    };
+                    
+                    _openWindows[pageName] = settingsWindow;
+                    settingsWindow.Closed += (s, e) => _openWindows.Remove(pageName);
+                    settingsWindow.Show();
+                }
+                ,
                 _ => () =>
                 {
                     throw new Exception($"Окна {pageName} не существует.");
