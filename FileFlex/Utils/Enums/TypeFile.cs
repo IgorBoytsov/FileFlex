@@ -3,6 +3,10 @@
     public enum TypeFile
     {
         /// <summary>
+        /// Для отсутствия выбранного файла. При запуске приложение, либо после очистки списка файлов.
+        /// </summary>
+        None,
+        /// <summary>
         ///  Для следующих файлов: JPEG, PNG, Ico, TIFF, WebP
         /// </summary>
         Image,
