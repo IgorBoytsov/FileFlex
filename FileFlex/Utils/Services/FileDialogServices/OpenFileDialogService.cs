@@ -14,7 +14,7 @@ namespace FileFlex.Utils.Services.FileDialogServices
             openFileDialog.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), 
                                                            "Downloads");
             if (openFileDialog.ShowDialog() == true) return openFileDialog.FileNames;
-            else return null;
+            else return [];
         }
     }
 }
