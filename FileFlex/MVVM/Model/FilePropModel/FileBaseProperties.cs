@@ -10,6 +10,6 @@
 
         public string WriteTime { get; set; }
 
-        public double FileWeight { get; set; }
+        public long FileWeight { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace FileFlex.MVVM.Model.AppModel
 
         public string FilePath { get; set; }
 
-        public double FileWeight { get; set; }
+        public long FileWeight { get; set; }
 
         public DateTime DateCreate { get; set; }
     }
