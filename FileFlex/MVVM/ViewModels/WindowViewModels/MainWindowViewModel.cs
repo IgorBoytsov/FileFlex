@@ -1,24 +1,25 @@
 ﻿using FileFlex.Command;
 using FileFlex.MVVM.Model.AppModel;
+using FileFlex.MVVM.Model.FilePropModel;
 using FileFlex.MVVM.ViewModels.BaseVM;
+using FileFlex.Utils.Enums;
+using FileFlex.Utils.Helpers;
+using FileFlex.Utils.Services.CustomWindowServices;
 using FileFlex.Utils.Services.FileDialogServices;
+using FileFlex.Utils.Services.NavigationServices;
+using FileFlex.Utils.Settings;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualBasic.FileIO;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Windows;
-using FileFlex.Utils.Enums;
-using Microsoft.VisualBasic.FileIO;
-using FileFlex.Utils.Helpers;
-using FileFlex.Utils.Services.NavigationServices;
-using FileFlex.Utils.Services.CustomWindowServices;
-using FileFlex.MVVM.Model.FilePropModel;
-using System.Windows.Media.Imaging;
-using System.Drawing;
-using System.Windows.Threading;
 using System.Windows.Interop;
-using System.Drawing.Imaging;
-using System.Diagnostics;
-using FileFlex.Utils.Settings;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+
 
 namespace FileFlex.MVVM.ViewModels.WindowViewModels
 {
@@ -40,11 +41,29 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         public ObservableCollection<FileData> Files { get; set; } = [];
 
+        public List<FileData> SelectedFiles { get; set; } = [];
+
         public ObservableCollection<FileProperties> FileProps { get; set; } = [];
 
         #endregion
 
         /*-Свойства---------------------------------------------------------------------------------------*/
+
+        #region Свойства : выбора файла
+
+        private FileData _selectedFile;
+        public FileData SelectedFile
+        {
+            get => _selectedFile;
+            set
+            {
+                _selectedFile = value;
+                DetermineFileType(value);
+                OnPropertyChanged();
+            }
+        }
+
+        #endregion
 
         #region Свойство : Текущий тип отображенного файла
 
@@ -87,6 +106,80 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         #endregion
 
+        #region Свойство : Выбор директории
+
+        private string _directoryPath;
+        public string DirectoryPath
+        {
+            get => _directoryPath;
+            set
+            {
+                if (_directoryPath != value)
+                {
+                    _directoryPath = value;
+                    OnPropertyChanged();
+
+                    if (value.Length == 0)
+                    {
+                        Files.Clear();
+                        EmptyFileProps();
+                        EmptyBaseFileProps();
+                        return;
+                    }
+
+                    // Автоматическое добавление '\' при вводе корневого пути
+                    if (value.Length == 2 && value[1] == ':' && !value.EndsWith("\\"))
+                    {
+                        _directoryPath += "\\";
+                        OnPropertyChanged(nameof(DirectoryPath));
+                    }
+                    InteractionFiles(FileAction.AddFromDirectory);
+                } 
+            }
+        }
+
+        #endregion
+
+        #region Свойства : отображение файлов
+
+        private string _selectedImage;
+        public string SelectedImage
+        {
+            get => _selectedImage;
+            set
+            {
+                _selectedImage = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private BitmapSource _currentFrame;
+        public BitmapSource CurrentFrame
+        {
+            get => _currentFrame;
+            private set
+            {
+                if (_currentFrame != value)
+                {
+                    _currentFrame = value;
+                    OnPropertyChanged(nameof(CurrentFrame));
+                }
+            }
+        }
+
+        private BitmapImage _iconSelectedFile;
+        public BitmapImage IconSelectedFile
+        {
+            get => _iconSelectedFile;
+            set
+            {
+                _iconSelectedFile = value;
+                OnPropertyChanged();
+            }
+        }
+
+        #endregion
+
         /*--Сервисы---------------------------------------------------------------------------------------*/
 
         private readonly IServiceProvider _serviceProvider;
@@ -96,6 +189,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         private readonly IFileDialogService _openFileDialogService;
         private readonly IFileDialogService _saveFileDialogService;
+        private readonly IFileDialogService _openDirectoryDialog;
 
         private readonly ICustomMessageService _customMessageWindowService;
 
@@ -118,6 +212,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
             _openFileDialogService = fileDialogServices[0];
             _saveFileDialogService = fileDialogServices[1];
+            _openDirectoryDialog = fileDialogServices[2];
 
             _customMessageWindowService = customMessageServices[0];
 
@@ -151,6 +246,27 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
         private RelayCommand _moveFilesToTrashCommand;
         public RelayCommand MoveFilesToTrashCommand { get => _moveFilesToTrashCommand ??= new(obj => { InteractionFiles(FileAction.MoveToTrash); }); }
 
+        private RelayCommand _itemDoubleClickCommand;
+        public RelayCommand ItemDoubleClickCommand => _itemDoubleClickCommand ??= new RelayCommand(DoubleClick);
+
+        //Взаимодействие с директориями
+
+        private RelayCommand _getDirectoryPathCommand;
+        public RelayCommand GetDirectoryPathCommand { get => _getDirectoryPathCommand ??= new(obj => { GetDirectoryPath(); }); } 
+        
+        private RelayCommand _previousDirectoryCommand;
+        public RelayCommand PreviousDirectoryCommand { get => _previousDirectoryCommand ??= new(obj => { PreviousDirectory(); }); }
+        
+        private RelayCommand _nextDirectoryCommand;
+        public RelayCommand NextDirectoryCommand { get => _nextDirectoryCommand ??= new(obj => 
+        {
+            if (SelectedFile != null)
+                NextDirectory(SelectedFile.FileName);
+        });}
+        
+        private RelayCommand _clearDirectoryPropCommand;
+        public RelayCommand ClearDirectoryPropCommand { get => _clearDirectoryPropCommand ??= new(obj => { ClearDirectoryProp(); });}
+
         // Взаимодействие с свойствами
 
         private RelayCommand _copyPropValueCommand;
@@ -170,6 +286,9 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         private RelayCommand _openConvertImageCommand;
         public RelayCommand OpenConvertImageCommand { get => _openConvertImageCommand ??= new(obj => { ConvertImageWindowOpen(); }); }
+
+        private RelayCommand _openGifCreationCommand;
+        public RelayCommand OpenGifCreationCommand { get => _openGifCreationCommand ??= new(obj => { GifCreationOpen(); }); }
 
         private RelayCommand _fileViewerCommand;
         public RelayCommand FileViewerWindowCommand { get => _fileViewerCommand ??= new(obj => { FileViewerOpen(); }); }
@@ -195,6 +314,10 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         private void EmptyBaseFileProps()
         {
+            IconSelectedFile = null;
+            SelectedImage = null;
+            CurrentDisplayFile = TypeFile.None;
+
             BaseProperties = new FileBaseProperties()
             {
                 Directory = EMPTY_PROP,
@@ -223,7 +346,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
         private void ConvertImageWindowOpen()
         {
             if (SelectedFiles.Count != 0)
-            {              
+            {
                 var transferredFiles = new List<FileData>();
                 var filesNotTransferred = new List<FileData>();
 
@@ -273,7 +396,44 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
             else
             {
                 _windowNavigationService.NavigateTo("ConvertImageWindow");
-            } 
+            }
+        }
+
+        #endregion
+
+        #region Методы открытие Window : Создать
+
+        private void GifCreationOpen()
+        {
+            if (SelectedFiles.Count > 0)
+            {
+                var transferredFiles = new List<FileData>();
+                var filesNotTransferred = new List<FileData>();
+
+                foreach (var file in SelectedFiles)
+                {
+                    if (CheckFileFormatToGifCreation(file))
+                    {
+                        transferredFiles.Add(file);
+                    }
+                    else
+                    {
+                        filesNotTransferred.Add(file);
+                    }
+                }
+                if (filesNotTransferred.Count > 0)
+                {
+                    string fileNameList = "";
+                    foreach (var file in filesNotTransferred)
+                    {
+                        fileNameList += ", " + file.FileName + file.FileExtension;
+                    }
+                    _customMessageWindowService.Show($"Следующие файлы не были переданы {fileNameList}.", "Не переданные файлы.", TypeMessage.Information);
+                }
+                _windowNavigationService.NavigateTo("GifCreationWindow", transferredFiles);
+            }
+            else
+                _windowNavigationService.NavigateTo("GifCreationWindow");
         }
 
         #endregion
@@ -312,6 +472,21 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                 return false;
         }
 
+        private static bool CheckFileFormatToGifCreation(FileData files)
+        {
+            if (files.FileExtension == ".jpg" ||
+                files.FileExtension == ".jpeg" ||
+                files.FileExtension == ".jfif" ||
+                files.FileExtension == ".jpe" ||
+                files.FileExtension == ".png" ||
+                files.FileExtension == ".ico" ||
+                files.FileExtension == ".webp" ||
+                files.FileExtension == ".heic")
+                return true;
+            else
+                return false;
+        }
+
         #endregion
 
         /*-Обновление \ Получение значение из файла с настройками-----------------------------------------*/
@@ -328,60 +503,58 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         /*-Взаимодействие с файлами из списка-------------------------------------------------------------*/
 
-        #region Свойства : выбора файла
+        #region Метод : Открытие файла по двойному клику | Переход в следующую директорию
 
-        private FileData _selectedFile;
-        public FileData SelectedFile
+        private void DoubleClick(object value)
         {
-            get => _selectedFile;
-            set
+            if (value is FileData fileData)
             {
-                _selectedFile = value;
-                DetermineFileType(value);
-                OnPropertyChanged();
-            }
-        }
-
-        public List<FileData> SelectedFiles { get; set; } = [];
-
-        #endregion
-
-        #region Свойства : отображение файлов
-
-        private string _selectedImage;
-        public string SelectedImage
-        {
-            get => _selectedImage;
-            set
-            {
-                _selectedImage = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private BitmapSource _currentFrame;
-        public BitmapSource CurrentFrame
-        {
-            get => _currentFrame;
-            private set
-            {
-                if (_currentFrame != value)
+                if (Directory.Exists(fileData.FilePath))
                 {
-                    _currentFrame = value;
-                    OnPropertyChanged(nameof(CurrentFrame));
+                    if (CheckLastCharBackslash(DirectoryPath))
+                        DirectoryPath += $"{SelectedFile.FileName}";
+                    else
+                        DirectoryPath += $"\\{SelectedFile.FileName}";
                 }
             }
         }
 
-        private BitmapImage _iconSelectedFile;
-        public BitmapImage IconSelectedFile
+        #endregion
+
+        #region Методы : Навигация вперед и назад по директориям
+
+        private void NextDirectory(string directoryName)
         {
-            get => _iconSelectedFile;
-            set
+            if (Directory.Exists(DirectoryPath + $"\\{directoryName}"))
             {
-                _iconSelectedFile = value;
-                OnPropertyChanged();
+                if (CheckLastCharBackslash(DirectoryPath))
+                    DirectoryPath += $"{SelectedFile.FileName}";
+                else
+                    DirectoryPath += $"\\{SelectedFile.FileName}";
             }
+        }
+
+        private void PreviousDirectory()
+        {
+            var trimmedPath = DirectoryPath.TrimEnd('\\');
+
+            if (trimmedPath.Length == 2 && trimmedPath[1] == ':')
+            {
+                DirectoryPath = trimmedPath + "\\"; 
+                return;
+            }
+
+            // Получаем директорию верхнего уровня
+            var parentDirectory = Path.GetDirectoryName(trimmedPath);
+
+            // Если не удалось найти родительский каталог, оставляем путь без изменений
+            if (string.IsNullOrEmpty(parentDirectory))
+            {
+                DirectoryPath = trimmedPath + "\\";
+                return;
+            }
+
+            DirectoryPath = parentDirectory + "\\";
         }
 
         #endregion
@@ -395,24 +568,12 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                 FileAction.Add => async () =>
                 {
                     string[] files = _openFileDialogService.OpenDialog();
-                    if (files == null) return;
 
                     if (files.Length != 0)
                     {
                         foreach (var file in files)
-                        {
-                            FileInfo fileInfo = new(file);
-                            var fileData = new FileData()
-                            {
-                                FileName = Path.GetFileNameWithoutExtension(fileInfo.FullName),
-                                FileExtension = fileInfo.Extension,
-                                FileIcon = await IconExtractionHelper.ExtractionFileIconAsync(fileInfo.FullName),
-                                FilePath = fileInfo.FullName,
-                                DateCreate = fileInfo.CreationTime,
-                                //FileWeight = Math.Round((double)fileInfo.Length / (1024 * 1024), 3), //Получаем размер в МБ,
-                                FileWeight = Math.Round((double)fileInfo.Length / 1024, 1), //Получаем размер в КБ,
-                            };
-                            Files.Add(fileData);
+                        {     
+                            Files.Add(await CreationFileDataFromFile(file));
                             LoadFilesInPrivateList();
                         }
                     }
@@ -525,9 +686,113 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                     }
                 }
                 ,
+                FileAction.AddFromDirectory => async () =>
+                {
+                    try
+                    {
+                        string[] entries = Directory.GetFileSystemEntries(DirectoryPath);
+
+                        Files.Clear();
+                        _files.Clear();
+
+                        foreach (string entry in entries)
+                        {
+                            if (Directory.Exists(entry))
+                            {
+                                Files.Add(await CreationFileDataFromDirectory(entry));
+                                LoadFilesInPrivateList();
+                            }
+                            else if (File.Exists(entry))
+                            {
+                                Files.Add(await CreationFileDataFromFile(entry));
+                                LoadFilesInPrivateList();
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
+                   
+                }
+                ,
                 _ => () => { return; }
             };
-            action.Invoke();
+            action?.Invoke();
+        }
+
+        private void GetDirectoryPath()
+        {
+            DirectoryPath = _openDirectoryDialog.OpenDialog()[0];
+        }
+
+        private static async Task<FileData> CreationFileDataFromFile(string file)
+        {
+            FileInfo fileInfo = new(file);
+            var fileData = new FileData()
+            {
+                FileName = Path.GetFileNameWithoutExtension(fileInfo.FullName),
+                FileExtension = fileInfo.Extension,
+                FileIcon = await IconExtractionHelper.ExtractionFileIconAsync(fileInfo.FullName),
+                FilePath = fileInfo.FullName,
+                DateCreate = fileInfo.CreationTime,
+                FileWeight = fileInfo.Length,
+                //FileWeight = Math.Round((double)fileInfo.Length / (1024 * 1024), 3), //Получаем размер в МБ,
+                //FileWeight = Math.Round((double)fileInfo.Length / 1024, 1), //Получаем размер в КБ,
+            };
+
+            return fileData;
+        }
+
+        private static async Task<FileData> CreationFileDataFromDirectory(string entry)
+        {
+            var directory = new DirectoryInfo(entry);
+
+            var fileData = new FileData
+            {
+                FileName = directory.Name,
+                FileExtension = EntryType.Folder.ToString(),
+                FileIcon = BitmapHelper.ToBitmapImage(BitmapHelper.ToBitmap("C:\\Users\\light\\Downloads\\file-manager-icon.png")),
+                FilePath = entry,
+                DateCreate = directory.CreationTime,
+                //FileWeight = await GetFolderSize(entry),
+            };
+
+            return fileData;
+        }
+
+        private static async Task<long> GetFolderSize(string folderPath)
+        {
+            return await Task.Run(() => 
+            {
+                long totalSize = 0;
+
+                try
+                {
+                    DirectoryInfo directoryInfo = new DirectoryInfo(folderPath);
+                    FileInfo[] files = directoryInfo.GetFiles();
+
+                    foreach (FileInfo file in files)
+                    {
+                        totalSize += file.Length; 
+                    }
+
+                    DirectoryInfo[] subDirectories = directoryInfo.GetDirectories();
+                    foreach (DirectoryInfo subDirectory in subDirectories)
+                    {
+                        totalSize += GetFolderSize(subDirectory.FullName).Result;
+                    }
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    
+                }
+                catch (Exception)
+                {
+                    
+                }
+
+                return totalSize;
+            });
         }
 
         private void LoadFilesInPrivateList()
@@ -547,6 +812,11 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
         {
             _files.Remove(fileToRemove);
             Files.Remove(fileToRemove);
+        }
+
+        private void ClearDirectoryProp()
+        {
+            DirectoryPath = string.Empty;
         }
 
         #endregion  
@@ -574,6 +844,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
                     // Специфические файлы
                     {".exe",  () => RenderExe(fileData) },
+                    {EntryType.Folder.ToString(), null }
                 };
 
                 var propAction = new Dictionary<string, Action>
@@ -591,6 +862,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
                     // Специфические файлы
                     {".exe",  () => ExtractExeProperty(fileData) },
+                    {EntryType.Folder.ToString(), null }
                 };
 
                 if (renderAction.TryGetValue(fileData.FileExtension.ToLower(), out Action render)) render();
@@ -736,6 +1008,9 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         private static FileBaseProperties ExtractBaseFileProperty(string filePath)
         {
+            if (Directory.Exists(filePath)) 
+                return new FileBaseProperties();
+
             var fileInfo = new FileInfo(filePath);
 
             var directory = fileInfo.DirectoryName;
@@ -751,7 +1026,8 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                 AccessTime = accessTime.ToString("f"),
                 WriteTime = writeTime.ToString("f"),
                 //FileWeight = Math.Round((double)fileInfo.Length / (1024 * 1024), 3), //Получаем размер в МБ,
-                FileWeight = Math.Round((double)FileWeight / 1024, 1), //Получаем размер в КБ,
+                //FileWeight = Math.Round((double)FileWeight / 1024, 1), //Получаем размер в КБ,
+                FileWeight = FileWeight,
             };
         }
 
@@ -905,5 +1181,26 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         #endregion
 
+        /*-Проверки условий-------------------------------------------------------------------------------*/
+
+        #region Методы проверки : Проверка на последний символ "\" и "/"
+
+        //private bool CheckLastCharSlash(string value)
+        //{
+        //    char lastChar = value[^1];
+        //    if (lastChar == '/')
+        //        return true;
+        //    else return false;
+        //}
+
+        private bool CheckLastCharBackslash(string value)
+        {
+            char lastChar = DirectoryPath[^1];
+            if (lastChar == '\\')
+                return true;
+            else return false;
+        }
+
+        #endregion
     }
 }

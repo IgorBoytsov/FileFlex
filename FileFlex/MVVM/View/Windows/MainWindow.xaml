@@ -13,10 +13,8 @@
         mc:Ignorable="d"
         Style="{StaticResource BaseStyle}"
         WindowStartupLocation="CenterScreen"
-        Height="550" MinHeight="450"
-        Width="1050" MinWidth="800"
-        d:Width="auto"
-        d:Height="auto"
+        Height="550" MinHeight="450" d:Height="auto" 
+        Width="1050" MinWidth="800"  d:Width="auto" 
         Title="FileFlex">
 
     <WindowChrome.WindowChrome>
@@ -41,45 +39,43 @@
 
     <Border x:Name="MainWindowBorder" Style="{StaticResource MainContenBorder}">
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height ="Auto"/>
                 <RowDefinition Height ="*"/>
             </Grid.RowDefinitions>
 
-            <!--#region Меню -->
-
-            <Menu Grid.Column="0" VerticalAlignment="Center" WindowChrome.IsHitTestVisibleInChrome="True" FontSize="15" Background="Transparent" Margin="3,2,0,0">
-
-                <MenuItem Header="Файл" Style="{StaticResource AppMenuItem}">
-
-                    <MenuItem Header="Добавить файл(лы)" Command="{Binding AddFilesCommand}" Foreground="{StaticResource MainAppColor}"/>
-
-                    <MenuItem Header="Выход" Foreground="{StaticResource MainAppColor}"/>
-
-                </MenuItem>
-
-                <MenuItem Header="Конвертер" Style="{StaticResource AppMenuItem}">
-                    
-                    <MenuItem Header="Изображений" Command="{Binding OpenConvertImageCommand}" Foreground="{StaticResource MainAppColor}"/>
-                    
-                </MenuItem>
-                
-                <MenuItem Header="Сервис" Style="{StaticResource AppMenuItem}">
-
-                    <MenuItem Header="Настройки" Command="{Binding OpenSettingsWindowCommand}" Foreground="{StaticResource MainAppColor}"/>
-
-                </MenuItem>
-
-            </Menu>
-
-            <!--#endregion-->
-
             <Grid Grid.Column="1" Grid.Row="0" Style="{StaticResource HeaderWindow}">
-   
+
+                <!--#region Меню -->
+
+                <StackPanel HorizontalAlignment="Left">
+                    <Menu Grid.Column="0" VerticalAlignment="Center" WindowChrome.IsHitTestVisibleInChrome="True" FontSize="15" Background="Transparent" Margin="3,2,0,0">
+
+                        <MenuItem Header="Файл" Style="{StaticResource AppMenuItem}">
+
+                            <MenuItem Header="Добавить файл(лы)" Command="{Binding AddFilesCommand}" Foreground="{StaticResource MainAppColor}"/>
+
+                            <MenuItem Header="Выход" Foreground="{StaticResource MainAppColor}"/>
+
+                        </MenuItem>
+
+                        <MenuItem Header="Конвертер" Style="{StaticResource AppMenuItem}">
+
+                            <MenuItem Header="Изображений" Command="{Binding OpenConvertImageCommand}" Foreground="{StaticResource MainAppColor}"/>
+
+                        </MenuItem>
+
+                        <MenuItem Header="Сервис" Style="{StaticResource AppMenuItem}">
+
+                            <MenuItem Header="Настройки" Command="{Binding OpenSettingsWindowCommand}" Foreground="{StaticResource MainAppColor}"/>
+
+                        </MenuItem>
+
+                    </Menu>
+                </StackPanel>
+
+                <!--#endregion-->
+
                 <!--#region Кнопки управление окном -->
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
@@ -99,7 +95,7 @@
 
             <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,5,0,0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="40"/>
                     <RowDefinition Height="40"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
@@ -108,10 +104,51 @@
                     <ColumnDefinition Width="300" MinWidth="200" MaxWidth="500"/>
                 </Grid.ColumnDefinitions>
 
+                <!--#region Путь к выбранному каталогу | Кнопки навигации по каталогам -->
+      
+                <DockPanel Margin="10,5,10,5">
+                    <Button DockPanel.Dock="Right" Width="40" Command="{Binding GetDirectoryPathCommand}" Template="{StaticResource TransparentAppButton}">
+                        <Button.Content>
+                            <fa:ImageAwesome Style="{StaticResource FolderIcon}"/>
+                        </Button.Content> 
+                    </Button>
+
+                    <Button DockPanel.Dock="Right" Width="40" Command="{Binding ClearDirectoryPropCommand}" Template="{StaticResource TransparentAppButton}">
+                        <Button.Content>
+                            <StackPanel>
+                                <ContentControl ContentTemplate="{StaticResource CrossTemplate}"/>
+                            </StackPanel>
+                        </Button.Content> 
+                    </Button>
+
+                    <Button DockPanel.Dock="Left" Width="40" 
+                            Template="{StaticResource TransparentAppButton}"
+                            Command="{Binding PreviousDirectoryCommand}"
+                            ToolTip="Предыдущая директория">
+                        <Button.Content>
+                            <fa:ImageAwesome Style="{StaticResource ArrowLeftIcon}"/>
+                        </Button.Content>
+                    </Button>
+                    <Button DockPanel.Dock="Left" Width="40" 
+                            Template="{StaticResource TransparentAppButton}"
+                            Command="{Binding NextDirectoryCommand}"
+                            ToolTip="Следующая директория">
+                        <Button.Content>
+                            <fa:ImageAwesome Style="{StaticResource ArrowRightIcon}"/>
+                        </Button.Content>
+                    </Button>
+
+                    <TextBox Text="{Binding DirectoryPath, UpdateSourceTrigger=PropertyChanged}" d:Text="Путь" 
+                             Style="{StaticResource DirectoryTextBoxStyle}"
+                             HorizontalAlignment="Stretch" FontSize="20" Margin="3,0,3,0"/>
+                </DockPanel>
+                
+                <!--#endregion-->
+                
                 <!--#region Элементы управление списка файлов -->
 
                 <Border Grid.Row="1" Style="{StaticResource ControlsFilesBorder}">
-                    <DockPanel VerticalAlignment="Center"  Margin="10,0,10,0">
+                    <DockPanel VerticalAlignment="Center" Margin="10,0,10,0">
 
                         <Popup IsOpen="{Binding IsFilterPopupOpen}" PlacementTarget="{Binding ElementName=FilterButton}" Placement="Bottom" StaysOpen="False">
                             <Border Background="Black" Width="100" Height="100">
@@ -128,7 +165,7 @@
                         <Button Name="FilterButton" 
                                 Command="{Binding OpenFilterCommand}"
                                 Template="{StaticResource TransparentAppButton}"
-                                Width="30" Height="30" Margin="5,0,5,0"
+                                Width="33" Height="30" Margin="5,0,5,0"
                                 HorizontalAlignment="Right" VerticalAlignment="Center">
                             <Button.Content>
                                 <fa:ImageAwesome Icon="Solid_Filter" Foreground="White"/>
@@ -140,13 +177,13 @@
                 </Border>
 
                 <!--#endregion-->
-
+       
                 <GridSplitter Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" BorderBrush="{StaticResource MainAppColor}" BorderThickness="1"/>
 
                 <!--#region Список файлов -->
 
-                <ListView x:Name="FilesListView" Grid.Column="0" Grid.Row="2"
-                          ItemsSource="{Binding Files}" d:ItemsSource="{d:SampleData ItemCount=2}" 
+                <ListView x:Name="FilesListView" Grid.Column="0" Grid.Row="3"
+                          ItemsSource="{Binding Files}" d:ItemsSource="{d:SampleData ItemCount=5}" 
                           SelectedItem="{Binding SelectedFile}"
                           Style="{StaticResource PreviewFileList}"
                           ItemTemplate="{StaticResource ShortDescriptionFile}"
@@ -159,14 +196,31 @@
                     <i:Interaction.Behaviors>
                         <behavior:ListViewSelectedItemsBehavior SelectedItems="{Binding SelectedFiles}"/>
                     </i:Interaction.Behaviors>
-
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <i:InvokeCommandAction Command="{Binding ItemDoubleClickCommand}" CommandParameter="{Binding SelectedFile}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    
                     <ListView.ContextMenu>
+                        
                         <ContextMenu Style="{StaticResource AppContextMenu}">
-
                             <MenuItem Header="Добавить файлы" Command="{Binding AddFilesCommand}">
                                 <MenuItem.Icon>
                                     <fa:ImageAwesome Style="{StaticResource AddFileIcon}"/>
                                 </MenuItem.Icon>
+                            </MenuItem>
+
+                            <MenuItem Header="Создать">
+                                <MenuItem.Icon>
+                                    <fa:ImageAwesome Style="{StaticResource AddFileIcon}"/>
+                                </MenuItem.Icon>
+
+                                <MenuItem Header="Gif" Command="{Binding OpenGifCreationCommand}">
+                                    <MenuItem.Icon>
+                                        <fa:ImageAwesome Style="{StaticResource AddFileIcon}"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
                             </MenuItem>
 
                             <Separator/>
@@ -225,9 +279,19 @@
                             </MenuItem>
 
                         </ContextMenu>
+                        
                     </ListView.ContextMenu>
-
+                    
                 </ListView>
+
+                <!--#endregion-->
+
+                <!--#region Название файла -->
+
+                <TextBlock Grid.Row="0" Grid.Column="1" 
+                           Text="{Binding SelectedFile.FileName, StringFormat=Файл: {0}}" d:Text="Файл: Тестовый файл" 
+                           FontSize="15"
+                           Style="{StaticResource NameFile}"/>
 
                 <!--#endregion-->
 
@@ -255,7 +319,7 @@
 
                                 <!--#region Отсуствие выбранного файла -->
 
-                                <TextBlock Text="Отсуствует файл" Style="{StaticResource NoneFile}"
+                                <TextBlock Text="Отсуствует файл" Style="{StaticResource NameFile}"
                                            Visibility="{Binding CurrentDisplayFile, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=None}"
                                            d:Visibility="Visible"/>
 
@@ -312,7 +376,7 @@
                                     <TextBlock Text="{Binding BaseProperties.CreationTime}" Style="{StaticResource FilePropValueTextBlock}"/>
                                     <TextBlock Text="{Binding BaseProperties.WriteTime}" Style="{StaticResource FilePropValueTextBlock}"/>
                                     <TextBlock Text="{Binding BaseProperties.AccessTime}" Style="{StaticResource FilePropValueTextBlock}"/>
-                                    <TextBlock Text="{Binding BaseProperties.FileWeight}" Style="{StaticResource FilePropValueTextBlock}"/>
+                                    <TextBlock Text="{Binding BaseProperties.FileWeight, Converter={StaticResource FileSizeConverter}}" Style="{StaticResource FilePropValueTextBlock}"/>
                                 </StackPanel>
                             </WrapPanel>
                         </Border>
