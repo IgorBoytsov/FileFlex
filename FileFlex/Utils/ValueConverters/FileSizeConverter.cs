@@ -7,18 +7,20 @@ namespace FileFlex.Utils.ValueConverters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is double sizeInKb)
+            if (value is long fileSize)
             {
-                double sizeInBytes = sizeInKb * 1024;
+                // Единицы измерения
+                string[] sizes = { "Б", "КБ", "МБ", "ГБ", "ТБ" };
+                double len = fileSize;
+                int order = 0;
 
-                if (sizeInBytes < 1024)
-                    return "байт";
-                else if (sizeInKb < 1024)
-                    return "Кб";
-                else if (sizeInKb < 1024 * 1024)
-                    return "Мб";
-                else
-                    return "Гб";
+                while (len >= 1024 && order < sizes.Length - 1)
+                {
+                    order++;
+                    len /= 1024;
+                }
+
+                return $"{len:0.##} {sizes[order]}";
             }
 
             return "N/A";
