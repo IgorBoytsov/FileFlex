@@ -4,19 +4,22 @@
     <Style x:Key="NameApp" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="Arieal"/>
         <Setter Property="Margin" Value="4, 3, 0, 0"/>
+        <Setter Property="Foreground" Value="{StaticResource MainAppTextColor}"/>
     </Style>
 
     <!-- MainWindow -->
     
     <!--#region Отсуствие выбранного файла -->
 
-    <Style x:Key="NoneFile" TargetType="TextBlock">
+    <Style x:Key="NameFile" TargetType="TextBlock">
         <Setter Property="Foreground" Value="{StaticResource MainAppTextColor}"/>
         <Setter Property="FontSize" Value="20"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
     
-    <!--#endregion-->
+    <!--#endregion-->    
 
     <!--#region Заголовк над блоками с выводом свойств -->
    
@@ -49,6 +52,30 @@
         <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
         <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    
+    <!--#endregion-->
+
+    <!--#region Текст категорий в боковом меню -->
+
+    <Style x:Key="SideMenuText" TargetType="TextBlock">
+        <Setter Property="Margin" Value="0,0,0,5"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+    
+    <!--#endregion-->
+
+    <!-- ConvertImage -->
+
+    <!--#region Текст настройки конвертации -->
+
+    <Style x:Key="ConvertText" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="17"/>
+        <Setter Property="Foreground" Value="{StaticResource MainAppTextColor}"/>
+        <Setter Property="Margin" Value="0,5,0,0"/>
     </Style>
     
     <!--#endregion-->

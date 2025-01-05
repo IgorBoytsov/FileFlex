@@ -63,4 +63,15 @@
     
     <!--#endregion-->
 
+    <!--#region Разделитель между названием категори и ее содержимым -->
+
+    <Style x:Key="SeparatorBetweenCategoryNameAndContent" TargetType="Border">
+        <Setter Property="BorderBrush" Value="White"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="Height" Value="1"/>
+    </Style>
+    
+    <!--#endregion-->
+
 </ResourceDictionary>

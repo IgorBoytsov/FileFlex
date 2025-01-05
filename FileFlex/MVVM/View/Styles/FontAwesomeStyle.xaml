@@ -3,7 +3,52 @@
                     xmlns:fa="http://schemas.fontawesome.com/icons/" >
 
     <!--Контекстное меню в MainWidnow (Список файлов)-->
-    
+
+    <!--#region Стрелка в лево (Иконка : Стрелка в лево ) -->
+
+    <Style x:Key="ArrowLeftIcon" TargetType="fa:ImageAwesome">
+        <Setter Property="Icon" Value="Solid_ArrowLeft"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <!--#endregion-->
+
+    <!--#region Стрелка в право (Иконка : Стрелка в право ) -->
+
+    <Style x:Key="ArrowRightIcon" TargetType="fa:ImageAwesome">
+        <Setter Property="Icon" Value="Solid_ArrowRight"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <!--#endregion-->
+
+    <!--#region Стрелка вверх (Иконка : Стрелка вверх ) -->
+
+    <Style x:Key="ArrowUpIcon" TargetType="fa:ImageAwesome">
+        <Setter Property="Icon" Value="Solid_ArrowUp"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <!--#endregion-->
+
+    <!--#region Стрелка вниз (Иконка : Стрелка в низ ) -->
+
+    <Style x:Key="ArrowDownIcon" TargetType="fa:ImageAwesome">
+        <Setter Property="Icon" Value="Solid_ArrowDown"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <!--#endregion-->
+
+    <!--#region Открыть папку (Иконка : Папка ) -->
+
+    <Style x:Key="FolderIcon" TargetType="fa:ImageAwesome">
+        <Setter Property="Icon" Value="Regular_FolderOpen"/>
+        <Setter Property="Foreground" Value="#FDDA0D"/>
+    </Style>
+
+    <!--#endregion-->
+
     <!--#region Добавление файлов (Иконка : файл с плюсом ) -->
     
     <Style x:Key="AddFileIcon" TargetType="fa:ImageAwesome">
@@ -80,6 +125,29 @@
 
     <Style x:Key="ViewerFile" TargetType="fa:ImageAwesome">
         <Setter Property="Icon" Value="Solid_Expand"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <!--#endregion-->
+
+    <!--#region Изменение размеров бокового меню (Иконка : HDD) -->
+
+    <Style x:Key="StorageIcon" TargetType="fa:ImageAwesome">
+        <Setter Property="Icon" Value="Regular_Hdd"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <!--#endregion-->
+ 
+    <!--#region Изменение размеров бокового меню () -->
+
+    <Style x:Key="ResizeRightSideMenu" TargetType="fa:ImageAwesome">
+        <Setter Property="Icon" Value="Solid_AngleRight"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <Style x:Key="ResizeLeftSideMenu" TargetType="fa:ImageAwesome">
+        <Setter Property="Icon" Value="Solid_AngleLeft"/>
         <Setter Property="Foreground" Value="White"/>
     </Style>
 

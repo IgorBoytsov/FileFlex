@@ -75,26 +75,75 @@
                 Background="Transparent"
                 BorderThickness="2">
 
-            <ContentControl HorizontalAlignment="Center" 
-                             VerticalAlignment="Center"
-                             FontSize="16"
-                             Foreground="#F0F1F3"
-                             Content="{TemplateBinding Content}"/>
+            <ContentControl x:Name="contenButton" 
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Margin="2"
+                            Foreground="#F0F1F3"
+                            Content="{TemplateBinding Content}"/>
         </Border>
 
         <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="true">
-                <Setter TargetName="buttonBorder" Property="BorderBrush" Value="LightGray"/>
+                <Setter TargetName="buttonBorder" Property="BorderThickness" Value="0"/>
+                <!--<Setter TargetName="buttonBorder" Property="Background" Value="Gray"/>-->
             </Trigger>
             <Trigger Property="IsPressed" Value="true">
-                <Setter TargetName="buttonBorder" Property="BorderBrush" Value="#FF9FB0C0"/>
+                <Setter TargetName="buttonBorder" Property="BorderThickness" Value="0"/>
+                <!--<Setter TargetName="buttonBorder" Property="Background" Value="Gray"/>-->
+                <Setter TargetName="contenButton" Property="Margin" Value="-1"/>
             </Trigger>
 
         </ControlTemplate.Triggers>
     </ControlTemplate>
     
     <!--#endregion-->
-    
+
+    <!--MainWindow-->
+
+    <!--#region Кнопка для списка системных дисков -->
+
+    <Style x:Key="StorageDiskButton" TargetType="Button">
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="buttonBorder"
+                            Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}"
+                            Background="Transparent"
+                            BorderThickness="2"
+                            CornerRadius="5">
+
+                        <ContentControl x:Name="contenButton" 
+                                        HorizontalAlignment="Center" 
+                                        VerticalAlignment="Center"
+                                        FontSize="16"
+                                        Margin="2"
+                                        Foreground="#F0F1F3"
+                                        Content="{TemplateBinding Content}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter TargetName="buttonBorder" Property="Background" Value="Gray"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="true">
+                            <Setter TargetName="buttonBorder" Property="Background" Value="Gray"/>
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--#endregion-->
+
     <!--Кастомное окно с сообщениями-->
 
     <Style x:Key="ResultButtonCustomMessageWindow" TargetType="Button">
