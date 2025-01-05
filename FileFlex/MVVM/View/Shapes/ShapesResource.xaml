@@ -45,5 +45,29 @@
     </DataTemplate>
     
     <!--#endregion-->
-    
+
+    <!--#region Значок крестика (X) -->
+
+    <DataTemplate x:Key="CrossTemplate">
+        <Grid>
+            <!-- Диагональная линия сверху слева - вниз направо -->
+            <Rectangle Width="30" Height="2" Fill="Red" 
+                   RenderTransformOrigin="0.5,0.5">
+                <Rectangle.RenderTransform>
+                    <RotateTransform Angle="45" />
+                </Rectangle.RenderTransform>
+            </Rectangle>
+
+            <!-- Диагональная линия сверху справа - вниз налево -->
+            <Rectangle Width="30" Height="2" Fill="Red" 
+                   RenderTransformOrigin="0.5,0.5">
+                <Rectangle.RenderTransform>
+                    <RotateTransform Angle="-45" />
+                </Rectangle.RenderTransform>
+            </Rectangle>
+        </Grid>
+    </DataTemplate>
+
+    <!--#endregion --> 
+
 </ResourceDictionary>
