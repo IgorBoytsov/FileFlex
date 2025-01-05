@@ -100,13 +100,50 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" MinWidth="200"/>
-                    <ColumnDefinition Width="300" MinWidth="200" MaxWidth="500"/>
+                    <ColumnDefinition Width="Auto"/> <!--Боковое меню-->
+                    <ColumnDefinition Width="*" MinWidth="200"/> <!--Навигация по дирректориям | Управление списком файлов | Список файлов-->
+                    <ColumnDefinition Width="300" MinWidth="200" MaxWidth="500"/> <!--Информация о выбранном файле-->
                 </Grid.ColumnDefinitions>
+
+                <!--#region Боковое меню -->
+
+                <Border Grid.Column="0" Grid.RowSpan="3" Background="Transparent" Margin="0,0,5,0">
+                    <StackPanel>
+                        <StackPanel>
+
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                <StackPanel Margin="0,51,0,0">
+                                    <TextBlock Text="Диски" Style="{StaticResource SideMenuText}"/>
+                                    <Border Style="{StaticResource SeparatorBetweenCategoryNameAndContent}"/>
+                                    <ItemsControl ItemsSource="{Binding StorageDevices}" d:ItemsSource="{d:SampleData ItemCount=5}"
+                                                  HorizontalAlignment="Stretch">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button Style="{StaticResource StorageDiskButton}"
+                                                        Command="{Binding DataContext.SelectStorageDeviceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}">
+                                                    <Button.Content>
+                                                        <DockPanel>
+                                                            <fa:ImageAwesome  Width="30" DockPanel.Dock="Left" HorizontalAlignment="Left"
+                                                                              Style="{StaticResource StorageIcon}"/>
+                                                            <TextBlock Text="{Binding NameStorage}" d:Text="D:\" Margin="5,0,0,0"/>
+                                                        </DockPanel>
+                                                    </Button.Content>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ScrollViewer>
+                            
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                
+                <!--#endregion-->
 
                 <!--#region Путь к выбранному каталогу | Кнопки навигации по каталогам -->
       
-                <DockPanel Margin="10,5,10,5">
+                <DockPanel Grid.Column="1" Margin="10,5,10,5">
                     <Button DockPanel.Dock="Right" Width="40" Command="{Binding GetDirectoryPathCommand}" Template="{StaticResource TransparentAppButton}">
                         <Button.Content>
                             <fa:ImageAwesome Style="{StaticResource FolderIcon}"/>
@@ -147,7 +184,7 @@
                 
                 <!--#region Элементы управление списка файлов -->
 
-                <Border Grid.Row="1" Style="{StaticResource ControlsFilesBorder}">
+                <Border Grid.Column="1" Grid.Row="1" Style="{StaticResource ControlsFilesBorder}">
                     <DockPanel VerticalAlignment="Center" Margin="10,0,10,0">
 
                         <Popup IsOpen="{Binding IsFilterPopupOpen}" PlacementTarget="{Binding ElementName=FilterButton}" Placement="Bottom" StaysOpen="False">
@@ -166,11 +203,16 @@
                                 Command="{Binding OpenFilterCommand}"
                                 Template="{StaticResource TransparentAppButton}"
                                 Width="33" Height="30" Margin="5,0,5,0"
-                                HorizontalAlignment="Right" VerticalAlignment="Center">
+                                DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center">
                             <Button.Content>
                                 <fa:ImageAwesome Icon="Solid_Filter" Foreground="White"/>
                             </Button.Content>
                         </Button>
+                        
+                        <ComboBox Width="120" Template="{StaticResource Convert}"
+                                  ItemsSource="{Binding SortingFile}" SelectedItem="{Binding SelectedSorting}"
+                                  Foreground="White"
+                                  HorizontalAlignment="Right" VerticalAlignment="Center"/>
 
                     </DockPanel>
 
@@ -178,11 +220,9 @@
 
                 <!--#endregion-->
        
-                <GridSplitter Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" BorderBrush="{StaticResource MainAppColor}" BorderThickness="1"/>
-
                 <!--#region Список файлов -->
 
-                <ListView x:Name="FilesListView" Grid.Column="0" Grid.Row="3"
+                <ListView x:Name="FilesListView" Grid.Column="1" Grid.Row="3"
                           ItemsSource="{Binding Files}" d:ItemsSource="{d:SampleData ItemCount=5}" 
                           SelectedItem="{Binding SelectedFile}"
                           Style="{StaticResource PreviewFileList}"
@@ -286,9 +326,11 @@
 
                 <!--#endregion-->
 
+                <GridSplitter Grid.Column="2" Grid.Row="2" HorizontalAlignment="Left" BorderBrush="{StaticResource MainAppColor}" BorderThickness="1"/>
+
                 <!--#region Название файла -->
 
-                <TextBlock Grid.Row="0" Grid.Column="1" 
+                <TextBlock Grid.Row="0" Grid.Column="2" 
                            Text="{Binding SelectedFile.FileName, StringFormat=Файл: {0}}" d:Text="Файл: Тестовый файл" 
                            FontSize="15"
                            Style="{StaticResource NameFile}"/>
@@ -297,7 +339,7 @@
 
                 <!--#region Элементы управление выбранным файлом -->
 
-                <StackPanel Grid.Column="1" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0">
+                <StackPanel Grid.Column="2" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0">
                     <Button Command="{Binding FileViewerWindowCommand}" Template="{StaticResource TransparentAppButton}" Width="25" Height="25">
                         <Button.Content>
                             <fa:ImageAwesome Style="{StaticResource ViewerFile}"/>
@@ -312,7 +354,7 @@
 
                 <!--#region Отображение данных файла -->
 
-                <ScrollViewer Grid.Column="1" Grid.Row="2" Margin="5,0,0,0">
+                <ScrollViewer Grid.Column="2" Grid.Row="2" Margin="5,0,0,0">
                     <StackPanel>
                         <Border Style="{StaticResource PreviewFileBorder}">
                             <StackPanel VerticalAlignment="Center">

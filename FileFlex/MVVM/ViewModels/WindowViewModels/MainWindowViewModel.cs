@@ -47,6 +47,18 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         #endregion
 
+        #region Коллекция : Список системных дисков
+
+        public ObservableCollection<Storage> StorageDevices { get; private set; } = [];
+
+        #endregion
+
+        #region Коллекция : Сортировка файлов
+
+        public ObservableCollection<string> SortingFile { get; private set; } = ["Отсутствует","Названию","Весу", "Дате",];
+
+        #endregion
+
         /*-Свойства---------------------------------------------------------------------------------------*/
 
         #region Свойства : выбора файла
@@ -59,6 +71,21 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
             {
                 _selectedFile = value;
                 DetermineFileType(value);
+                OnPropertyChanged();
+            }
+        }
+
+        #endregion
+
+        #region Свойство : Отображение базовой информации файла
+
+        private FileBaseProperties _baseProperties;
+        public FileBaseProperties BaseProperties
+        {
+            get => _baseProperties;
+            set
+            {
+                _baseProperties = value;
                 OnPropertyChanged();
             }
         }
@@ -122,16 +149,21 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                     if (value.Length == 0)
                     {
                         Files.Clear();
+                        _files.Clear();
                         EmptyFileProps();
                         EmptyBaseFileProps();
                         return;
                     }
 
-                    // Автоматическое добавление '\' при вводе корневого пути
                     if (value.Length == 2 && value[1] == ':' && !value.EndsWith("\\"))
                     {
                         _directoryPath += "\\";
-                        OnPropertyChanged(nameof(DirectoryPath));
+                        OnPropertyChanged();
+                    }
+                    if (value.Length == 4 && value[1] == ':' && value[2] == '\\' && value[3] == '\\')
+                    {
+                        _directoryPath = _directoryPath.Substring(0, _directoryPath.Length - 1);
+                        OnPropertyChanged();
                     }
                     InteractionFiles(FileAction.AddFromDirectory);
                 } 
@@ -174,6 +206,22 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
             set
             {
                 _iconSelectedFile = value;
+                OnPropertyChanged();
+            }
+        }
+
+        #endregion
+
+        #region Свойство : Выбор элемента для сортировки
+
+        private string _selectedSorting;
+        public string SelectedSorting
+        {
+            get => _selectedSorting;
+            set
+            {
+                _selectedSorting = value;
+                SortFiles();
                 OnPropertyChanged();
             }
         }
@@ -223,6 +271,9 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
             EmptyFileProps();
             EmptyBaseFileProps();
+            GetStorageDevice();
+
+            SelectedSorting = SortingFile.FirstOrDefault();
         }
 
         /*--RelayCommands---------------------------------------------------------------------------------*/
@@ -266,6 +317,9 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
         
         private RelayCommand _clearDirectoryPropCommand;
         public RelayCommand ClearDirectoryPropCommand { get => _clearDirectoryPropCommand ??= new(obj => { ClearDirectoryProp(); });}
+
+        private RelayCommand _selectStorageDeviceCommand;
+        public RelayCommand SelectStorageDeviceCommand => _selectStorageDeviceCommand ??= new RelayCommand(OpenStorageDevice);
 
         // Взаимодействие с свойствами
 
@@ -489,6 +543,28 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
 
         #endregion
 
+        /*-Взаимодействие с системными дисками------------------------------------------------------------*/
+
+        #region Метод : Извлечение данных из выбранного диска в список
+
+        private void OpenStorageDevice(object value)
+        {
+            if (value is Storage disk)
+            {
+                DirectoryPath = disk.NameStorage;
+            }
+        }
+
+        private void GetStorageDevice()
+        {
+            var fixedDrives = DriveInfo.GetDrives().Where(d => d.DriveType == DriveType.Fixed);
+
+            foreach (var drive in fixedDrives)
+                StorageDevices.Add(new Storage { NameStorage = drive.Name, LabelStorage = drive.VolumeLabel });
+        }
+
+        #endregion
+
         /*-Обновление \ Получение значение из файла с настройками-----------------------------------------*/
 
         #region Метод : Обновление значений из файла настроек
@@ -502,62 +578,6 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
         #endregion
 
         /*-Взаимодействие с файлами из списка-------------------------------------------------------------*/
-
-        #region Метод : Открытие файла по двойному клику | Переход в следующую директорию
-
-        private void DoubleClick(object value)
-        {
-            if (value is FileData fileData)
-            {
-                if (Directory.Exists(fileData.FilePath))
-                {
-                    if (CheckLastCharBackslash(DirectoryPath))
-                        DirectoryPath += $"{SelectedFile.FileName}";
-                    else
-                        DirectoryPath += $"\\{SelectedFile.FileName}";
-                }
-            }
-        }
-
-        #endregion
-
-        #region Методы : Навигация вперед и назад по директориям
-
-        private void NextDirectory(string directoryName)
-        {
-            if (Directory.Exists(DirectoryPath + $"\\{directoryName}"))
-            {
-                if (CheckLastCharBackslash(DirectoryPath))
-                    DirectoryPath += $"{SelectedFile.FileName}";
-                else
-                    DirectoryPath += $"\\{SelectedFile.FileName}";
-            }
-        }
-
-        private void PreviousDirectory()
-        {
-            var trimmedPath = DirectoryPath.TrimEnd('\\');
-
-            if (trimmedPath.Length == 2 && trimmedPath[1] == ':')
-            {
-                DirectoryPath = trimmedPath + "\\"; 
-                return;
-            }
-
-            // Получаем директорию верхнего уровня
-            var parentDirectory = Path.GetDirectoryName(trimmedPath);
-
-            // Если не удалось найти родительский каталог, оставляем путь без изменений
-            if (string.IsNullOrEmpty(parentDirectory))
-            {
-                DirectoryPath = trimmedPath + "\\";
-                return;
-            }
-
-            DirectoryPath = parentDirectory + "\\";
-        }
-
-        #endregion
 
         #region Методы возоимодействиe с списком файлов : Открытие \ добавление, удаление, очистка, перемещение в карзину
 
@@ -573,9 +593,10 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                     {
                         foreach (var file in files)
                         {     
-                            Files.Add(await CreationFileDataFromFile(file));
-                            LoadFilesInPrivateList();
+                            Files.Add(await CreationFileDataFromFile(file));  
                         }
+                        LoadFilesInPrivateList();
+                        SortFiles();
                     }
                 }
                 ,
@@ -700,14 +721,15 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                             if (Directory.Exists(entry))
                             {
                                 Files.Add(await CreationFileDataFromDirectory(entry));
-                                LoadFilesInPrivateList();
+                               
                             }
                             else if (File.Exists(entry))
                             {
                                 Files.Add(await CreationFileDataFromFile(entry));
-                                LoadFilesInPrivateList();
-                            }
+                            } 
                         }
+                        LoadFilesInPrivateList();
+                        SortFiles();
                     }
                     catch (Exception)
                     {
@@ -739,7 +761,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                 //FileWeight = Math.Round((double)fileInfo.Length / (1024 * 1024), 3), //Получаем размер в МБ,
                 //FileWeight = Math.Round((double)fileInfo.Length / 1024, 1), //Получаем размер в КБ,
             };
-
+            
             return fileData;
         }
 
@@ -756,7 +778,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                 DateCreate = directory.CreationTime,
                 //FileWeight = await GetFolderSize(entry),
             };
-
+          
             return fileData;
         }
 
@@ -800,11 +822,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
             if (Files.Count != 0)
             {
                 _files.Clear();
-
-                foreach (var item in _files)
-                {
-                    _files.Add(item);
-                }
+                _files.AddRange(Files);
             }
         }
 
@@ -820,6 +838,102 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
         }
 
         #endregion  
+
+        #region Методы : Навигация вперед и назад по директориям
+
+        private void NextDirectory(string directoryName)
+        {
+            if (Directory.Exists(DirectoryPath + $"\\{directoryName}"))
+            {
+                SelectedSorting = SortingFile.FirstOrDefault();
+
+                if (CheckLastCharBackslash(DirectoryPath))
+                    DirectoryPath += $"{SelectedFile.FileName}";
+                else
+                    DirectoryPath += $"\\{SelectedFile.FileName}";
+            }
+        }
+
+        private void PreviousDirectory()
+        {
+            SelectedSorting = SortingFile.FirstOrDefault();
+            var trimmedPath = DirectoryPath.TrimEnd('\\');
+
+            if (trimmedPath.Length == 2 && trimmedPath[1] == ':')
+            {
+                DirectoryPath = trimmedPath + "\\"; 
+                return;
+            }
+
+            // Получаем директорию верхнего уровня
+            var parentDirectory = Path.GetDirectoryName(trimmedPath);
+
+            // Если не удалось найти родительский каталог, оставляем путь без изменений
+            if (string.IsNullOrEmpty(parentDirectory))
+            {
+                DirectoryPath = trimmedPath + "\\";
+                return;
+            }
+
+            DirectoryPath = parentDirectory + "\\";
+        }
+
+        #endregion
+
+        #region Метод : Открытие файла по двойному клику | Переход в следующую директорию
+
+        private void DoubleClick(object value)
+        {
+            if (value is FileData fileData)
+            {
+                if (Directory.Exists(fileData.FilePath))
+                {
+                    SelectedSorting = SortingFile.FirstOrDefault();
+
+                    if (CheckLastCharBackslash(DirectoryPath))
+                        DirectoryPath += $"{SelectedFile.FileName}";
+                    else
+                        DirectoryPath += $"\\{SelectedFile.FileName}";
+                }
+            }
+        }
+
+        #endregion
+
+        #region Метод : Сортировка файлов
+
+        private void SortFiles()
+        {
+            Action action = SelectedSorting switch
+            {
+                "Названию" => () =>
+                {
+                    Files.Clear();
+                    foreach (var item in _files.OrderBy(x => x.FileName))
+                        Files.Add(item);
+                }
+                ,
+                "Весу" => () =>
+                {
+                    Files.Clear();
+                    foreach (var item in _files.OrderBy(x => x.FileWeight))
+                        Files.Add(item);
+                }
+                ,
+                "Дате" => () =>
+                {
+                    Files.Clear();
+                    foreach (var item in _files.OrderBy(x => x.DateCreate))
+                        Files.Add(item);
+                }
+                ,
+                _ => null
+            };
+            action?.Invoke();
+            
+        }
+
+        #endregion
 
         /*-Отображение контента файлов--------------------------------------------------------------------*/
 
@@ -988,21 +1102,6 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
         #endregion
 
         /*-Отображение свойств файлов---------------------------------------------------------------------*/
-
-        #region Свойство : Отображение базовой информации файла
-
-        private FileBaseProperties _baseProperties;
-        public FileBaseProperties BaseProperties
-        {
-            get => _baseProperties;
-            set
-            {
-                _baseProperties = value;
-                OnPropertyChanged();
-            }
-        }
-
-        #endregion
 
         #region Метод : Получение базовых свойств файла
 
