@@ -1,5 +1,9 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+                    xmlns:converter="clr-namespace:FileFlex.Utils.ValueConverters" xmlns:fa="http://schemas.fontawesome.com/icons/">
+
+    <converter:FileSizeConverter x:Key="FileSizeConverter"/>
+    <converter:FileExtensionFolderToStringEmptyConverter x:Key="FileExtensionFolderToStringEmptyConverter"/>
 
     <!--#region Панели для вывода -->
 
@@ -16,20 +20,22 @@
     <!--#region ItemsTemplate (ListView) -->
 
     <DataTemplate x:Key="ShortDescriptionFile">
-        <DockPanel>
+        <DockPanel HorizontalAlignment="Stretch">
             <Image Source="{Binding FileIcon}" Width="23"/>
             <TextBlock Text="{Binding FileName}" TextWrapping="WrapWithOverflow" Margin="5,0,0,0" FontSize="20"/>
-            <TextBlock Text="{Binding FileExtension}" FontSize="20"/>
+            <WrapPanel DockPanel.Dock="Right" HorizontalAlignment="Right">
+                <TextBlock Text="{Binding FileExtension, Converter={StaticResource FileExtensionFolderToStringEmptyConverter}}" FontSize="20"/>
+                <TextBlock Text="{Binding FileWeight, Converter={StaticResource FileSizeConverter}}" FontSize="20" Width="120"  Margin="5,0,10,0" HorizontalAlignment="Right" TextAlignment="Right"/>
+            </WrapPanel>
         </DockPanel>
     </DataTemplate>
 
-    <DataTemplate x:Key="DetailedDescriptionFile">
+    <DataTemplate x:Key="DetailedDescriptionFileDockPanel">
         <DockPanel>
             <Image Source="{Binding FileIcon}" Width="23"/>
             <TextBlock Text="{Binding FileName}" TextWrapping="WrapWithOverflow" Margin="5,0,0,0" FontSize="20"/>
-            <TextBlock Text="{Binding FileExtension}" FontSize="20"/>
-            <TextBlock Text="{Binding DateCreate}" FontSize="20" DockPanel.Dock="Right"/>
-            <TextBlock Text="{Binding FileWeight}" FontSize="20" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+            <TextBlock Text="{Binding FileExtension, Converter={StaticResource FileExtensionFolderToStringEmptyConverter}}" FontSize="20" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding FileWeight, Converter={StaticResource FileSizeConverter}}" DockPanel.Dock="Right" FontSize="20" HorizontalAlignment="Right" Margin="0,0,10,0"/>
         </DockPanel>
     </DataTemplate>
 
@@ -99,7 +105,7 @@
         </Style.Resources>
 
     </Style>
-    
+
     <!--#endregion-->
 
     <!--#region ComveryImageWindow Список изображение -->
@@ -149,4 +155,18 @@
 
     <!--#endregion-->
 
+
+    <!--#region Пока не используется -->
+
+    <!--<DataTemplate x:Key="ShortDescriptionFile">
+        <DockPanel>
+            <Image Source="{Binding FileIcon}" Width="23"/>
+            <TextBlock Text="{Binding FileName}" TextWrapping="WrapWithOverflow" Margin="5,0,0,0" FontSize="20"/>
+            <TextBlock Text="{Binding FileExtension, Converter={StaticResource FileExtensionFolderToStringEmptyConverter}}" FontSize="20"/>
+            <TextBlock Text="{Binding FileWeight, Converter={StaticResource FileSizeConverter}}" DockPanel.Dock="Right" FontSize="20" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+        </DockPanel>
+    </DataTemplate>-->
+
+    <!--#endregion-->
+    
 </ResourceDictionary>
