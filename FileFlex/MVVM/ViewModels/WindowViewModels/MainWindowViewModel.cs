@@ -593,7 +593,7 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                     {
                         foreach (var file in files)
                         {     
-                            Files.Add(await CreationFileDataFromFile(file));  
+                            Files.Add(await CreationFileDataHelper.FileDataFromFile(file));  
                         }
                         LoadFilesInPrivateList();
                         SortFiles();
@@ -720,12 +720,12 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
                         {
                             if (Directory.Exists(entry))
                             {
-                                Files.Add(await CreationFileDataFromDirectory(entry));
+                                Files.Add(await CreationFileDataHelper.FileDataFromDirectory(entry));
                                
                             }
                             else if (File.Exists(entry))
                             {
-                                Files.Add(await CreationFileDataFromFile(entry));
+                                Files.Add(await CreationFileDataHelper.FileDataFromFile(entry));
                             } 
                         }
                         LoadFilesInPrivateList();
@@ -745,76 +745,6 @@ namespace FileFlex.MVVM.ViewModels.WindowViewModels
         private void GetDirectoryPath()
         {
             DirectoryPath = _openDirectoryDialog.OpenDialog()[0];
-        }
-
-        private static async Task<FileData> CreationFileDataFromFile(string file)
-        {
-            FileInfo fileInfo = new(file);
-            var fileData = new FileData()
-            {
-                FileName = Path.GetFileNameWithoutExtension(fileInfo.FullName),
-                FileExtension = fileInfo.Extension,
-                FileIcon = await IconExtractionHelper.ExtractionFileIconAsync(fileInfo.FullName),
-                FilePath = fileInfo.FullName,
-                DateCreate = fileInfo.CreationTime,
-                FileWeight = fileInfo.Length,
-                //FileWeight = Math.Round((double)fileInfo.Length / (1024 * 1024), 3), //Получаем размер в МБ,
-                //FileWeight = Math.Round((double)fileInfo.Length / 1024, 1), //Получаем размер в КБ,
-            };
-            
-            return fileData;
-        }
-
-        private static async Task<FileData> CreationFileDataFromDirectory(string entry)
-        {
-            var directory = new DirectoryInfo(entry);
-
-            var fileData = new FileData
-            {
-                FileName = directory.Name,
-                FileExtension = EntryType.Folder.ToString(),
-                FileIcon = BitmapHelper.ToBitmapImage(BitmapHelper.ToBitmap("C:\\Users\\light\\Downloads\\file-manager-icon.png")),
-                FilePath = entry,
-                DateCreate = directory.CreationTime,
-                //FileWeight = await GetFolderSize(entry),
-            };
-          
-            return fileData;
-        }
-
-        private static async Task<long> GetFolderSize(string folderPath)
-        {
-            return await Task.Run(() => 
-            {
-                long totalSize = 0;
-
-                try
-                {
-                    DirectoryInfo directoryInfo = new DirectoryInfo(folderPath);
-                    FileInfo[] files = directoryInfo.GetFiles();
-
-                    foreach (FileInfo file in files)
-                    {
-                        totalSize += file.Length; 
-                    }
-
-                    DirectoryInfo[] subDirectories = directoryInfo.GetDirectories();
-                    foreach (DirectoryInfo subDirectory in subDirectories)
-                    {
-                        totalSize += GetFolderSize(subDirectory.FullName).Result;
-                    }
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    
-                }
-                catch (Exception)
-                {
-                    
-                }
-
-                return totalSize;
-            });
         }
 
         private void LoadFilesInPrivateList()
